@@ -4,6 +4,7 @@ from flask import Flask, jsonify, make_response
 # from api import ledok
 from api.gotoposition import go_to_position
 from api.chargetestapi import chargetest
+from api.chargetestreverse import chargetestreverse
 # from mcu.robotcontroller import RobotController, robot_controller
 
 app = Flask(__name__)
@@ -49,6 +50,7 @@ if __name__ == '__main__':
         app.register_blueprint(go_to_position)
         # app.register_blueprint(ledok.led_ok)
         app.register_blueprint(chargetest)
+        app.register_blueprint(chargetestreverse)
     else:
         print("Bad arguments : manual or automatic")
     app.run(host='0.0.0.0')
