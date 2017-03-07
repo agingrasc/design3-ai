@@ -1,0 +1,10 @@
+from enum import Enum
+
+class task_enum(Enum):
+    IDENTIFIER_ANTENNE = 1
+    RECEVOIR_INFORMATIONS = 2
+    DEPLACEMENT_IMAGE = 3
+    CAPTURER_IMAGE = 4
+    DEPLACEMENT_ZONE_DESSIN = 5
+    DESSINER = 6
+    TERMINER_TACHE = 7

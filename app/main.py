@@ -1,9 +1,10 @@
 import sys
 from flask import Flask, jsonify, make_response
 
-from api import ledok
+# from api import ledok
 from api.gotoposition import go_to_position
-from mcu.robotcontroller import RobotController, robot_controller
+# from mcu.robotcontroller import RobotController, robot_controller
+from robot.robotai import robot_ai
 
 app = Flask(__name__)
 
@@ -44,9 +45,12 @@ if __name__ == '__main__':
         print("AUTOMATIC MODE not implemented")
     elif status == MANUAL:
         print("MANUAL MODE")
-        robot_controller.startup_test()
+        # robot_controller.startup_test()
         app.register_blueprint(go_to_position)
-        app.register_blueprint(ledok.led_ok)
+        # app.register_blueprint(ledok.led_ok)
+        robot_ai.start(1)
+
+
     else:
         print("Bad arguments : manual or automatic")
     app.run(host='0.0.0.0')
