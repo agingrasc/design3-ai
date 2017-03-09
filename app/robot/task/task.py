@@ -9,6 +9,7 @@ class task():
         self.id_image = 0
         self.magnification = 0
         self.orientation = "north"
+        self.segments_image = []
 
     def execute(self, x_robot_position, y_robot_position):
         pass

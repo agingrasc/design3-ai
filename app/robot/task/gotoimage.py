@@ -2,7 +2,7 @@ import math
 
 from domain.gameboard.gameboard import GameBoard
 from domain.pathfinding import pathfinding
-from mcu.commands import Move
+# from mcu.commands import Move
 from .task import task
 
 
@@ -14,7 +14,7 @@ class go_to_image(task):
         self.x_robot_position = 0
         self.y_robot_position = 0
         self.theta = -(math.pi/2)
-        self.next_state = self._go_to_image
+        self.next_state = self._find_path
         self.status_flag = 0
         self.robot_controller = None
 
@@ -28,11 +28,7 @@ class go_to_image(task):
         self.next_state()
         return self.robot_controller
 
-    def _go_to_image(self):
-        print("going to image Command")
-        print(self.x_image)
-        print(self.y_image)
-
+    def _find_path(self):
         game_board = GameBoard(50, 50, [])
 
         end_position = game_board.game_board[self.x_image][self.y_image]
@@ -42,21 +38,27 @@ class go_to_image(task):
                                              end_position)
 
         path = pathfinder.find_path()
-        segments = self._get_segments_path(path)
+        self.segments = self._get_segments_path(path)
 
         game_board.print_game_board()
 
-        for segment in segments:
-            while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
-                # testGit
-                cmd = Move(segment[0], segment[1], self.theta)
-                self.robot_controller.send_command(cmd)
+        self.next_state = self._go_to_image
 
-        self.x_robot_position = segments[len(segments)-1][0]
-        self.y_robot_position = segments[len(segments)-1][1]
+    def _go_to_image(self):
+        print("going to image Command")
+        print(self.x_image)
+        print(self.y_image)
+
+        # for segment in self.segments:
+        #     while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
+        #         cmd = Move(segment[0], segment[1], self.theta)
+        #         self.robot_controller.send_command(cmd)
+
+        self.x_robot_position = self.segments[len(self.segments)-1][0]
+        self.y_robot_position = self.segments[len(self.segments)-1][1]
 
         if self._distance(self.x_robot_position, self.y_robot_position, self.x_image, self.y_image) <= 2:
-            self.next_state = self._stop()
+            self.next_state = self._stop
 
 
     def _stop(self):
