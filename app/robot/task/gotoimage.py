@@ -48,6 +48,7 @@ class go_to_image(task):
 
         for segment in segments:
             while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
+                # testGit
                 cmd = Move(segment[0], segment[1], self.theta)
                 self.robot_controller.send_command(cmd)
 
