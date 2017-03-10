@@ -49,7 +49,7 @@ if __name__ == '__main__':
         app.register_blueprint(go_to_position)
         # app.register_blueprint(ledok.led_ok)
         ai = robot_ai()
-        ai.start(5)
+        ai.start(7)
 
 
     else:

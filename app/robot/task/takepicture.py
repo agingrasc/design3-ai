@@ -32,10 +32,10 @@ class take_picture(task):
         # self.robot_controller.send_command(cmdCapture)
         #
         # cmd = Led(Leds.UP_GREEN)
-        # self.send_command(cmd)
+        # self.robot_controller.send_command(cmd)
         # time.sleep(1)
         # cmd = Led(Leds.DOWN_GREEN)
-        # self.send_command(cmd)
+        # self.robot_controller.send_command(cmd)
 
         self.next_state = self._analyse_picture
 

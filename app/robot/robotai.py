@@ -18,8 +18,8 @@ class robot_ai():
         self.draw = draw(self.robot_controller)
         self.end_cycle = end_cycle(self.robot_controller)
 
-        self.x_robot_position = 20
-        self.y_robot_position = 40
+        self.x_robot_position = 10
+        self.y_robot_position = 10
 
 
     def start(self, task):
