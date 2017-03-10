@@ -1,6 +1,8 @@
 import math
 
-# from mcu.commands import Move
+from mcu.commands import Move
+from mcu.commands import Pencil
+from mcu.protocol import PencilStatus
 from robot.task.task import task
 
 
@@ -26,10 +28,16 @@ class draw(task):
 
     def _draw(self):
         print("in draw")
-        # for segment in self.segments_image:
-        #     while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
-        #         cmd = Move(segment[0], segment[1], self.theta)
-        #         self.robot_controller.send_command(cmd)
+        cmdPencil = Pencil(PencilStatus.RAISED)
+        self.robot_controller.send_command(cmdPencil)
+
+        for segment in self.segments_image:
+            while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
+                cmd = Move(segment[0], segment[1], self.theta)
+                self.robot_controller.send_command(cmd)
+
+        cmdPencil = Pencil(PencilStatus.LOWERED)
+        self.robot_controller.send_command(cmdPencil)
 
         if self._distance(self.x_robot_position, self.y_robot_position, self.segments_image[len(self.segments_image)-1][0],
                           self.segments_image[len(self.segments_image)-1][1]) <= 2:
@@ -37,6 +45,3 @@ class draw(task):
 
     def _stop(self):
         self.status_flag = 1
-
-    def _distance(self, x_point1, y_point1, x_point2, y_point2):
-        return math.sqrt((x_point1 - x_point2) ** 2 + (y_point1 - y_point2) ** 2)

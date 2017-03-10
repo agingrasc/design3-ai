@@ -9,8 +9,8 @@ from robot.task.task import task
 class go_to_drawzone(task):
     def __init__(self, robot_controller):
         task.__init__(self, robot_controller)
-        self.x_drawzone = 10
-        self.y_drawzone = 10
+        self.x_drawzone = 5
+        self.y_drawzone = 5
         self.x_robot_position = 20
         self.y_robot_position = 40
         self.theta = -(math.pi / 2)
@@ -37,8 +37,7 @@ class go_to_drawzone(task):
         pathfinder = pathfinding.PathFinding(game_board, begin_position,
                                              end_position)
 
-        path = pathfinder.find_path()
-        self.segments = self._get_segments_path(path)
+        self.segments = pathfinder.find_path()
         print(self.segments)
 
         game_board.print_game_board()
@@ -64,29 +63,3 @@ class go_to_drawzone(task):
     def _stop(self):
         self.status_flag = 1
 
-    def _get_segments_path(self, path):
-        segments = []
-        x_segment = path[0].pos_x
-        y_segment = path[0].pos_y
-
-        for i in range(1, (len(path) - 1)):
-            if (path[i].pos_x == x_segment) & (path[i].pos_y != y_segment):
-                y_segment = path[i].pos_y
-
-                if path[i].pos_x != path[(i + 1)].pos_x:
-                    segments.append((x_segment, y_segment))
-            elif (path[i].pos_y == y_segment) & (path[i].pos_x != x_segment):
-                x_segment = path[i].pos_x
-                if path[i].pos_y != path[(i + 1)].pos_y:
-                    segments.append((x_segment, y_segment))
-            else:
-                x_segment = path[i].pos_x
-                y_segment = path[i].pos_y
-                if (path[i].pos_x == path[(i + 1)].pos_x) | (path[i].pos_y == path[(i + 1)].pos_y):
-                    segments.append((x_segment, y_segment))
-
-        segments.append((x_segment, y_segment))
-        return segments
-
-    def _distance(self, x_point1, y_point1, x_point2, y_point2):
-        return math.sqrt((x_point1 - x_point2) ** 2 + (y_point1 - y_point2) ** 2)

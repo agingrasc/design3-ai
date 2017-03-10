@@ -2,8 +2,8 @@ import math
 
 import time
 
-# from mcu.commands import Camera, Led
-# from mcu.protocol import Leds
+from mcu.commands import Camera, Led
+from mcu.protocol import Leds
 from robot.geometricinterpreter import geometric_interpreter
 from robot.task.task import task
 
@@ -28,14 +28,14 @@ class take_picture(task):
         return self.robot_controller
 
     def _take_image(self):
-        # cmdCapture = Camera(self.x_theta, self.y_theta)
-        # self.robot_controller.send_command(cmdCapture)
-        #
-        # cmd = Led(Leds.UP_GREEN)
-        # self.robot_controller.send_command(cmd)
-        # time.sleep(1)
-        # cmd = Led(Leds.DOWN_GREEN)
-        # self.robot_controller.send_command(cmd)
+        cmdCapture = Camera(self.x_theta, self.y_theta)
+        self.robot_controller.send_command(cmdCapture)
+
+        cmd = Led(Leds.UP_GREEN)
+        self.robot_controller.send_command(cmd)
+        time.sleep(1)
+        cmd = Led(Leds.DOWN_GREEN)
+        self.robot_controller.send_command(cmd)
 
         self.next_state = self._analyse_picture
 

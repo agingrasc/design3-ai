@@ -21,23 +21,27 @@ class robot_ai():
         self.x_robot_position = 10
         self.y_robot_position = 10
 
+        self.tasks = {1: self.identify_antenna, 2: self.receive_information, 3: self.go_to_image, 4: self.take_picture
+            , 5: self.go_to_drawzone, 6: self.draw, 7: self.end_cycle}
 
-    def start(self, task):
 
-        self._execute(task)
+    def start(self, task = None):
+        if(task):
+            self._execute_one_task(task)
+        else:
+            self._execute()
 
-    def _execute(self, task_id):
-        tasks = {1: self.identify_antenna, 2: self.receive_information, 3: self.go_to_image, 4: self.take_picture
-                 , 5: self.go_to_drawzone, 6: self.draw, 7: self.end_cycle}
-        current_task = tasks[task_id]
-        for task_id in tasks:
+    def _execute(self):
+        for task_id in self.tasks:
+            current_task = self.tasks[task_id]
             while current_task.status_flag == 0:
                 self.robot_controller = current_task.execute(self.x_robot_position, self.y_robot_position)
             if current_task.status_flag == 1:
                 continue
-        # if(task_id == 1):
-        #     identification = identify_antenna()
-        #     identification.execute()
 
+    def _execute_one_task(self, task_id):
+        current_task = self.tasks[task_id]
+        while current_task.status_flag == 0:
+            self.robot_controller = current_task.execute(self.x_robot_position, self.y_robot_position)
 
 
