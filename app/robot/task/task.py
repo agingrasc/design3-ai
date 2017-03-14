@@ -2,7 +2,7 @@ from mcu.robotcontroller import RobotController
 import math
 
 
-class task():
+class Task():
     def __init__(self, robot_controler = None):
         if robot_controler:
             self.robot_controller = robot_controler

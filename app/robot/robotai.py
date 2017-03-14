@@ -1,28 +1,30 @@
-from .task.identifyantenna import identify_antenna
-from .task.receiveinformation import receive_information
-from .task.gotoimage import go_to_image
-from .task.takepicture import take_picture
-from .task.gotodrawzone import go_to_drawzone
-from .task.draw import draw
-from .task.endcycle import end_cycle
+from .task.identifyantennatask import IdentifyAntennaTask
+from .task.receiveinformationtask import ReceiveInformationTask
+from .task.gotoimagetask import GoToImageTask
+from .task.takepicturetask import TakePictureTask
+from .task.gotodrawzonetask import GoToDrawzoneTask
+from .task.drawtask import DrawTask
+from .task.gooutofdrawzonetask import GoOutOfDrawzoneTask
+from .task.lightredledtask import LightRedLedTask
 
-class robot_ai():
+class RobotAi():
 
     def __init__(self):
         self.robot_controller = None
-        self.identify_antenna = identify_antenna()
-        self.receive_information = receive_information(self.robot_controller)
-        self.go_to_image = go_to_image(self.robot_controller)
-        self.take_picture = take_picture(self.robot_controller)
-        self.go_to_drawzone = go_to_drawzone(self.robot_controller)
-        self.draw = draw(self.robot_controller)
-        self.end_cycle = end_cycle(self.robot_controller)
+        self.identify_antenna = IdentifyAntennaTask()
+        self.receive_information = ReceiveInformationTask(self.robot_controller)
+        self.go_to_image = GoToImageTask(self.robot_controller)
+        self.take_picture = TakePictureTask(self.robot_controller)
+        self.go_to_drawzone = GoToDrawzoneTask(self.robot_controller)
+        self.draw = DrawTask(self.robot_controller)
+        self.go_out_of_drawzone = GoOutOfDrawzoneTask(self.robot_controller)
+        self.light_red_led = LightRedLedTask(self.robot_controller)
 
         self.x_robot_position = 10
         self.y_robot_position = 10
 
         self.tasks = {1: self.identify_antenna, 2: self.receive_information, 3: self.go_to_image, 4: self.take_picture
-            , 5: self.go_to_drawzone, 6: self.draw, 7: self.end_cycle}
+            , 5: self.go_to_drawzone, 6: self.draw, 7: self.go_out_of_drawzone, 8: self.light_red_led}
 
 
     def start(self, task = None):
