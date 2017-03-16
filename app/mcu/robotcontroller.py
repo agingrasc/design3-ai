@@ -4,7 +4,9 @@ import time
 
 from domain.gameboard.position import Position
 from mcu import protocol
+from mcu import servos
 from mcu.commands import regulator, MoveCommand
+from mcu.protocol import PencilStatus
 
 if __name__ == "__main__":
     from mcu.protocol import Leds
@@ -14,7 +16,7 @@ else:
     from .commands import ICommand, LedCommand
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
-SERIAL_POLULU_DEV_NAME = "ttyPolulu"
+SERIAL_POLULU_DEV_NAME = "ttyPololu"
 
 
 constants = [(0.027069, 0.040708, 0, 14),  # REAR X
@@ -65,15 +67,28 @@ class RobotController(object):
         while ret_code != 0:
             self.ser_mcu.write(cmd.pack_command())
 
+    def send_servo_command(self, cmd: ICommand):
+        """"
+        Prend une commande et s'occupe de l'envoyer au Pololu.
+        Args:
+            :cmd: La commande a envoyer
+        Returns:
+            None
+        """
+        self.ser_polulu.write(cmd.pack_command())
+        # TODO: get command response? (i.e: in case GET_POSITION command is sent)
+
     def send_move_command(self, robot_position: Position):
         cmd = MoveCommand(robot_position)
         self.send_command(cmd)
 
     def lower_pencil(self):
-        pass
+        cmd = PencilRaiseLowerCommand(PencilStatus.LOWERED)
+        self.send_servo_command(cmd)
 
     def raise_pencil(self):
-        pass
+        cmd = PencilRaiseLowerCommand(PencilStatus.RAISED)
+        self.send_servo_command(cmd)
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:

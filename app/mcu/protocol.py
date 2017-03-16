@@ -3,6 +3,7 @@ communication."""
 from enum import Enum
 
 import struct
+import servos
 
 PID_SCALING = 100000
 
@@ -10,8 +11,6 @@ PID_SCALING = 100000
 class PayloadLength(Enum):
     MOVE = 6
     LED = 2
-    PENCIL = 2
-    CAMERA = 4
     MANUAL_SPEED = 4
     READ_ENCODER = 2
     TOGGLE_PID = 2
@@ -22,8 +21,6 @@ class PayloadLength(Enum):
 
 class CommandType(Enum):
     MOVE = 0x00
-    CAMERA = 0x01
-    PENCIL = 0x02
     LED = 0x03
     SET_PID_CONSTANTS = 0x04
     MANUAL_SPEED = 0xa0
@@ -84,15 +81,13 @@ def generate_led_command(led: Leds) -> bytes:
 def generate_pencil_command(status: PencilStatus) -> bytes:
     assert isinstance(status, PencilStatus), "Le status doit etre dans PencilStatus."
 
-    header = _generate_header(CommandType.PENCIL, PayloadLength.PENCIL)
-    payload = _generate_payload([status.value])
-    return header + payload
+    # Redirect command to our pololu command factory
+    return servos.generate_pencil_command(status)
 
 
-def generate_camera_command(x_theta: int, y_theta: int) -> bytes:
-    header = _generate_header(CommandType.CAMERA, PayloadLength.CAMERA)
-    payload = _generate_payload([x_theta, y_theta])
-    return header + payload
+def generate_camera_command(x_theta, y_theta) -> bytes:
+    # Redirect comnmand to our pololu command factory
+    return servos.generate_camera_command(x_theta, y_theta)
 
 
 def generate_manual_speed_command(motor: Motors, pwm_percentage: int, direction: MotorsDirection = None):
