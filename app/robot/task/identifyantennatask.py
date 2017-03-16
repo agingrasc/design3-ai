@@ -1,14 +1,14 @@
 import math
 
-from mcu.commands import Pencil
+# from mcu.commands import Pencil
 from mcu.protocol import PencilStatus
 from .task import Task
-from mcu.commands import Move
+# from mcu.commands import Move
 
 
 class IdentifyAntennaTask(Task):
-    def __init__(self):
-        Task.__init__(self)
+    def __init__(self, robot_controler):
+        Task.__init__(self, robot_controler)
         self.x_start_point = 10
         self.y_start_point = 10
         self.x_end_point = 30
@@ -38,37 +38,37 @@ class IdentifyAntennaTask(Task):
         print("going to start point")
         print(self.x_start_point)
         print(self.y_start_point)
-        while self._distance(self.x_robot_position, self.y_robot_position, self.x_start_point, self.y_end_point) > 2:
-            cmd = Move(self.x_start_point, self.y_start_point, self.theta)
-            self.robot_controller.send_command(cmd)
+        # while self._distance(self.x_robot_position, self.y_robot_position, self.x_start_point, self.y_end_point) > 2:
+            # cmd = Move(self.x_start_point, self.y_start_point, self.theta)
+            # self.robot_controller.send_command(cmd)
 
     def _go_to_end_point(self):
         print("goint to end point")
         print(self.x_end_point)
         print(self.y_end_point)
-        while self._distance(self.x_robot_position, self.y_robot_position, self.x_end_point, self.y_end_point) > 2:
-            cmd = Move(self.x_end_point, self.y_end_point, self.theta)
-            self.robot_controller.send_command(cmd)
+        # while self._distance(self.x_robot_position, self.y_robot_position, self.x_end_point, self.y_end_point) > 2:
+            # cmd = Move(self.x_end_point, self.y_end_point, self.theta)
+            # self.robot_controller.send_command(cmd)
 
     def _go_to_max_point(self):
         print("going to max point")
         print(self.x_max_point)
         print(self.y_max_point)
-        while self._distance(self.x_robot_position, self.y_robot_position, self.x_max_point, self.y_max_point) > 2:
-            cmd = Move(self.x_max_point, self.y_max_point, self.theta)
-            self.robot_controller.send_command(cmd)
+        # while self._distance(self.x_robot_position, self.y_robot_position, self.x_max_point, self.y_max_point) > 2:
+            # cmd = Move(self.x_max_point, self.y_max_point, self.theta)
+            # self.robot_controller.send_command(cmd)
 
     def _mark_antenna(self):
-        print("mariking antenna")
-        cmdPencil = Pencil(PencilStatus.RAISED)
-        self.robot_controller.send_command(cmdPencil)
+        print("marking antenna")
+        # cmdPencil = Pencil(PencilStatus.RAISED)
+        # self.robot_controller.send_command(cmdPencil)
 
-        while self._distance(self.y_robot_position, self.y_robot_position, self.x_robot_position, (self.y_robot_position + 5)) > 1:
-            cmd = Move(self.x_robot_position, (self.y_robot_position + 5), self.theta)
-            self.robot_controller.send_command(cmd)
+        # while self._distance(self.y_robot_position, self.y_robot_position, self.x_robot_position, (self.y_robot_position + 5)) > 1:
+            # cmd = Move(self.x_robot_position, (self.y_robot_position + 5), self.theta)
+            # self.robot_controller.send_command(cmd)
 
-        cmdPencil = Pencil(PencilStatus.LOWERED)
-        self.robot_controller.send_command(cmdPencil)
+        # cmdPencil = Pencil(PencilStatus.LOWERED)
+        # self.robot_controller.send_command(cmdPencil)
 
     def _stop(self):
         self.status_flag = 1

@@ -2,7 +2,7 @@ import math
 
 from domain.gameboard.gameboard import GameBoard
 from domain.pathfinding import pathfinding
-from mcu.commands import Move
+# from mcu.commands import Move
 from .task import Task
 
 
@@ -51,10 +51,10 @@ class GoToImageTask(Task):
         print(self.x_image)
         print(self.y_image)
 
-        for segment in self.segments:
-            while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
-                cmd = Move(segment[0], segment[1], self.theta)
-                self.robot_controller.send_command(cmd)
+        # for segment in self.segments:
+        #     while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
+        #         cmd = Move(segment[0], segment[1], self.theta)
+        #         self.robot_controller.send_command(cmd)
 
     def _stop(self):
         self.status_flag = 1

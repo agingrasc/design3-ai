@@ -1,5 +1,5 @@
-from mcu.commands import Led
-from mcu.protocol import Leds
+# from mcu.commands import Led
+# from mcu.protocol import Leds
 from robot.task.task import Task
 
 
@@ -10,11 +10,13 @@ class LightRedLedTask(Task):
 
     def execute(self, x_robot_position, y_robot_position):
         print("lighting red led")
+        self._launch_end_signal()
+        self._stop()
 
     def _launch_end_signal(self):
         print("Red led")
-        cmd = Led(Leds.UP_RED)
-        self.robot_controller.send_command(cmd)
+        # cmd = Led(Leds.UP_RED)
+        # self.robot_controller.send_command(cmd)
 
     def _stop(self):
         self.status_flag = 1

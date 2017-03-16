@@ -3,11 +3,8 @@ import math
 
 
 class Task():
-    def __init__(self, robot_controler = None):
-        if robot_controler:
-            self.robot_controller = robot_controler
-        else:
-            self.robot_controller = RobotController()
+    def __init__(self, robot_controler):
+        self.robot_controller = robot_controler
         self.id_image = 3
         self.magnification = 0
         self.orientation = "north"

@@ -1,8 +1,8 @@
 import math
 
-from mcu.commands import Led
-from mcu.protocol import Leds
-from mcu.commands import Move
+# from mcu.commands import Led
+# from mcu.protocol import Leds
+# from mcu.commands import Move
 from robot.task.task import Task
 
 
@@ -27,10 +27,10 @@ class GoOutOfDrawzoneTask(Task):
 
     def _quit_draw_zone(self):
         print("quiting")
-        for segment in self.segments_image:
-            while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
-                cmd = Move(segment[0], segment[1], self.theta)
-                self.robot_controller.send_command(cmd)
+        # for segment in self.segments_image:
+        #     while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
+        #         cmd = Move(segment[0], segment[1], self.theta)
+        #         self.robot_controller.send_command(cmd)
 
     def _stop(self):
         self.status_flag = 1
