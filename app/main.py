@@ -20,9 +20,10 @@ def run_manual():
     print("run manual")
 
 def decide_task_list(task_id):
+    robot_controler = RobotController()
     tasks = {0: "COMPETITION", 1: "IDENTIFY_ANTENNA", 2: "RECEIVE_INFORMATION", 3: "GO_TO_IMAGE", 4: "TAKE_PICTURE"
         , 5: "GO_TO_DRAWZONE", 6: "DRAW", 7: "GO_OUT_OF_DRAWZONE", 8: "LIGHT_RED_LED"}
-    task_factory = TaskFactory()
+    task_factory = TaskFactory(robot_controler)
     task_execute_list = []
     if(tasks[task_id] == "COMPETITION"):
         task_execute_list = task_factory.create_competition_tasks()

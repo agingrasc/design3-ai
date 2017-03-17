@@ -32,7 +32,6 @@ class IdentifyAntennaTask(Task):
         self._go_to_max_point()
         self._mark_antenna()
         self._stop()
-        return self.robot_controller
 
     def _go_to_start_point(self):
         print("going to start point")
@@ -71,4 +70,5 @@ class IdentifyAntennaTask(Task):
         # self.robot_controller.send_command(cmdPencil)
 
     def _stop(self):
+        print("stopping")
         self.status_flag = 1

@@ -23,7 +23,6 @@ class DrawTask(Task):
         self.x_robot_position = x_robot_position
         self._draw()
         self._stop()
-        return self.robot_controller
 
     def _draw(self):
         print("in draw")

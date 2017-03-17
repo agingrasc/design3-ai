@@ -21,9 +21,7 @@ class GoOutOfDrawzoneTask(Task):
         self.y_robot_position = y_robot_position
         self.x_robot_position = x_robot_position
         self._quit_draw_zone()
-        self._launch_end_signal()
         self._stop()
-        return self.robot_controller
 
     def _quit_draw_zone(self):
         print("quiting")

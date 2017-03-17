@@ -24,7 +24,6 @@ class GoToDrawzoneTask(Task):
         self._find_path()
         self._go_to_drawzone()
         self._stop()
-        return self.robot_controller
 
     def _find_path(self):
         game_board = GameBoard(50, 50, [])

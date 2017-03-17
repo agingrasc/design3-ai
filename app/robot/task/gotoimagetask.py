@@ -28,7 +28,6 @@ class GoToImageTask(Task):
         self._find_path()
         self._go_to_image()
         self._stop()
-        return self.robot_controller
 
     def _find_path(self):
         self.x_image = self.images[self.id_image][0]

@@ -10,7 +10,6 @@ class ReceiveInformationTask(Task):
         print("receiving information")
         self._get_information()
         self._stop()
-        return self.robot_controller
 
     def _get_information(self):
         print("getting information")

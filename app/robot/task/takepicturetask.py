@@ -24,7 +24,6 @@ class TakePictureTask(Task):
         self._take_image()
         self._analyse_picture()
         self._stop()
-        return self.robot_controller
 
     def _take_image(self):
         print("taking image")
