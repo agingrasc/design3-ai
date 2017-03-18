@@ -1,11 +1,8 @@
 from unittest import TestCase
 from unittest.mock import Mock, MagicMock, patch, call
 
-from domain.gameboard.gameboard import GameBoard
 from mcu.robotcontroller import RobotController
 from robot.task.gotoimagetask import GoToImageTask
-from domain.pathfinding import pathfinding
-
 
 class GoToImageTaskTest(TestCase):
 
