@@ -80,7 +80,6 @@ class PIPositionRegulator(object):
         command = []
         for cmd in saturated_cmd:
             command.append(int(cmd))
-        print("({}) Sortie du regulateur: {}, {}, {}".format(time.time(), command[0], command[1], command[2]))
         return command
 
     def _relinearize(self, cmd):
