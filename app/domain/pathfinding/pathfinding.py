@@ -25,7 +25,7 @@ def find(grid, begin_position, end_position):
         current_neighbor = find_minimum(new_neighbors)
         current_neighbor.set_path()
         path.append(current_neighbor)
-    return _get_segments_path(path)
+    return path
 
 
 def find_minimum(neighbors):
@@ -66,31 +66,3 @@ def initialise_weight(grid, begin_position):
             ]
             neighbors += new_neighbors
         neighbors = set(neighbors)
-
-def _get_segments_path(path):
-    segments = []
-    x_segment = path[0].pos_x
-    y_segment = path[0].pos_y
-    for p in path:
-        print(p)
-    for i in range(1, (len(path) - 1)):
-        if (path[i].pos_x == x_segment) & (path[i].pos_y != y_segment):
-            y_segment = path[i].pos_y
-
-            if path[i].pos_x != path[(i + 1)].pos_x:
-                segments.append((x_segment, y_segment))
-
-        elif (path[i].pos_y == y_segment) & (path[i].pos_x != x_segment):
-            x_segment = path[i].pos_x
-            if path[i].pos_y != path[(i + 1)].pos_y:
-                segments.append((x_segment, y_segment))
-        else:
-            x_segment = path[i].pos_x
-            y_segment = path[i].pos_y
-            print( str(path[i].pos_x) + " " + str(path[(i + 1)].pos_x))
-            print((path[i].pos_x == path[(i + 1)].pos_x))
-            if (path[i].pos_x == path[(i + 1)].pos_x) | (path[i].pos_y == path[(i + 1)].pos_y):
-                segments.append((x_segment, y_segment))
-
-    segments.append((path[len(path)-1].pos_x, path[len(path)-1].pos_y))
-    return segments
