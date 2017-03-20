@@ -5,7 +5,7 @@ from mcu.robotcontroller import robot_controller, set_move_destination
 from domain.gameboard.position import Position
 from mcu.commands import regulator
 
-DELTA_T = 0.1
+DELTA_T = 0.3
 
 
 class VisionRegulation:

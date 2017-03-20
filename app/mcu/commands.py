@@ -14,22 +14,24 @@ from .protocol import PencilStatus, Leds
 
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 50
-THETA_DEADZONE = 3.14
+DEADZONE = 50 #mm
+THETA_DEADZONE = 0.009 #rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
+THETA_ACC_DECAY = 0.79 #3 iteration pour diminuer de moitie
 
 DEFAULT_KP = 1
 DEFAULT_KI = 0
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.1
-DEFAULT_THETA_KI = 0
+DEFAULT_THETA_KI = 0.5
 DEFAULT_MAX_CMD = 80
 DEFAULT_DEADZONE_CMD = 20
 DEFAULT_MIN_CMD = 20
-DEFAULT_THETA_MAX_CMD = 0.5
-DEFAULT_THETA_MIN_CMD = 0.15
+DEFAULT_THETA_MAX_CMD = 0.35
+DEFAULT_THETA_MIN_CMD = 0.015
+# 2Pi rad en 10,66 secondes (0.5) et 17,25 secondes (0.3)
 
 
 class PIPositionRegulator(object):
@@ -71,7 +73,8 @@ class PIPositionRegulator(object):
         dest_x = self.setpoint.pos_x
         dest_y = self.setpoint.pos_y
         dest_theta = self.setpoint.theta
-        err_x, err_y, err_theta = dest_x - actual_x, dest_y - actual_y, actual_theta - dest_theta
+        err_x, err_y, err_theta = dest_x - actual_x, dest_y - actual_y, dest_theta - actual_theta
+        err_theta = wrap_theta(err_theta)
 
         # wrap theta [-PI, PI]
 
@@ -113,8 +116,7 @@ class PIPositionRegulator(object):
         command = []
         for cmd in saturated_cmd:
             command.append(int(cmd))
-        #command.append(saturated_theta)
-        command.append(0)
+        command.append(saturated_theta)
         print("Regulator cmd: {}, {}, {}".format(command[0], command[1], command[2]))
         return command
 
@@ -143,6 +145,7 @@ class PIPositionRegulator(object):
         elif theta_ui < -self.constants.theta_max_cmd:
             theta_ui = -self.constants.theta_max_cmd
         self.accumulator[2] = theta_ui
+        self.accumulator[2] *= THETA_ACC_DECAY
 
     def _saturate_theta_cmd(self, cmd):
         if cmd > self.constants.theta_max_cmd:
@@ -172,14 +175,17 @@ def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float]
     Returns:
         Un tuple contenant les composantes x et y selon le plan du robot.
     """
-    t = (t + np.pi) % (2 * np.pi) - np.pi
-    print("Theta pour ref: {}".format(t))
+    t = wrap_theta(t)
     cos = math.cos(t)
     sin = math.sin(t)
 
     corrected_x = (x * cos - y * sin)
     corrected_y = (y * cos + x * sin)
     return corrected_x, corrected_y
+
+
+def wrap_theta(t):
+    return (t + np.pi) % (2 * np.pi) - np.pi
 
 
 """ Regulateur de position persistent."""
