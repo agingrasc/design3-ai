@@ -3,9 +3,17 @@ from flask import Flask, jsonify, make_response
 
 from api import ledok
 from api.gotoposition import go_to_position
-from mcu.robotcontroller import RobotController
-from robot.robotai import RobotAi
-from robot.task.taskfactory import TaskFactory
+from api.startai import start_ai
+from api.endinitialorientationtask import end_initial_orientation_task
+from api.endidentifyantennatask import end_identify_antenna_task
+from api.endreceiveinformationtask import end_receive_information_task
+from api.endgotoimagetask import end_go_to_image_task
+from api.endtakepicturetask import end_take_picture_task
+from api.endgotodrawzonetask import end_go_to_drawzone_task
+from api.enddrawtask import end_draw_task
+from api.endgooutofdrawzonetask import end_go_out_of_drawzone_task
+from api.endlightredledtask import end_light_red_led_task
+
 from domain.command.visionregulation import vision_regulator
 
 app = Flask(__name__)
@@ -19,35 +27,6 @@ def run_automatic():
 
 def run_manual():
     print("run manual")
-
-def decide_task_list(task_id):
-    robot_controler = RobotController()
-    tasks = {0: "COMPETITION", 1:"INITIAL_ORIENTATION", 2: "IDENTIFY_ANTENNA", 3: "RECEIVE_INFORMATION", 4: "GO_TO_IMAGE", 5: "TAKE_PICTURE"
-        , 6: "GO_TO_DRAWZONE", 7: "DRAW", 8: "GO_OUT_OF_DRAWZONE", 9: "LIGHT_RED_LED"}
-    task_factory = TaskFactory(robot_controler)
-    task_execute_list = []
-    if(tasks[task_id] == "COMPETITION"):
-        task_execute_list = task_factory.create_competition_tasks()
-    if (tasks[task_id] == "INITIAL_ORIENTATION"):
-        task_execute_list = task_factory.create_initial_orientation_task()
-    if (tasks[task_id] == "IDENTIFY_ANTENNA"):
-        task_execute_list = task_factory.create_indentify_antenna_task()
-    if (tasks[task_id] == "RECEIVE_INFORMATION"):
-        task_execute_list = task_factory.create_receive_informations_task()
-    if (tasks[task_id] == "GO_TO_IMAGE"):
-        task_execute_list = task_factory.create_go_to_image_task()
-    if (tasks[task_id] == "TAKE_PICTURE"):
-        task_execute_list = task_factory.create_take_picture_task()
-    if (tasks[task_id] == "GO_TO_DRAWZONE"):
-        task_execute_list = task_factory.create_go_to_drawzone_task()
-    if (tasks[task_id] == "DRAW"):
-        task_execute_list = task_factory.create_draw_task()
-    if (tasks[task_id] == "GO_OUT_OF_DRAWZONE"):
-        task_execute_list = task_factory.create_go_out_of_drawzone_task()
-    if (tasks[task_id] == "LIGHT_RED_LED"):
-        task_execute_list = task_factory.create_light_red_led_task()
-
-    return task_execute_list
 
 @app.after_request
 def after_request(data):
@@ -73,8 +52,17 @@ if __name__ == '__main__':
     status = sys.argv[1]
     base_station_url = sys.argv[2]
     vision_regulator.set_url(base_station_url)
-    task_id = sys.argv[3]
-    ai = RobotAi(decide_task_list(task_id))
+
+    app.register_blueprint(start_ai)
+    app.register_blueprint(end_initial_orientation_task)
+    app.register_blueprint(end_identify_antenna_task)
+    app.register_blueprint(end_receive_information_task)
+    app.register_blueprint(end_go_to_image_task)
+    app.register_blueprint(end_take_picture_task)
+    app.register_blueprint(end_go_to_drawzone_task)
+    app.register_blueprint(end_draw_task)
+    app.register_blueprint(end_go_out_of_drawzone_task)
+    app.register_blueprint(end_light_red_led_task)
 
     if status == AUTOMATIC:
         print("AUTOMATIC MODE not implemented")
@@ -82,7 +70,6 @@ if __name__ == '__main__':
         print("MANUAL MODE")
         app.register_blueprint(go_to_position)
         app.register_blueprint(ledok.led_ok)
-        ai.execute()
 
     else:
         print("Bad arguments : manual or automatic")
