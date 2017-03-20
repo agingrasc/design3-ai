@@ -25,7 +25,8 @@ class VisionRegulation:
         robot_position_info = json.loads(robot_position_json)
         pos_x = float(robot_position_info['x'])
         pos_y = float(robot_position_info['y'])
-        robot_position = Position(int(pos_x), int(pos_y))
+        pos_t = float(robot_position_info['theta'])
+        robot_position = Position(int(pos_x), int(pos_y), pos_t)
         set_move_destination(position)
 
         now = time.time()
