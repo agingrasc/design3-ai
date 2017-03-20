@@ -13,6 +13,7 @@ from .protocol import PencilStatus, Leds
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
 DEADZONE = 50
+THETA_DEADZONE = 0.009
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
@@ -20,13 +21,13 @@ MAX_Y = 100
 DEFAULT_KP = 1
 DEFAULT_KI = 0
 DEFAULT_KD = 0
-DEFAULT_THETA_KP = 1
+DEFAULT_THETA_KP = 0.1
 DEFAULT_THETA_KI = 0
 DEFAULT_MAX_CMD = 80
 DEFAULT_DEADZONE_CMD = 20
 DEFAULT_MIN_CMD = 20
 DEFAULT_THETA_MAX_CMD = 0.5
-DEFAULT_THETA_MIN_CMD = 0.0
+DEFAULT_THETA_MIN_CMD = 0.15
 
 
 class PIPositionRegulator(object):
@@ -67,7 +68,9 @@ class PIPositionRegulator(object):
         dest_x = self.setpoint.pos_x
         dest_y = self.setpoint.pos_y
         dest_theta = self.setpoint.theta
-        err_x, err_y, err_theta = dest_x - actual_x, dest_y - actual_y, dest_theta - actual_theta
+        err_x, err_y, err_theta = dest_x - actual_x, dest_y - actual_y, actual_theta - dest_theta
+
+        # wrap theta [-PI, PI]
 
         # calcul PID pour x/y
         cmd_x = err_x * self.constants.kp
@@ -97,11 +100,18 @@ class PIPositionRegulator(object):
         cmd_theta = theta_up + theta_ui
 
         # saturation de la commande theta
-        saturated_cmd.append(self._saturate_theta_cmd(cmd_theta))
+        saturated_theta = self._saturate_theta_cmd(cmd_theta)
+
+        # deadzone theta
+        if abs(err_theta) < THETA_DEADZONE:
+            print("theta ok")
+            saturated_theta = 0
 
         command = []
         for cmd in saturated_cmd:
             command.append(int(cmd))
+        command.append(saturated_theta)
+        print("Regulator cmd: {}, {}, {}".format(command[0], command[1], command[2]))
         return command
 
     def _relinearize(self, cmd):
@@ -133,6 +143,10 @@ class PIPositionRegulator(object):
     def _saturate_theta_cmd(self, cmd):
         if cmd > self.constants.theta_max_cmd:
             return self.constants.theta_max_cmd
+        elif -self.constants.theta_min_cmd < cmd < 0:
+            return cmd - self.constants.theta_min_cmd
+        elif 0 < cmd < self.constants.theta_min_cmd:
+            return cmd + self.constants.theta_min_cmd
         elif cmd < -self.constants.theta_max_cmd:
             return -self.constants.theta_max_cmd
         return cmd
@@ -140,7 +154,8 @@ class PIPositionRegulator(object):
     def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
-        return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone
+        err_theta = robot_position.theta - self.setpoint.theta
+        return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone and abs(err_theta) < THETA_DEADZONE
 
 
 def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float]:

@@ -16,6 +16,7 @@ class VisionRegulation:
         self.connection = create_connection("ws://" + url + ":3000")
 
     def go_to_position(self, position):
+        print("Position recu: {}".format(position))
         data = {}
         data["headers"] = "pull_robot_position"
         data["data"] = {}
@@ -34,7 +35,8 @@ class VisionRegulation:
 
         while not regulator.is_arrived(robot_position):
             now = time.time()
-            if now - last_time > DELTA_T:
+            delta_t = now - last_time
+            if delta_t > DELTA_T:
                 last_time = time.time()
                 self.connection.send(json.dumps(data))
 
@@ -50,7 +52,7 @@ class VisionRegulation:
                     theta = 0
                 robot_position = Position(int(pos_x), int(pos_y), theta)
 
-                robot_controller.send_move_command(robot_position)
+                robot_controller.send_move_command(robot_position, delta_t)
 
 
 vision_regulator = VisionRegulation()
