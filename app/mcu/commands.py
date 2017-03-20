@@ -6,6 +6,8 @@ import math
 import time
 from typing import List, Tuple
 
+import numpy as np
+
 from domain.gameboard.position import Position
 from . import protocol
 from .protocol import PencilStatus, Leds
@@ -13,7 +15,7 @@ from .protocol import PencilStatus, Leds
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
 DEADZONE = 50
-THETA_DEADZONE = 0.009
+THETA_DEADZONE = 3.14
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
@@ -62,6 +64,7 @@ class PIPositionRegulator(object):
         Returns:
             La vitesse en x, y et en theta.
         """
+        print("Retroaction position: {}".format(actual_position))
         actual_x = actual_position.pos_x
         actual_y = actual_position.pos_y
         actual_theta = actual_position.theta
@@ -110,7 +113,8 @@ class PIPositionRegulator(object):
         command = []
         for cmd in saturated_cmd:
             command.append(int(cmd))
-        command.append(saturated_theta)
+        #command.append(saturated_theta)
+        command.append(0)
         print("Regulator cmd: {}, {}, {}".format(command[0], command[1], command[2]))
         return command
 
@@ -168,11 +172,13 @@ def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float]
     Returns:
         Un tuple contenant les composantes x et y selon le plan du robot.
     """
+    t = (t + np.pi) % (2 * np.pi) - np.pi
+    print("Theta pour ref: {}".format(t))
     cos = math.cos(t)
     sin = math.sin(t)
 
-    corrected_x = (x * cos + y * sin)
-    corrected_y = (y * cos - x * sin)
+    corrected_x = (x * cos - y * sin)
+    corrected_y = (y * cos + x * sin)
     return corrected_x, corrected_y
 
 
