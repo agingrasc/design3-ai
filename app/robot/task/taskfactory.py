@@ -51,6 +51,7 @@ class TaskFactory():
         return self.task_list
 
     def create_competition_tasks(self):
+        self.task_list.append(InitialOrientationTask(self.robot_controler))
         self.task_list.append(IdentifyAntennaTask(self.robot_controler))
         self.task_list.append(ReceiveInformationTask(self.robot_controler))
         self.task_list.append(GoToImageTask(self.robot_controler))
