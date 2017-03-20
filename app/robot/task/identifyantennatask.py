@@ -68,7 +68,3 @@ class IdentifyAntennaTask(Task):
 
         # cmdPencil = Pencil(PencilStatus.LOWERED)
         # self.robot_controller.send_command(cmdPencil)
-
-    def _stop(self):
-        print("stopping")
-        self.status_flag = 1

@@ -45,6 +45,3 @@ class GoToDrawzoneTask(Task):
         #         cmd = Move(segment[0], segment[1], self.theta)
         #         self.robot_controller.send_command(cmd)
 
-    def _stop(self):
-        self.status_flag = 1
-

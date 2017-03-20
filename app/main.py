@@ -15,18 +15,19 @@ AUTOMATIC = "automatic"
 def run_automatic():
     print("run robot AI")
 
-
 def run_manual():
     print("run manual")
 
 def decide_task_list(task_id):
     robot_controler = RobotController()
-    tasks = {0: "COMPETITION", 1: "IDENTIFY_ANTENNA", 2: "RECEIVE_INFORMATION", 3: "GO_TO_IMAGE", 4: "TAKE_PICTURE"
-        , 5: "GO_TO_DRAWZONE", 6: "DRAW", 7: "GO_OUT_OF_DRAWZONE", 8: "LIGHT_RED_LED"}
+    tasks = {0: "COMPETITION", 1:"INITIAL_ORIENTATION", 2: "IDENTIFY_ANTENNA", 3: "RECEIVE_INFORMATION", 4: "GO_TO_IMAGE", 5: "TAKE_PICTURE"
+        , 6: "GO_TO_DRAWZONE", 7: "DRAW", 8: "GO_OUT_OF_DRAWZONE", 9: "LIGHT_RED_LED"}
     task_factory = TaskFactory(robot_controler)
     task_execute_list = []
     if(tasks[task_id] == "COMPETITION"):
         task_execute_list = task_factory.create_competition_tasks()
+    if (tasks[task_id] == "INITIAL_ORIENTATION"):
+        task_execute_list = task_factory.create_initial_orientation_task()
     if (tasks[task_id] == "IDENTIFY_ANTENNA"):
         task_execute_list = task_factory.create_indentify_antenna_task()
     if (tasks[task_id] == "RECEIVE_INFORMATION"):

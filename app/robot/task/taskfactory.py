@@ -3,6 +3,7 @@ from robot.task.gooutofdrawzonetask import GoOutOfDrawzoneTask
 from robot.task.gotodrawzonetask import GoToDrawzoneTask
 from robot.task.gotoimagetask import GoToImageTask
 from robot.task.identifyantennatask import IdentifyAntennaTask
+from robot.task.initialorientationtask import InitialOrientationTask
 from robot.task.lightredledtask import LightRedLedTask
 from robot.task.receiveinformationtask import ReceiveInformationTask
 from robot.task.takepicturetask import TakePictureTask
@@ -12,6 +13,10 @@ class TaskFactory():
     def __init__(self, robot_controler):
         self.robot_controler = robot_controler
         self.task_list = []
+
+    def create_initial_orientation_task(self):
+        self.task_list.append(InitialOrientationTask(self.robot_controler))
+        return self.task_list
 
     def create_indentify_antenna_task(self):
         self.task_list.append(IdentifyAntennaTask(self.robot_controler))

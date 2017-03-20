@@ -40,6 +40,3 @@ class TakePictureTask(Task):
 
     def _analyse_picture(self):
         self.segments_image = self.geometric_interpreter.polygone_interpreter(self.image, self.orientation, self.magnification)
-
-    def _stop(self):
-        self.status_flag = 1

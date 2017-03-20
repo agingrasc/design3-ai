@@ -14,6 +14,3 @@ class ReceiveInformationTask(Task):
     def _get_information(self):
         print("getting information")
         # place where to add the command to get the information and set the in the right variable
-
-    def _stop(self):
-        self.status_flag = 1

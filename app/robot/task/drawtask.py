@@ -36,6 +36,3 @@ class DrawTask(Task):
         #
         # cmdPencil = Pencil(PencilStatus.LOWERED)
         # self.robot_controller.send_command(cmdPencil)
-
-    def _stop(self):
-        self.status_flag = 1

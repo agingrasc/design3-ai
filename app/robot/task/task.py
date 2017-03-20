@@ -13,5 +13,5 @@ class Task():
     def execute(self, x_robot_position, y_robot_position):
         pass
 
-    def _distance(self, x_point1, y_point1, x_point2, y_point2):
-        return math.sqrt((x_point1 - x_point2) ** 2 + (y_point1 - y_point2) ** 2)
+    def _stop(self):
+        self.status_flag = 1
