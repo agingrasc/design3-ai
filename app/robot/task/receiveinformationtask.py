@@ -1,3 +1,5 @@
+import requests as req
+
 from robot.task.task import Task
 
 
@@ -14,3 +16,7 @@ class ReceiveInformationTask(Task):
     def _get_information(self):
         print("getting information")
         # place where to add the command to get the information and set the in the right variable
+
+    def _stop(self):
+        self.status_flag = 1
+        req.post(url=self.ROBOT_API_URL + "end-receive-information-task")

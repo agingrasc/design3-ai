@@ -1,3 +1,5 @@
+import requests as req
+
 # from mcu.commands import Led
 # from mcu.protocol import Leds
 from robot.task.task import Task
@@ -17,3 +19,7 @@ class LightRedLedTask(Task):
         print("Red led")
         # cmd = Led(Leds.UP_RED)
         # self.robot_controller.send_command(cmd)
+
+    def _stop(self):
+        self.status_flag = 1
+        req.post(url=self.ROBOT_API_URL + "end-light-red-led-task")

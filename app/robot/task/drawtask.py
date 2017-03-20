@@ -1,9 +1,11 @@
 import math
+import requests as req
 
 # from mcu.commands import Move
 # from mcu.commands import Pencil
 from mcu.protocol import PencilStatus
 from robot.task.task import Task
+
 
 
 class DrawTask(Task):
@@ -36,3 +38,7 @@ class DrawTask(Task):
         #
         # cmdPencil = Pencil(PencilStatus.LOWERED)
         # self.robot_controller.send_command(cmdPencil)
+
+    def _stop(self):
+        self.status_flag = 1
+        req.post(url=self.ROBOT_API_URL + "end-draw-task")

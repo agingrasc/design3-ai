@@ -1,4 +1,5 @@
 import math
+import requests as req
 
 # from mcu.commands import Led
 # from mcu.protocol import Leds
@@ -29,3 +30,7 @@ class GoOutOfDrawzoneTask(Task):
         #     while self._distance(self.x_robot_position, self.y_robot_position, segment[0], segment[1]) <= 2:
         #         cmd = Move(segment[0], segment[1], self.theta)
         #         self.robot_controller.send_command(cmd)
+
+    def _stop(self):
+        self.status_flag = 1
+        req.post(url=self.ROBOT_API_URL + "end-go-out-of-drawzone-task")

@@ -1,6 +1,5 @@
 import math
-
-import time
+import requests as req
 
 # from mcu.commands import Camera, Led
 # from mcu.protocol import Leds
@@ -40,3 +39,7 @@ class TakePictureTask(Task):
 
     def _analyse_picture(self):
         self.segments_image = self.geometric_interpreter.polygone_interpreter(self.image, self.orientation, self.magnification)
+
+    def _stop(self):
+        self.status_flag = 1
+        req.post(url=self.ROBOT_API_URL + "end-take-picture-task")
