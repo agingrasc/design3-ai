@@ -16,7 +16,10 @@ class VisionRegulation:
         self.connection = create_connection("ws://" + url + ":3000")
 
     def push_path(self, path):
-        self.connection.send(json.dumps(path))
+        data = {}
+        data["headers"] = "push_path"
+        data["data"] = path
+        self.connection.send(json.dumps(data))
 
     def go_to_positions(self, positions):
         for position in positions:
