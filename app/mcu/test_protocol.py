@@ -12,12 +12,12 @@ class ProtocolTest(unittest.TestCase):
         pass
 
     def test_zero_move(self):
-        expected_cmd = b'\x00\x06\xfa\x00\x00\x00\x00\x00\x00'
+        expected_cmd = b'\x00\x08\xf8\x00\x00\x00\x00\x00\x00\x00\x00'
         packed_cmd = protocol.generate_move_command(0, 0, 0)
         self.assertEqual(expected_cmd, packed_cmd)
 
     def test_basic_move(self):
-        expected_cmd = b'\x00\x06\xfa\x00\x0a\x00\x0a\x00\x0a'
+        expected_cmd = b'\x00\x08\xf8\x04\xba\x04\xa6\x04\xa6\x04\xba'
         packed_cmd = protocol.generate_move_command(10, 10, 10)
         self.assertEqual(expected_cmd, packed_cmd)
 
