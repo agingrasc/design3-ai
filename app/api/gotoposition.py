@@ -32,7 +32,18 @@ def go_to_position_():
     destination_x = int(float(destination["x"]))
     destination_y = int(float(destination["y"]))
     destination_t = float(destination['theta'])
-    destination_position = Position(destination_x, destination_y, destination_t)
+    destination_position = Position(destination_x, destination_y,
+                                    destination_t)
+
+    robot_position = Position(robot_pos.x, robot_pos.y)
+
+    base_tabel = req_info["base_table"]
+    width = base_tabel["dimension"]["width"]
+    lenght = base_tabel["dimension"]["lenght"]
+
+    path = pathfinding_application_service.find(
+        [], width, lenght, robot_position, destination_position)
+    vision_regulator.push_path(path)
 
     vision_regulator.go_to_position(destination_position)
 

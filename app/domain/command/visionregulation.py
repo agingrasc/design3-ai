@@ -15,6 +15,9 @@ class VisionRegulation:
     def set_url(self, url):
         self.connection = create_connection("ws://" + url + ":3000")
 
+    def push_path(self, path):
+        self.connection.send(json.dumps(path))
+
     def go_to_position(self, position):
         print("Position recu: {}".format(position))
         data = {}
@@ -46,7 +49,7 @@ class VisionRegulation:
                     pos_x = float(robot_position_info['x'])
                     pos_y = float(robot_position_info['y'])
                     theta = float(robot_position_info['theta'])
-                except (json.JSONDecodeError,ValueError) as e:
+                except (json.JSONDecodeError, ValueError) as e:
                     pos_x = 0
                     pos_y = 0
                     theta = 0
