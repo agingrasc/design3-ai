@@ -1,52 +1,31 @@
-from unittest import TestCase
+import unittest
 from unittest.mock import Mock, MagicMock, patch, call
 
-from mcu.robotcontroller import RobotController
-from robot.task.drawtask import DrawTask
+from domain.robot.task.drawtask import drawtask
+
+VALID_MESSAGE = drawtask.MESSAGE
 
 
-class DrawTaskTest(TestCase):
-    def test_execute_all_the_subtasks(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        draw_task = DrawTask(robot_controler)
+class DrawTaskTest(unittest.TestCase):
+    def setUp(self):
+        self.feedback = Mock()
+        self.drawer = Mock()
+        self.geometricinterpreter = Mock()
 
-        mock = Mock()
-        mock.draw_task._draw()
-        mock.draw_task._stop()
+    def test_called_all_subtask(self):
+        task = drawtask.DrawTask(self.feedback, self.drawer,
+                                 self.geometricinterpreter)
+        task.execute()
 
-        draw_task.execute(x_robot_position, y_robot_position)
+        self.feedback.send_comment.assert_called_once()
+        self.geometricinterpreter.polygone_interpreter.assert_called_once()
+        self.drawer.draw.assert_called_once()
 
-        mock.draw_task._draw.assert_called_once()
-        mock.draw_task._stop.assert_called_once()
+    def test_called_drawer_with_good_input(self):
+        task = drawtask.DrawTask(self.feedback, self.drawer,
+                                 self.geometricinterpreter)
+        return_value_interpreter = ["position1", "position2"]
+        self.geometricinterpreter.polygone_interpreter.return_value = return_value_interpreter
+        task.execute()
 
-    def test_task_status_change_to_done_at_the_end_of_execution(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        draw_task = DrawTask(robot_controler)
-
-        mock = Mock()
-        mock.draw_task._stop()
-
-        draw_task.execute(x_robot_position, y_robot_position)
-
-        mock.draw_task._stop.assert_called_once()
-        self.assertEquals(draw_task.status_flag, 1)
-
-    def test_subtasks_are_executed_in_order(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        draw_task = DrawTask(robot_controler)
-
-        draw_mock = MagicMock()
-        with patch('robot.task.drawtask.DrawTask._draw', draw_mock.function1), \
-                patch('robot.task.drawtask.DrawTask._stop', draw_mock.function2):
-
-            expected = [call.function1(), call.function2()]
-
-            draw_task.execute(x_robot_position, y_robot_position)
-
-            self.assertEqual(draw_mock.mock_calls, expected)
+        self.drawer.draw.assert_called_with(return_value_interpreter)
