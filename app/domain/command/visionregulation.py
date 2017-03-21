@@ -18,6 +18,10 @@ class VisionRegulation:
     def push_path(self, path):
         self.connection.send(json.dumps(path))
 
+    def go_to_positions(self, positions):
+        for position in positions:
+            go_to_position(position)
+
     def go_to_position(self, position):
         print("Position recu: {}".format(position))
         data = {}
