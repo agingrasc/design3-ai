@@ -42,16 +42,15 @@ def go_to_position_():
     robot_pos_y = int(float(robot_pos["y"]) / SCALING)
     robot_position = Position(robot_pos_x, robot_pos_y)
 
-    base_tabel = req_info["base_table"]
-    width = int(float(base_tabel["dimension"]["width"]) / SCALING)
-    lenght = int(float(base_tabel["dimension"]["lenght"]) / SCALING)
+    width = int(float(req_info["width"]) / SCALING)
+    lenght = int(float(req_info["length"]) / SCALING)
 
     path = pathfinding_application_service.find(
         [], width, lenght, robot_position, destination_position)
-    path = get_segments(path)
+    path = get_segments.get_filter_path(path)
     upscale_path = []
     for p in path:
-        upscale_path.append(Position(p.pos_x * SCALING, p.pos_y * SCALING))
+        upscale_path.append(Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
 
     vision_regulator.push_path(upscale_path)
 

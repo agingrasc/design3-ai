@@ -158,7 +158,7 @@ class PIPositionRegulator(object):
             return -self.constants.theta_max_cmd
         return cmd
 
-    def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
+    def is_arrived(self, robot_position: Position, deadzone=DEADZONE*1.25):
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
         err_theta = robot_position.theta - self.setpoint.theta
