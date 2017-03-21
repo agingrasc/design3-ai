@@ -1,6 +1,5 @@
 from domain.robot.task.task import Task
 from domain.command.drawer import Drawer
-from mcu.robotcontroller import RobotController
 from domain.robot.geometricinterpreter import GeometricInterpreter
 from domain.robot.feedback import Feedback
 
