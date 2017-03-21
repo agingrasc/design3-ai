@@ -6,7 +6,6 @@ from robot.task.drawtask import DrawTask
 
 
 class DrawTaskTest(TestCase):
-
     def test_execute_all_the_subtasks(self):
         x_robot_position = 10
         y_robot_position = 10
@@ -46,10 +45,7 @@ class DrawTaskTest(TestCase):
         with patch('robot.task.drawtask.DrawTask._draw', draw_mock.function1), \
                 patch('robot.task.drawtask.DrawTask._stop', draw_mock.function2):
 
-            expected = [
-                call.function1(),
-                call.function2()
-            ]
+            expected = [call.function1(), call.function2()]
 
             draw_task.execute(x_robot_position, y_robot_position)
 
