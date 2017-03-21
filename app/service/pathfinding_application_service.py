@@ -4,8 +4,12 @@ from domain.gameboard.gameboard import GameBoard
 
 
 def find(obstacles, width, length, robot_position, destination):
-    game_board = GameBoard(width, length, [])
+    game_board = GameBoard(width, length, obstacles)
     grid = Grid(game_board)
+    print(width)
+    print(length)
+    print(robot_position)
+    print(destination)
 
     robot_coordinate = grid.game_board[robot_position.pos_x][
         robot_position.pos_y]
