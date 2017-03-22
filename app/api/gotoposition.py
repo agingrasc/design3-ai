@@ -51,9 +51,9 @@ def go_to_position_():
     lenght = int(float(req_info["width"]) / SCALING)
     obj_obstacles = []
     for obs_json in obstacles:
-        x = int(float(obs_json['position']['y']) / (SCALING * 2))
-        y = int(float(obs_json['position']['x']) / (SCALING * 2))
-        radius = int(float(obs_json['dimension']['width']) / SCALING)
+        x = int(float(obs_json['position']['y']) / SCALING)
+        y = int(float(obs_json['position']['x']) / SCALING)
+        radius = int(float(obs_json['dimension']['width']) / (SCALING / 2))
         if obs_json['tag'] == "LEFT":
             tag = Tag.CANT_PASS_LEFT
         elif obs_json['tag'] == "RIGHT":
