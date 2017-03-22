@@ -29,12 +29,14 @@ class PathFindingITest(TestCase):
         grid = Grid(game_board)
 
         end_position = grid.game_board[1][1]
-        begin_position = grid.game_board[2][2]
+        begin_position = grid.game_board[3][3]
         pathfinder = pathfinding.PathFinding(grid, begin_position,
                                              end_position)
 
-        pathfinding.initialise_weight(grid, end_position)
+        self.validate_path(pathfinder.find_path())
+        print("ALLO")
         game_board.print_game_board_weight()
+        game_board.print_game_board()
 
     def test_find_no_obstacle(self):
         game_board = GameBoard(6, 6, [], 0)
@@ -106,6 +108,16 @@ class PathFindingITest(TestCase):
                                              end_position)
         self.validate_path(pathfinder.find_path())
         game_board.print_game_board()
+
+    def test_real_value_no_obstacle(self):
+        game_board = GameBoard(200, 110, [])
+
+        end_position = game_board.game_board[100][80]
+        begin_position = game_board.game_board[58][58]
+
+        pathfinder = pathfinding.PathFinding(game_board, begin_position,
+                                             end_position)
+        self.validate_path(pathfinder.find_path())
 
     def validate_path(self, path):
         new_path = get_segments.get_filter_path(path)

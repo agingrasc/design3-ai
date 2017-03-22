@@ -15,7 +15,6 @@ class PathFinding:
 
     def find_path(self):
         initialise_weight(self.grid, self.end_position)
-        self.game_board.print_game_board()
 
         path = find(self.grid, self.begin_position, self.end_position)
         return path

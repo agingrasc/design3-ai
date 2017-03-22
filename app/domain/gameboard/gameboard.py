@@ -68,7 +68,7 @@ class GameBoard:
                 coord = Coordinate(i, j)
                 row.append(coord)
             self.game_board.append(row)
-        #self.__add_padding_borders()
+        self.__add_padding_borders()
 
     def __add_obstacle(self, obstacle_value_object):
         obstacles = build_obstacle(obstacle_value_object, self.width,

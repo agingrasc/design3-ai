@@ -69,6 +69,7 @@ def go_to_position_():
     path = get_segments.get_filter_path(path)
     upscale_path = []
     for p in path:
+        print(p)
         upscale_path.append(
             Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
 
