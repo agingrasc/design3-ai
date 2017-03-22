@@ -37,28 +37,28 @@ def go_to_position_():
     theta = robot_pos['theta']
 
     destination = req_info["destination"]
-    destination_x = int(float(destination["y"]) / SCALING)
-    destination_y = int(float(destination["x"]) / SCALING)
+    destination_x = int(float(destination["x"]) / SCALING)
+    destination_y = int(float(destination["y"]) / SCALING)
     destination_t = float(destination['theta'])
     destination_position = Position(destination_x, destination_y,
                                     destination_t)
 
-    robot_pos_x = int(float(robot_pos["y"]) / SCALING)
-    robot_pos_y = int(float(robot_pos["x"]) / SCALING)
+    robot_pos_x = int(float(robot_pos["x"]) / SCALING)
+    robot_pos_y = int(float(robot_pos["y"]) / SCALING)
     robot_position = Position(robot_pos_x, robot_pos_y)
 
-    width = int(float(req_info["length"]) / SCALING)
-    lenght = int(float(req_info["width"]) / SCALING)
+    width = int(float(req_info["width"]) / SCALING)
+    lenght = int(float(req_info["length"]) / SCALING)
     obj_obstacles = []
     for obs_json in obstacles:
-        x = int(float(obs_json['position']['y']) / SCALING)
-        y = int(float(obs_json['position']['x']) / SCALING)
+        x = int(float(obs_json['position']['x']) / SCALING)
+        y = int(float(obs_json['position']['y']) / SCALING)
         radius = int(float(obs_json['dimension']['width']) / (SCALING / 2))
         radius = 5
         if obs_json['tag'] == "LEFT":
-            tag = Tag.CANT_PASS_RIGHT
-        elif obs_json['tag'] == "RIGHT":
             tag = Tag.CANT_PASS_LEFT
+        elif obs_json['tag'] == "RIGHT":
+            tag = Tag.CANT_PASS_RIGHT
         else:
             tag = ""
         obs = ObstacleValueObject(x, y, radius, tag)
@@ -69,12 +69,9 @@ def go_to_position_():
         int(ROBOT_RADIUS / SCALING))
     path = get_segments.get_filter_path(path)
     upscale_path = []
-    print("PATHHHHHHHHHHHHHHHHHHHHHHHH")
     for p in path:
-        print(p)
         upscale_path.append(
-            Position(p.pos_y * SCALING, p.pos_x * SCALING, destination_t))
-    print("FIN PATHHHHHHHHHHHHHHHHHHHHHHHH")
+            Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
 
     vision_regulator.push_path(upscale_path)
 

@@ -1,6 +1,6 @@
 from unittest import TestCase
 from . import pathfinding
-from app.domain.gameboard.gameboard import Coordinate
+from domain.gameboard.gameboard import Coordinate
 from unittest.mock import Mock
 
 
