@@ -56,9 +56,9 @@ def go_to_position_():
         radius = int(float(obs_json['dimension']['width']) / (SCALING / 2))
         radius = 5
         if obs_json['tag'] == "LEFT":
-            tag = Tag.CANT_PASS_LEFT
-        elif obs_json['tag'] == "RIGHT":
             tag = Tag.CANT_PASS_RIGHT
+        elif obs_json['tag'] == "RIGHT":
+            tag = Tag.CANT_PASS_LEFT
         else:
             tag = ""
         obs = ObstacleValueObject(x, y, radius, tag)
