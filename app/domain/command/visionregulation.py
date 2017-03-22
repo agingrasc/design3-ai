@@ -4,6 +4,7 @@ from websocket import create_connection
 from mcu.robotcontroller import robot_controller, set_move_destination
 from domain.gameboard.position import Position
 from mcu.commands import regulator
+from mcu import robotcontroller
 
 DELTA_T = 0.3
 
@@ -16,17 +17,24 @@ class VisionRegulation:
         self.connection = create_connection("ws://" + url + ":3000")
 
     def push_path(self, path):
+        new_path = []
+        for pos in path:
+            x = pos.pos_x
+            y = pos.pos_y
+            new_pos = {'x': x, 'y': y}
+            new_path.append(new_pos)
+
         data = {}
         data["headers"] = "push_path"
-        data["data"] = path
+        data["data"] = new_path
         self.connection.send(json.dumps(data))
 
     def go_to_positions(self, positions):
         for position in positions:
-            go_to_position(position)
+            print("####DEBUG####\n{}\n".format(position))
+            self.go_to_position(position)
 
     def go_to_position(self, position):
-        print("Position recu: {}".format(position))
         data = {}
         data["headers"] = "pull_robot_position"
         data["data"] = {}
@@ -64,5 +72,8 @@ class VisionRegulation:
 
                 robot_controller.send_move_command(robot_position, delta_t)
 
+        robotcontroller.set_move_destination(robot_position)
+        robot_controller.send_move.command(robot_position)
+        
 
 vision_regulator = VisionRegulation()

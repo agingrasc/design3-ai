@@ -11,10 +11,14 @@ class PathFinding:
         self.begin_position = begin_position
         self.end_position = end_position
         self.end_position.set_weight(0)
+        self.game_board = game_board
 
     def find_path(self):
         initialise_weight(self.grid, self.end_position)
-        return find(self.grid, self.begin_position, self.end_position)
+        
+        path = find(self.grid, self.begin_position, self.end_position)
+        #self.game_board.print_game_board()
+        return path
 
 
 def find(grid, begin_position, end_position):
