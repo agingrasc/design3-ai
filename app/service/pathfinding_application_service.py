@@ -3,8 +3,9 @@ from domain.pathfinding.pathfinding import PathFinding
 from domain.gameboard.gameboard import GameBoard
 
 
-def find(obstacles, width, length, robot_position, destination):
-    game_board = GameBoard(width, length, [])
+def find(obstacles, width, length, robot_position, destination,
+         robot_radius=1):
+    game_board = GameBoard(width, length, [], robot_radius)
     grid = Grid(game_board)
 
     robot_coordinate = grid.game_board[robot_position.pos_x][
