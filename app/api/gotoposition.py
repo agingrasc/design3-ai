@@ -67,10 +67,12 @@ def go_to_position_():
         obj_obstacles, width, lenght, robot_position, destination_position, 1)
     path = get_segments.get_filter_path(path)
     upscale_path = []
+    print("PATHHHHHHHHHHHHHHHHHHHHHHHH")
     for p in path:
         print(p)
         upscale_path.append(
             Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
+    print("FIN PATHHHHHHHHHHHHHHHHHHHHHHHH")
 
     vision_regulator.push_path(upscale_path)
 
