@@ -97,7 +97,7 @@ class PathFindingITest(TestCase):
             pos_x=10, pos_y=39, radius=3, tag=Tag.CANT_PASS_RIGHT)
         obstacle3 = ObstacleValueObject(
             pos_x=10, pos_y=19, radius=3, tag=Tag.CANT_PASS_RIGHT)
-        game_board = GameBoard(30, 55, [obstacle1, obstacle2, obstacle3], 3)
+        game_board = GameBoard(30, 55, [obstacle1, obstacle2, obstacle3], 2)
 
         end_position = game_board.game_board[8][50]
         begin_position = game_board.game_board[2][2]
