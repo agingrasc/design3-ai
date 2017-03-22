@@ -19,7 +19,7 @@ go_to_position = Blueprint('go-to-position', __name__)
 
 commandcontroller = CommandController(robotcontroller.robot_controller)
 SCALING = 10
-ROBOT_RADIUS = 200
+ROBOT_RADIUS = 100
 OBSTACLE_PADDING = ROBOT_RADIUS / 4
 
 
@@ -51,9 +51,9 @@ def go_to_position_():
     lenght = int(float(req_info["length"]) / SCALING)
     obj_obstacles = []
     for obs_json in obstacles:
-        x = int(float(obs_json['position']['x'])/SCALING)
-        y = int(float(obs_json['position']['y'])/SCALING)
-        radius = int(float(obs_json['dimension']['width'])/SCALING + (OBSTACLE_PADDING/SCALING))
+        x = int(float(obs_json['position']['x']) / (SCALING * 2))
+        y = int(float(obs_json['position']['y']) / (SCALING * 2))
+        radius = int(float(obs_json['dimension']['width']) / SCALING)
         if obs_json['tag'] == "LEFT":
             tag = Tag.CANT_PASS_LEFT
         elif obs_json['tag'] == "RIGHT":
@@ -64,11 +64,13 @@ def go_to_position_():
         obj_obstacles.append(obs)
 
     path = pathfinding_application_service.find(
-        obj_obstacles, width, lenght, robot_position, destination_position)
+        obj_obstacles, width, lenght, robot_position, destination_position,
+        ROBOT_RADIUS)
     path = get_segments.get_filter_path(path)
     upscale_path = []
     for p in path:
-        upscale_path.append(Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
+        upscale_path.append(
+            Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
 
     vision_regulator.push_path(upscale_path)
 
