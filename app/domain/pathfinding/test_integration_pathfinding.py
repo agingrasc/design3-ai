@@ -37,7 +37,7 @@ class PathFindingITest(TestCase):
         game_board.print_game_board_weight()
 
     def test_find_no_obstacle(self):
-        game_board = GameBoard(6, 6, [])
+        game_board = GameBoard(6, 6, [], 0)
 
         end_position = game_board.game_board[2][2]
         begin_position = game_board.game_board[5][5]
@@ -65,7 +65,7 @@ class PathFindingITest(TestCase):
     def test_find_left_obstacle(self):
         obstacle = ObstacleValueObject(
             pos_x=14, pos_y=19, radius=3, tag=Tag.CANT_PASS_LEFT)
-        game_board = GameBoard(30, 55, [obstacle])
+        game_board = GameBoard(30, 55, [obstacle], 3)
 
         end_position = game_board.game_board[8][50]
         begin_position = game_board.game_board[2][2]
@@ -77,10 +77,10 @@ class PathFindingITest(TestCase):
 
     def test_find_extrem_left_right_obstacles(self):
         obstacle1 = ObstacleValueObject(
-            pos_x=25, pos_y=19, radius=3, tag=Tag.CANT_PASS_LEFT)
+            pos_x=20, pos_y=19, radius=3, tag=Tag.CANT_PASS_LEFT)
         obstacle2 = ObstacleValueObject(
-            pos_x=5, pos_y=39, radius=3, tag=Tag.CANT_PASS_RIGHT)
-        game_board = GameBoard(30, 55, [obstacle1, obstacle2])
+            pos_x=10, pos_y=39, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        game_board = GameBoard(30, 55, [obstacle1, obstacle2], 3)
 
         end_position = game_board.game_board[8][50]
         begin_position = game_board.game_board[2][2]
@@ -92,12 +92,12 @@ class PathFindingITest(TestCase):
 
     def test_find_left_rightx2_obstacles(self):
         obstacle1 = ObstacleValueObject(
-            pos_x=25, pos_y=8, radius=3, tag=Tag.CANT_PASS_LEFT)
+            pos_x=20, pos_y=8, radius=3, tag=Tag.CANT_PASS_LEFT)
         obstacle2 = ObstacleValueObject(
-            pos_x=5, pos_y=39, radius=3, tag=Tag.CANT_PASS_RIGHT)
+            pos_x=10, pos_y=39, radius=3, tag=Tag.CANT_PASS_RIGHT)
         obstacle3 = ObstacleValueObject(
-            pos_x=5, pos_y=19, radius=3, tag=Tag.CANT_PASS_RIGHT)
-        game_board = GameBoard(30, 55, [obstacle1, obstacle2, obstacle3])
+            pos_x=10, pos_y=19, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        game_board = GameBoard(30, 55, [obstacle1, obstacle2, obstacle3], 3)
 
         end_position = game_board.game_board[8][50]
         begin_position = game_board.game_board[2][2]

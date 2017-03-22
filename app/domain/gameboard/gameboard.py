@@ -17,7 +17,7 @@ class Tag(Enum):
 
 
 class GameBoard:
-    def __init__(self, width, length, obstacles):
+    def __init__(self, width, length, obstacles, robot_radius=1):
         self.width = width
         self.length = length
         self.robot_coordinate = Coordinate(0, 0)
@@ -25,6 +25,7 @@ class GameBoard:
         self.__build_board()
         for obstacle in obstacles:
             self.__add_obstacle(obstacle)
+        self.__add_padding_borders(robot_radius)
 
     def set_robot_position(self, pos_x, pos_y):
         self.robot_coordinate.set_tag(Tag.CAN_PASS)
@@ -48,14 +49,23 @@ class GameBoard:
                     line += " " + str(self.game_board[i][j].weight) + " "
             print(line)
 
+    def __add_padding_borders(self, radius):
+        for i in range(0, self.width):
+            for j in range(0, radius):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+            for j in range(self.length - radius, self.length):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+        for j in range(0, self.length):
+            for i in range(0, radius):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+            for i in range(self.width - radius, self.width):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+
     def __build_board(self):
         for i in range(0, self.width):
             row = []
             for j in range(0, self.length):
                 coord = Coordinate(i, j)
-                if i == 0 or (i == self.width - 1) or j == 0 or (
-                        j == self.length - 1):
-                    coord.set_tag(Tag.OBSTACLE)
                 row.append(coord)
             self.game_board.append(row)
 
