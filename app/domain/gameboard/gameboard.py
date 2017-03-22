@@ -25,6 +25,12 @@ class GameBoard:
         self.robot_radius = robot_radius
         self.__build_board()
         for obstacle in obstacles:
+            print("OBSTACLE")
+            print(obstacle.pos_x)
+            print(obstacle.pos_y)
+            print(obstacle.radius)
+            print(obstacle.tag)
+            print("END")
             self.__add_obstacle(obstacle)
 
     def set_robot_position(self, pos_x, pos_y):
