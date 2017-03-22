@@ -3,8 +3,8 @@ import requests as req
 
 # from mcu.commands import Camera, Led
 # from mcu.protocol import Leds
-from robot.geometricinterpreter import GeometricInterpreter
-from robot.task.task import Task
+from domain.robot.geometricinterpreter import GeometricInterpreter
+from domain.robot.task.task import Task
 
 class TakePictureTask(Task):
     def __init__(self, robot_controller):

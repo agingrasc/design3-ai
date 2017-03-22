@@ -1,4 +1,5 @@
 from domain.gameboard.position import Position
+from mcu.robotcontroller import RobotController
 from service.globalinformation import GlobalInformation
 
 X_START_OFFSET = 0
@@ -9,7 +10,8 @@ X_END_OFFSET = 50
 
 
 class Antenna:
-    def __init__(self, global_information: GlobalInformation):
+    def __init__(self, global_information: GlobalInformation, robot_controler: RobotController):
+        self.robot_controler = robot_controler
         self.global_information = global_information
 
     def start_recording(self):
