@@ -72,7 +72,7 @@ def go_to_position_():
     for p in path:
         print(p)
         upscale_path.append(
-            Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
+            Position(p.pos_y * SCALING, p.pos_x * SCALING, destination_t))
     print("FIN PATHHHHHHHHHHHHHHHHHHHHHHHH")
 
     vision_regulator.push_path(upscale_path)
