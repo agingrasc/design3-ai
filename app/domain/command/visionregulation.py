@@ -73,7 +73,7 @@ class VisionRegulation:
                 robot_controller.send_move_command(robot_position, delta_t)
 
         robotcontroller.set_move_destination(robot_position)
-        robot_controller.send_move.command(robot_position)
-        
+        robot_controller.send_move_command(robot_position)
+
 
 vision_regulator = VisionRegulation()
