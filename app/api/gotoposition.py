@@ -64,8 +64,7 @@ def go_to_position_():
         obj_obstacles.append(obs)
 
     path = pathfinding_application_service.find(
-        obj_obstacles, width, lenght, robot_position, destination_position,
-        ROBOT_RADIUS)
+        obj_obstacles, width, lenght, robot_position, destination_position, 1)
     path = get_segments.get_filter_path(path)
     upscale_path = []
     for p in path:
