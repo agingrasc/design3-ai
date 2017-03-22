@@ -54,6 +54,7 @@ def go_to_position_():
         x = int(float(obs_json['position']['y']) / SCALING)
         y = int(float(obs_json['position']['x']) / SCALING)
         radius = int(float(obs_json['dimension']['width']) / (SCALING / 2))
+        radius = 5
         if obs_json['tag'] == "LEFT":
             tag = Tag.CANT_PASS_LEFT
         elif obs_json['tag'] == "RIGHT":
