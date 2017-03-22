@@ -75,6 +75,25 @@ class RobotController(object):
     def raise_pencil(self):
         pass
 
+    def decode_manchester(self):
+        cmd = mcu.commands.DecodeManchesterCommand()
+        self.send_command(cmd)
+
+        res = int.from_bytes(ser.read(1), byteorder='big') # Decode result (success or error)
+        figNo = int.from_bytes(ser.read(1), byteorder='big')
+        orien = int.from_bytes(ser.read(1), byteorder='big')
+        scale = int.from_bytes(ser.read(1), byteorder='big')
+
+        return [res, figNo, orien, scale]
+
+    def get_manchester_power(self):
+        cmd = mcu.commands.GetManchesterPowerCommand()
+        self.send_command(cmd)
+
+        pow = int.from_bytes(ser.read(2), byteorder='big')
+
+        return pow
+
     def _init_mcu_pid(self):
         for motor in protocol.Motors:
             kp, ki, kd, dz = constants[motor.value]

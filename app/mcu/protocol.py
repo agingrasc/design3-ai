@@ -25,7 +25,8 @@ class PayloadLength(Enum):
     SET_PID_CONSTANTS = 10
     TEST_PID = 6
     READ_PID_LAST_CMD = 2
-
+    DECODE_MANCHESTER = 4
+    GET_MANCHESTER_CODE_POWER = 2
 
 class CommandType(Enum):
     MOVE = 0x00
@@ -38,7 +39,8 @@ class CommandType(Enum):
     TOGGLE_PID = 0xa2
     TEST_PID = 0xa3
     READ_PID_LAST_CMD = 0xa4
-
+    DECODE_MANCHESTER = 0xb1
+    GET_MANCHESTER_CODE_POWER = 0xb2
 
 class Leds(Enum):
     UP_RED = 0
@@ -74,6 +76,40 @@ class MotorsDirection(Enum):
 class MotorsRotation(Enum):
     CLOCKWISE = 0
     COUNTERCLOCKWISE = 1
+
+
+class ManchesterOrientation(Enum):
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
+
+
+class ManchesterScale(Enum):
+    X2 = 0
+    X4 = 1
+
+
+def generate_get_manchester_power_command():
+    """
+    Genere une commande qui une demande le dernier voltage du code manchester mesuré par le MCU
+    Return:
+        :cmd bytes: La commande serialise
+    """
+    header = _generate_header(CommandType.GET_MANCHESTER_CODE_POWER, PayloadLength.GET_MANCHESTER_CODE_POWER)
+    payload = _generate_payload([0])
+    return header + payload
+
+
+def generate_decode_manchester_command():
+    """
+    Genere une commande qui une demande de décodage Manchester au MCU
+    Return:
+        :cmd bytes: La commande serialise
+    """
+    header = _generate_header(CommandType.DECODE_MANCHESTER, PayloadLength.DECODE_MANCHESTER)
+    payload = _generate_payload([0])
+    return header + payload
 
 
 def generate_move_command(x, y, theta) -> bytes:
