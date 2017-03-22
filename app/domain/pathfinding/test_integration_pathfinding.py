@@ -110,14 +110,15 @@ class PathFindingITest(TestCase):
         game_board.print_game_board()
 
     def test_real_value_no_obstacle(self):
-        game_board = GameBoard(200, 110, [])
+        game_board = GameBoard(230, 111, [])
 
-        end_position = game_board.game_board[100][80]
-        begin_position = game_board.game_board[58][58]
+        end_position = game_board.game_board[148][47]
+        begin_position = game_board.game_board[75][52]
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position,
                                              end_position)
         self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
 
     def validate_path(self, path):
         new_path = get_segments.get_filter_path(path)

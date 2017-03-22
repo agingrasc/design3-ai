@@ -37,22 +37,22 @@ def go_to_position_():
     theta = robot_pos['theta']
 
     destination = req_info["destination"]
-    destination_x = int(float(destination["x"]) / SCALING)
-    destination_y = int(float(destination["y"]) / SCALING)
+    destination_x = int(float(destination["y"]) / SCALING)
+    destination_y = int(float(destination["x"]) / SCALING)
     destination_t = float(destination['theta'])
     destination_position = Position(destination_x, destination_y,
                                     destination_t)
 
-    robot_pos_x = int(float(robot_pos["x"]) / SCALING)
-    robot_pos_y = int(float(robot_pos["y"]) / SCALING)
+    robot_pos_x = int(float(robot_pos["y"]) / SCALING)
+    robot_pos_y = int(float(robot_pos["x"]) / SCALING)
     robot_position = Position(robot_pos_x, robot_pos_y)
 
-    width = int(float(req_info["width"]) / SCALING)
-    lenght = int(float(req_info["length"]) / SCALING)
+    width = int(float(req_info["length"]) / SCALING)
+    lenght = int(float(req_info["width"]) / SCALING)
     obj_obstacles = []
     for obs_json in obstacles:
-        x = int(float(obs_json['position']['x']) / (SCALING * 2))
-        y = int(float(obs_json['position']['y']) / (SCALING * 2))
+        x = int(float(obs_json['position']['y']) / (SCALING * 2))
+        y = int(float(obs_json['position']['x']) / (SCALING * 2))
         radius = int(float(obs_json['dimension']['width']) / SCALING)
         if obs_json['tag'] == "LEFT":
             tag = Tag.CANT_PASS_LEFT
