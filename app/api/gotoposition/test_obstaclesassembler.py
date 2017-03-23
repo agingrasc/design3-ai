@@ -1,6 +1,7 @@
 from unittest import TestCase
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
 from unittest.mock import Mock, call
+from domain.gameboard.gameboard import Tag
 
 FIRST_RADIUS = 3
 SECOND_RADIUS = 4
@@ -97,7 +98,7 @@ class ObstacleAssemblerTest(TestCase):
             [VALID_OBSTACLE_JSON])
 
         self.assertEqual(1, len(obstacles))
-        self.assertEqual(LEFT, obstacles[0].tag)
+        self.assertEqual(Tag.CANT_PASS_LEFT, obstacles[0].tag)
 
     def test_given_two_obstacles_scaling_when_convert_from_json_then_return_proper_tag(
             self):
@@ -109,8 +110,8 @@ class ObstacleAssemblerTest(TestCase):
             [VALID_OBSTACLE_JSON, VALID_OBSTACLE2_JSON])
 
         self.assertEqual(2, len(obstacles))
-        self.assertEqual(LEFT, obstacles[0].tag)
-        self.assertEqual(RIGHT, obstacles[1].tag)
+        self.assertEqual(Tag.CANT_PASS_LEFT, obstacles[0].tag)
+        self.assertEqual(Tag.CANT_PASS_RIGHT, obstacles[1].tag)
 
     def test_given_one_obstacle_scaling_when_convert_from_json_then_radius_is_good(
             self):

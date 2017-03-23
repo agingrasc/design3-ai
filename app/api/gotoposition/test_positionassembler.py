@@ -17,6 +17,8 @@ SCALING = 10
 VALID_X_POSITION_SCALING = 5
 VALID_Y_POSITION_SCALING = 10
 
+DEFAULT_THETA = 0
+
 
 class PositionAssemblerTest(TestCase):
     def test_given_valid_json_position_without_scaling_when_convert_position_from_dto_then_return_position(
@@ -44,6 +46,19 @@ class PositionAssemblerTest(TestCase):
         self.assertEqual(VALID_X_POSITION_SCALING, valid_position.pos_x)
         self.assertEqual(VALID_Y_POSITION_SCALING, valid_position.pos_y)
         self.assertEqual(VALID_THETA, valid_position.theta)
+
+    def test_given_no_theta_when_convert_position_from_dto_then_defaul_theta_value(
+            self):
+        valid_json_position = {
+            'x': VALID_X_POSITION_NO_SCALING,
+            'y': VALID_Y_POSITION_NO_SCALING
+        }
+        self.position_assembler = PositionAssembler(SCALING)
+
+        valid_position = self.position_assembler.convert_position_from_json(
+            valid_json_position)
+
+        self.assertEqual(DEFAULT_THETA, valid_position.theta)
 
     def get_json_position(self, position_x, position_y, theta):
         position = {'x': position_x, 'y': position_y, 'theta': theta}

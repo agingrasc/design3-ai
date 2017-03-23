@@ -1,15 +1,15 @@
 from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.dimensionassembler import DimensionAssembler
 from domain.gameboard.gameboard import ObstacleValueObject
+from domain.gameboard.gameboard import Tag
 from typing import List
 
 
 class ObstacleAssembler:
-    def __init__(self,
-                 position_assembler: PositionAssembler,
-                 dimension_assembler: DimensionAssembler,
-                 scaling=1):
-        self.scaling = scaling
+    def __init__(
+            self,
+            position_assembler: PositionAssembler,
+            dimension_assembler: DimensionAssembler, ):
         self.position_assembler = position_assembler
         self.dimension_assembler = dimension_assembler
 
@@ -21,6 +21,12 @@ class ObstacleAssembler:
             dimension = self.dimension_assembler.convert_dimension_from_json(
                 obstacle["dimension"])
             tag = obstacle["tag"]
+            if tag == "LEFT":
+                tag = Tag.CANT_PASS_LEFT
+            elif tag == "RIGHT":
+                tag = Tag.CANT_PASS_RIGHT
+            else:
+                tag = ""
             new_obstacle = ObstacleValueObject(
                 pos_x=position.pos_x,
                 pos_y=position.pos_y,
