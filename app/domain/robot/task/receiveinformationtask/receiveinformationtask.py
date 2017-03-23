@@ -6,18 +6,12 @@ from domain.robot.task.task import Task
 
 
 class ReceiveInformationTask(Task):
-    def __init__(self, antenna: Antenna,
-                        feedback: Feedback,
-                        vision_regulation: VisionRegulation,
+    def __init__(self, feedback: Feedback,
                         decoder: Decoder):
-        self.antenna = antenna
         self.feedback = feedback
-        self.vision_regulation = vision_regulation
         self.decoder = decoder
 
     def execute(self):
-        max_signal_position = self.antenna.get_max_signal_position()
-        self.vision_regulation.go_to_position((max_signal_position))
         self.decoder.decode_information()
         self.id_image = self.decoder.get_image_number()
         self.orientation = self.decoder.get_image_orientation()

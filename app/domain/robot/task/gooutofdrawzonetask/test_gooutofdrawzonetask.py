@@ -1,56 +1,126 @@
 from unittest import TestCase
-from unittest.mock import Mock, MagicMock, patch, call
+from unittest.mock import Mock, call
 
-from mcu.robotcontroller import RobotController
-from robot.task.gooutofdrawzonetask import GoOutOfDrawzoneTask
+from domain.robot.task.gooutofdrawzonetask.gooutofdrawzonetask import GoOutOfDrawzoneTask
 
+
+VALID_OBSTACLES_LIST = [Mock(pos_x=50, pos_y=50, radius=2, Tag=""), Mock(pos_x=40, pos_y=40, radius=2, Tag="")]
+VALID_SAFEZONE_POSITION = Mock(pos_x=45, pos_y=45)
+WIDTH_TABLE = 1120
+LENGTH_TABLE = 2300
+VALID_PATH = [(35, 35), (40, 40), (45, 45)]
+VALID_DESTINATIONS_PATH = [(40, 40), (45, 45)]
 
 class GoOutOfDrawzoneTaskTest(TestCase):
 
-    def test_execute_all_the_subtasks(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        go_out_of_drawzone_task = GoOutOfDrawzoneTask(robot_controler)
+    def setUp(self):
+        self.feedback = Mock()
+        self.vision_regulation = Mock()
+        self.global_information = Mock()
+        self.destination_calculator = Mock()
+        self.pathfinding_application_service = Mock()
+        self.get_segments = Mock()
+        self.robot_position = Mock(pos_x=30, pos_y=30)
+        self.global_information.get_obstacles.return_value = VALID_OBSTACLES_LIST
+        self.global_information.get_robot_position.return_value = self.robot_position
+        self.global_information.get_gameboard_width.return_value = WIDTH_TABLE
+        self.global_information.get_gameboard_length.return_value = LENGTH_TABLE
+        self.destination_calculator.get_safezone.return_value = VALID_SAFEZONE_POSITION
+        self.pathfinding_application_service.find.return_value = VALID_PATH
+        self.get_segments.get_filter_path.return_value = VALID_DESTINATIONS_PATH
 
-        mock = Mock()
-        mock.go_out_of_drawzone_task._quit_draw_zone()
-        mock.go_out_of_drawzone_task._stop()
+    def test_get_information_of_the_gameboard_correctly(self):
+        task = GoOutOfDrawzoneTask(self.feedback,
+                                    self.vision_regulation,
+                                    self.destination_calculator,
+                                    self.global_information,
+                                    self.pathfinding_application_service,
+                                    self.get_segments)
 
-        go_out_of_drawzone_task.execute(x_robot_position, y_robot_position)
+        task.execute()
 
-        mock.go_out_of_drawzone_task._quit_draw_zone.assert_called_once()
-        mock.go_out_of_drawzone_task._stop.assert_called_once()
+        expected_calls = [
+            call.get_obstacles(), call.get_robot_position(), call.get_gameboard_width(), call.get_gameboard_length()
+        ]
 
-    def test_task_status_change_to_done_at_the_end_of_execution(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        go_out_of_drawzone_task = GoOutOfDrawzoneTask(robot_controler)
+        self.global_information.assert_has_calls(expected_calls)
 
-        mock = Mock()
-        mock.go_out_of_drawzone_task._stop()
+    def test_get_safezone_correctly(self):
+        task = GoOutOfDrawzoneTask(self.feedback,
+                                   self.vision_regulation,
+                                   self.destination_calculator,
+                                   self.global_information,
+                                   self.pathfinding_application_service,
+                                   self.get_segments)
 
-        go_out_of_drawzone_task.execute(x_robot_position, y_robot_position)
+        task.execute()
 
-        mock.go_out_of_drawzone_task._stop.assert_called_once()
-        self.assertEquals(go_out_of_drawzone_task.status_flag, 1)
+        expected_calls = [
+            call(VALID_OBSTACLES_LIST, self.robot_position)
+        ]
 
-    def test_subtasks_are_executed_in_order(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        go_out_of_drawzone_task = GoOutOfDrawzoneTask(robot_controler)
+        self.destination_calculator.get_safezone.assert_has_calls(expected_calls)
 
-        go_out_of_drawzone_mock = MagicMock()
-        with patch('robot.task.gooutofdrawzonetask.GoOutOfDrawzoneTask._quit_draw_zone', go_out_of_drawzone_mock.function1), \
-                patch('robot.task.gooutofdrawzonetask.GoOutOfDrawzoneTask._stop', go_out_of_drawzone_mock.function2):
+    def test_call_go_to_position_correctly(self):
+        task = GoOutOfDrawzoneTask(self.feedback,
+                                   self.vision_regulation,
+                                   self.destination_calculator,
+                                   self.global_information,
+                                   self.pathfinding_application_service,
+                                   self.get_segments)
 
-            expected = [
-                call.function1(),
-                call.function2()
-            ]
+        task.execute()
 
-            go_out_of_drawzone_task.execute(x_robot_position, y_robot_position)
+        expected_calls = [
+            call(VALID_DESTINATIONS_PATH[0]), call(VALID_DESTINATIONS_PATH[1])
+        ]
 
-            self.assertEqual(go_out_of_drawzone_mock.mock_calls, expected)
+        self.vision_regulation.go_to_position.assert_has_calls(expected_calls)
+
+    def test_get_path_to_safezone_correctly(self):
+        task = GoOutOfDrawzoneTask(self.feedback,
+                                   self.vision_regulation,
+                                   self.destination_calculator,
+                                   self.global_information,
+                                   self.pathfinding_application_service,
+                                   self.get_segments)
+
+        task.execute()
+
+        expected_calls = [
+            call(VALID_OBSTACLES_LIST, WIDTH_TABLE, LENGTH_TABLE, self.robot_position, VALID_SAFEZONE_POSITION)
+        ]
+
+        self.pathfinding_application_service.find.assert_has_calls(expected_calls)
+
+    def test_get_path_corners_correctly(self):
+        task = GoOutOfDrawzoneTask(self.feedback,
+                                   self.vision_regulation,
+                                   self.destination_calculator,
+                                   self.global_information,
+                                   self.pathfinding_application_service,
+                                   self.get_segments)
+
+        task.execute()
+
+        expected_calls = [
+            call(VALID_PATH)
+        ]
+
+        self.get_segments.get_filter_path.assert_has_calls(expected_calls)
+
+    def test_called_all_subtask(self):
+        task = GoOutOfDrawzoneTask(self.feedback,
+                                   self.vision_regulation,
+                                   self.destination_calculator,
+                                   self.global_information,
+                                   self.pathfinding_application_service,
+                                   self.get_segments)
+        task.execute()
+
+        self.feedback.send_comment.assert_called_once()
+        self.destination_calculator.get_safezone.assert_called_once()
+        self.global_information.get_obstacles.assert_called_once()
+        self.global_information.get_robot_position.assert_called_once()
+        self.pathfinding_application_service.find.assert_called_once()
+        self.get_segments.get_filter_path.assert_called_once()

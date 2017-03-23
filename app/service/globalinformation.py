@@ -21,3 +21,18 @@ class GlobalInformation:
         pos_y = float(robot_position_info['y'])
         robot_position = Position(int(pos_x), int(pos_y))
         return robot_position
+
+    def get_obstacles(self):
+        pass
+
+    def get_drawzone_corner_position(self):
+        pass
+
+    def get_robot_width(self):
+        pass
+
+    def get_gameboard_length(self):
+        pass
+
+    def get_gameboard_width(self):
+        pass

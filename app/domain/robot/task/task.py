@@ -1,18 +1,13 @@
 from mcu.robotcontroller import RobotController
 import math
 
-
-
-
 class Task():
-    def __init__(self, robot_controler):
-        self.ROBOT_API_URL = "http://localhost:5000/"
-        self.robot_controller = robot_controler
+    def __init__(self):
         self.id_image = 3
         self.magnification = 0
-        self.orientation = "north"
+        self.orientation = "North"
         self.segments_image = []
 
-    def execute(self, x_robot_position, y_robot_position):
+    def execute(self):
         pass
 

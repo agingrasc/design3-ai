@@ -51,5 +51,8 @@ class VisionRegulation:
 
                 robot_controller.send_move_command(robot_position)
 
+    def oriente_robot(self, angle):
+        pass
+
 
 vision_regulator = VisionRegulation()

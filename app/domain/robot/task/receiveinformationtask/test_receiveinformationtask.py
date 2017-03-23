@@ -13,48 +13,14 @@ VALID_IMAGE_MAGNIFICATION = 4
 class ReceiveInformationsTaskTest(unittest.TestCase):
     def setUp(self):
         self.decoder = Mock()
-        self.antenna = Mock()
         self.feedback = Mock()
-        self.vision_regulation = Mock()
         self.decoder.get_image_number.return_value = VALID_IMAGE_NUMBER
         self.decoder.get_image_orientation.return_value = VALID_IMAGE_ORIENTATION
         self.decoder.get_image_magnification.return_value = VALID_IMAGE_MAGNIFICATION
-        self.antenna.get_max_signal_position.return_value = VALID_MAX_SIGNAL_POSITION
-
-    def test_call_get_max_signal_position_correctly(self):
-        task = ReceiveInformationTask(self.antenna,
-                                      self.feedback,
-                                      self.vision_regulation,
-                                      self.decoder)
-
-        task.execute()
-
-        expected_calls = [
-            call.get_max_signal_position()
-        ]
-
-        self.antenna.assert_has_calls(expected_calls)
-
-    def test_call_go_to_position_correctly(self):
-        task = ReceiveInformationTask(self.antenna,
-                                        self.feedback,
-                                        self.vision_regulation,
-                                        self.decoder)
-
-        task.execute()
-
-        expected_calls = [
-            call(VALID_MAX_SIGNAL_POSITION)
-        ]
-
-        self.vision_regulation.go_to_position.assert_has_calls(expected_calls)
-
 
     def test_call_get_informations_correctly(self):
-        task = ReceiveInformationTask(self.antenna,
-                                      self.feedback,
-                                      self.vision_regulation,
-                                      self.decoder)
+        task = ReceiveInformationTask(self.feedback,
+                                       self.decoder)
 
         task.execute()
 
@@ -66,15 +32,11 @@ class ReceiveInformationsTaskTest(unittest.TestCase):
         self.decoder.assert_has_calls(expected_calls)
 
     def test_called_all_subtask(self):
-        task = ReceiveInformationTask(self.antenna,
-                                      self.feedback,
-                                      self.vision_regulation,
-                                      self.decoder)
+        task = ReceiveInformationTask(self.feedback,
+                                       self.decoder)
         task.execute()
 
-        self.antenna.get_max_signal_position.assert_called_once()
         self.feedback.send_comment.assert_called_once()
-        self.vision_regulation.go_to_position.assert_called_once()
         self.decoder.decode_information.assert_called_once()
         self.decoder.get_image_number.assert_called_once()
         self.decoder.get_image_orientation.assert_called_once()
