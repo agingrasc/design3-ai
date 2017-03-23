@@ -6,7 +6,7 @@ from domain.gameboard.position import Position
 from mcu.commands import regulator
 from mcu import robotcontroller
 
-DELTA_T = 0.3
+DELTA_T = 0.1
 
 
 class VisionRegulation:
