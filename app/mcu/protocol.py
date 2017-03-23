@@ -25,7 +25,10 @@ class PayloadLength(Enum):
     SET_PID_CONSTANTS = 10
     TEST_PID = 6
     READ_PID_LAST_CMD = 2
-
+    READ_LAST_ADC = 2
+    DECODE_MANCHESTER = 4
+    GET_MANCHESTER_CODE_POWER = 2
+    GET_MOTOR_ROTATION_DIRECTION = 2
 
 class CommandType(Enum):
     MOVE = 0x00
@@ -38,6 +41,10 @@ class CommandType(Enum):
     TOGGLE_PID = 0xa2
     TEST_PID = 0xa3
     READ_PID_LAST_CMD = 0xa4
+    READ_LAST_ADC = 0xa5
+    DECODE_MANCHESTER = 0xb1
+    GET_MANCHESTER_CODE_POWER = 0xb2
+    GET_MOTOR_ROTATION_DIRECTION = 0xb3
 
 
 class Leds(Enum):
@@ -47,6 +54,12 @@ class Leds(Enum):
     DOWN_GREEN = 3
     BLINK_RED = 4
     BLINK_GREEN = 5
+
+
+class Adc(Enum):
+    ADC_MANCHESTER_CODE_POWER = 1
+    ADC_MANCHESTER_CODE = 2
+    ADC_PENCIL = 3
 
 
 class PencilStatus(Enum):
@@ -75,6 +88,15 @@ class MotorsRotation(Enum):
     CLOCKWISE = 0
     COUNTERCLOCKWISE = 1
 
+class ManchesterOrientation(Enum):
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
+
+class ManchesterScale(Enum):
+    X2 = 0
+    X4 = 1
 
 def generate_move_command(x, y, theta) -> bytes:
     speeds = compute_wheels_speed(x, y, theta)
@@ -124,6 +146,37 @@ def generate_manual_speed_command(motor: Motors, pwm_percentage: int, direction:
     payload = _generate_payload([motor.value, pwm_percentage])
     return header + payload
 
+def generate_read_last_adc(adc: Adc):
+    """
+    Genere une commande qui effectue une lecture d'une valeur d'un des ADC.
+    Args:
+        :motor [0, 3]: Identifiant de l'ADC
+    Return:
+        :cmd bytes: La commande serialise
+    """
+    header = _generate_header(CommandType.READ_LAST_ADC, PayloadLength.READ_LAST_ADC)
+    payload = _generate_payload([adc.value])
+    return header + payload
+
+def generate_get_manchester_power_cmd():
+    """
+    Genere une commande qui une demande le dernier voltage du code manchester mesuré par le MCU
+    Return:
+        :cmd bytes: La commande serialise
+    """
+    header = _generate_header(CommandType.GET_MANCHESTER_CODE_POWER, PayloadLength.GET_MANCHESTER_CODE_POWER)
+    payload = _generate_payload([0])
+    return header + payload
+
+def generate_decode_manchester():
+    """
+    Genere une commande qui une demande de décodage Manchester au MCU
+    Return:
+        :cmd bytes: La commande serialise
+    """
+    header = _generate_header(CommandType.DECODE_MANCHESTER, PayloadLength.DECODE_MANCHESTER)
+    payload = _generate_payload([0])
+    return header + payload
 
 def generate_read_encoder(motor: Motors):
     """
@@ -165,6 +218,11 @@ def generate_test_pid(motor: Motors, delta_t: int, current_speed: int):
 
 def generate_read_pid_last_cmd(motor: Motors):
     header = _generate_header(CommandType.READ_PID_LAST_CMD, PayloadLength.READ_PID_LAST_CMD)
+    payload = _generate_payload([motor.value])
+    return header + payload
+
+def generate_get_motor_rotation_direction(motor: Motors):
+    header = _generate_header(CommandType.GET_MOTOR_ROTATION_DIRECTION, PayloadLength.GET_MOTOR_ROTATION_DIRECTION)
     payload = _generate_payload([motor.value])
     return header + payload
 
