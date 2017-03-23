@@ -66,6 +66,13 @@ class RobotController(object):
         while ret_code != 0:
             self.ser_mcu.write(cmd.pack_command())
 
+    def display_encoder(self):
+        readings = []
+        for motor in protocol.Motors:
+            readings.append(self.read_encoder(motor, self.ser_mcu))
+        print("(rear_x) {} -- (front_y) {} -- (front_x) {} -- (rear_y) {}".format(readings[0], readings[1], readings[2], readings[3]))
+
+
     def send_move_command(self, robot_position: Position, delta_t=None):
         now = time.time()
         if delta_t:
@@ -73,9 +80,16 @@ class RobotController(object):
         else:
             regulator_delta_t = now - self.last_timestamp
         self.last_timestamp = now
-        print("Move command, delta_t: {}".format(delta_t))
         cmd = MoveCommand(robot_position, regulator_delta_t)
         self.send_command(cmd)
+
+    def read_encoder(self, motor_id: protocol.Motors, ser) -> int:
+        ser.read(ser.inWaiting())
+        ser.write(protocol.generate_read_encoder(motor_id))
+        ser.read(1)
+        speed = ser.read(2)
+        return int.from_bytes(speed, byteorder='big')
+
 
     def lower_pencil(self):
         pass

@@ -14,23 +14,23 @@ from .protocol import PencilStatus, Leds
 
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 8 #mm
+DEADZONE = 20 #mm
 THETA_DEADZONE = 0.009 #rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
-POSITION_ACC_DECAY = 0.5
+POSITION_ACC_DECAY = 0.79
 THETA_ACC_DECAY = 0.79 #3 iteration pour diminuer de moitie
 
 DEFAULT_KP = 1.0
-DEFAULT_KI = 0.01
+DEFAULT_KI = 0.1
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.1
 DEFAULT_THETA_KI = 0.5
-DEFAULT_MAX_CMD = 80
+DEFAULT_MAX_CMD = 55
 DEFAULT_DEADZONE_CMD = 20
 DEFAULT_MIN_CMD = 20
-DEFAULT_THETA_MAX_CMD = 0.35
+DEFAULT_THETA_MAX_CMD = 0.2
 DEFAULT_THETA_MIN_CMD = 0.015
 # 2Pi rad en 10,66 secondes (0.5) et 17,25 secondes (0.3)
 
@@ -174,7 +174,7 @@ class PIPositionRegulator(object):
             return -self.constants.theta_max_cmd
         return cmd
 
-    def is_arrived(self, robot_position: Position, deadzone=DEADZONE*1.25):
+    def is_arrived(self, robot_position: Position, deadzone=DEADZONE*2):
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
         err_theta = robot_position.theta - self.setpoint.theta

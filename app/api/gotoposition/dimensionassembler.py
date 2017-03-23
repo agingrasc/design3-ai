@@ -7,5 +7,5 @@ class DimensionAssembler:
 
     def convert_dimension_from_json(self, dimension) -> Tuple:
         width = int(float(dimension["width"]) / self.scaling)
-        lenght = int(float(dimension["lenght"]) / self.scaling)
-        return (width, lenght)
+        length = int(float(dimension["length"]) / self.scaling)
+        return (width, length)
