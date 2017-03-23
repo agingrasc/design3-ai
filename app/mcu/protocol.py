@@ -78,7 +78,6 @@ class MotorsRotation(Enum):
 
 def generate_move_command(x, y, theta) -> bytes:
     speeds = compute_wheels_speed(x, y, theta)
-    print("Vitesse des moteurs: (rear_x) {} -- (front_y) {} -- (front_x) {} -- (rear_y) {}\n".format(speeds[0], speeds[1], speeds[2], speeds[3]))
     header = _generate_header(CommandType.MOVE, PayloadLength.MOVE)
     payload = _generate_payload(speeds)
     return header + payload
