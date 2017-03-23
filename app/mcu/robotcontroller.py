@@ -83,6 +83,7 @@ class RobotController(object):
             regulator_delta_t = now - self.last_timestamp
         self.last_timestamp = now
         cmd = MoveCommand(robot_position, regulator_delta_t)
+        self.ser_mcu.write(cmd.pack_command())
 
     def send_servo_command(self, cmd: ICommand):
         """"
