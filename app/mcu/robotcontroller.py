@@ -74,14 +74,12 @@ class RobotController(object):
 
 
     def send_move_command(self, robot_position: Position, delta_t=None):
-        self.display_encoder()
         now = time.time()
         if delta_t:
             regulator_delta_t = delta_t
         else:
             regulator_delta_t = now - self.last_timestamp
         self.last_timestamp = now
-        print("Move command, delta_t: {}".format(delta_t))
         cmd = MoveCommand(robot_position, regulator_delta_t)
         self.send_command(cmd)
 
