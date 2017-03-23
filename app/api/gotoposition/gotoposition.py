@@ -45,6 +45,7 @@ def go_to_position_():
         destination)
 
     robot = req_info["robot"]["position"]
+    destination_t = float(req_info['destination']['theta'])
     robot_position = position_assembler.convert_position_from_json(robot)
 
     world_dimension = dimension_assembler.convert_dimension_from_json(req_info)
@@ -68,6 +69,6 @@ def go_to_position_():
 
     return make_response(
         jsonify({
-            'x': destination_x,
-            'y': destination_y
+            'x': 0,
+            'y': 0
         }), 200)
