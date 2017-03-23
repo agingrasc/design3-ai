@@ -40,7 +40,7 @@ class ProtocolTest(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_basic_pencil(self):
-        expected_pencil_cmd = b'\x02\x02\xfc\x00\x00'
+        expected_pencil_cmd = b'\x84\x02\x50\x08'
         actual_pencil_cmd = protocol.generate_pencil_command(PencilStatus.RAISED)
         self.assertEqual(expected_pencil_cmd, actual_pencil_cmd)
 

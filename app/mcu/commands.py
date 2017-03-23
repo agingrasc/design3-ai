@@ -6,33 +6,46 @@ import math
 import time
 from typing import List, Tuple
 
+import numpy as np
+
 from domain.gameboard.position import Position
 from . import protocol
 from .protocol import PencilStatus, Leds
 
-
-PIDConstants = namedtuple("PIDConstants", 'kp ki kd max_cmd deadzone_cmd min_cmd')
-DEADZONE = 50
+PIDConstants = namedtuple("PIDConstants",
+                          'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
+DEADZONE = 20 #mm
+THETA_DEADZONE = 0.009 #rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
+POSITION_ACC_DECAY = 0.79
+THETA_ACC_DECAY = 0.79 #3 iteration pour diminuer de moitie
 
-DEFAULT_KP = 1
-DEFAULT_KI = 0
+DEFAULT_KP = 1.0
+DEFAULT_KI = 0.1
 DEFAULT_KD = 0
-DEFAULT_MAX_CMD = 80
+DEFAULT_THETA_KP = 0.1
+DEFAULT_THETA_KI = 0.5
+DEFAULT_MAX_CMD = 55
 DEFAULT_DEADZONE_CMD = 20
 DEFAULT_MIN_CMD = 20
+DEFAULT_THETA_MAX_CMD = 0.2
+DEFAULT_THETA_MIN_CMD = 0.015
+# 2Pi rad en 10,66 secondes (0.5) et 17,25 secondes (0.3)
 
 
 class PIPositionRegulator(object):
     """ Implémente un régulateur PI qui agit avec une rétroaction en position et génère une commande de vitesse."""
 
-    def __init__(self, kp=DEFAULT_KP, ki=DEFAULT_KI, kd=DEFAULT_KD, max_cmd=DEFAULT_MAX_CMD,
-                 deadzone_cmd=DEFAULT_DEADZONE_CMD, min_cmd=DEFAULT_MIN_CMD):
+    def __init__(self, kp=DEFAULT_KP, ki=DEFAULT_KI, kd=DEFAULT_KD, theta_kp=DEFAULT_THETA_KP,
+                 theta_ki=DEFAULT_THETA_KI, max_cmd=DEFAULT_MAX_CMD,
+                 deadzone_cmd=DEFAULT_DEADZONE_CMD, min_cmd=DEFAULT_MIN_CMD, theta_max=DEFAULT_THETA_MAX_CMD,
+                 theta_min=DEFAULT_THETA_MIN_CMD):
         self._setpoint: Position = Position()
-        self.accumulator = 0, 0, 0
-        self.constants = PIDConstants(kp, ki, kd, max_cmd, deadzone_cmd, min_cmd)
+        self.accumulator = [0, 0, 0]
+        self.constants = PIDConstants(kp, ki, kd, theta_kp, theta_ki, max_cmd, deadzone_cmd, min_cmd, theta_max,
+                                      theta_min)
 
     @property
     def setpoint(self):
@@ -42,10 +55,10 @@ class PIPositionRegulator(object):
     def setpoint(self, new_setpoint):
         """" Assigne une consigne au regulateur. Effet de bord: reinitialise les accumulateurs. """
         if self._setpoint != new_setpoint:
-            self.accumulator = 0, 0, 0
+            self.accumulator = [0, 0, 0]
             self._setpoint = new_setpoint
 
-    def next_speed_command(self, actual_position: Position, delta_t: float=DEFAULT_DELTA_T) -> List[int]:
+    def next_speed_command(self, actual_position: Position, delta_t: float = DEFAULT_DELTA_T) -> List[int]:
         """"
         Calcul une iteration du PID.
         Args:
@@ -54,6 +67,7 @@ class PIPositionRegulator(object):
         Returns:
             La vitesse en x, y et en theta.
         """
+        print("Retroaction position: {}".format(actual_position))
         actual_x = actual_position.pos_x
         actual_y = actual_position.pos_y
         actual_theta = actual_position.theta
@@ -61,25 +75,65 @@ class PIPositionRegulator(object):
         dest_y = self.setpoint.pos_y
         dest_theta = self.setpoint.theta
         err_x, err_y, err_theta = dest_x - actual_x, dest_y - actual_y, dest_theta - actual_theta
+        err_theta = wrap_theta(err_theta)
 
-        cmd_x = err_x * self.constants.kp
-        cmd_y = err_y * self.constants.kp
+        # wrap theta [-PI, PI]
+
+        # calcul PID pour x/y
+        up_x = err_x * self.constants.kp
+        up_y = err_y * self.constants.kp
+
+        ui_x = self.accumulator[0] + self.constants.ki * err_x * delta_t
+        ui_y = self.accumulator[1] + self.constants.ki * err_y * delta_t
+
+        cmd_x = up_x + ui_x
+        cmd_y = up_y + ui_y
+
+        self.accumulator[0] += ui_x
+        self.accumulator[1] += ui_y
+
+        self.accumulator[0] *= POSITION_ACC_DECAY
+        self.accumulator[1] *= POSITION_ACC_DECAY
+
+        print("ACC: {} -- {}".format(self.accumulator[0], self.accumulator[1]))
+
         cmd_x = self._relinearize(cmd_x)
         cmd_y = self._relinearize(cmd_y)
         cmd_x, cmd_y = _correct_for_referential_frame(cmd_x, cmd_y, actual_theta)
+
+        # correction referentiel
         corrected_err_x, corrected_err_y = _correct_for_referential_frame(err_x, err_y, actual_theta)
+
+        # saturation de la commande x/y
         saturated_cmd = []
-        for cmd in [cmd_x, cmd_y, 0]:
+        for cmd in [cmd_x, cmd_y]:
             saturated_cmd.append(self._saturate_cmd(cmd))
 
+        # deadzone pour arret du mouvement
         if abs(corrected_err_x) < DEADZONE:
             saturated_cmd[0] = 0
         if abs(corrected_err_y) < DEADZONE:
             saturated_cmd[1] = 0
 
+        # calcul de la vitesse angulaire
+        theta_up = err_theta * self.constants.theta_kp
+        theta_ui = self.accumulator[2] + self.constants.theta_ki * err_theta * delta_t
+        self._update_theta_accumulator(theta_ui)
+        cmd_theta = theta_up + theta_ui
+
+        # saturation de la commande theta
+        saturated_theta = self._saturate_theta_cmd(cmd_theta)
+
+        # deadzone theta
+        if abs(err_theta) < THETA_DEADZONE:
+            print("theta ok")
+            saturated_theta = 0
+
         command = []
         for cmd in saturated_cmd:
             command.append(int(cmd))
+        command.append(saturated_theta)
+        print("Regulator cmd: {}, {}, {}".format(command[0], command[1], command[2]))
         return command
 
     def _relinearize(self, cmd):
@@ -101,10 +155,30 @@ class PIPositionRegulator(object):
         else:
             return cmd
 
-    def is_arrived(self, robot_position: Position, deadzone = DEADZONE):
+    def _update_theta_accumulator(self, theta_ui):
+        if theta_ui > self.constants.theta_max_cmd:
+            theta_ui = self.constants.theta_max_cmd
+        elif theta_ui < -self.constants.theta_max_cmd:
+            theta_ui = -self.constants.theta_max_cmd
+        self.accumulator[2] = theta_ui
+        self.accumulator[2] *= THETA_ACC_DECAY
+
+    def _saturate_theta_cmd(self, cmd):
+        if cmd > self.constants.theta_max_cmd:
+            return self.constants.theta_max_cmd
+        elif -self.constants.theta_min_cmd < cmd < 0:
+            return cmd - self.constants.theta_min_cmd
+        elif 0 < cmd < self.constants.theta_min_cmd:
+            return cmd + self.constants.theta_min_cmd
+        elif cmd < -self.constants.theta_max_cmd:
+            return -self.constants.theta_max_cmd
+        return cmd
+
+    def is_arrived(self, robot_position: Position, deadzone=DEADZONE*2):
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
-        return math.sqrt(err_x**2 + err_y**2) < deadzone
+        err_theta = robot_position.theta - self.setpoint.theta
+        return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone and abs(err_theta) < THETA_DEADZONE
 
 
 def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float]:
@@ -117,12 +191,17 @@ def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float]
     Returns:
         Un tuple contenant les composantes x et y selon le plan du robot.
     """
+    t = wrap_theta(t)
     cos = math.cos(t)
     sin = math.sin(t)
 
-    corrected_x = (x * cos + y * sin)
-    corrected_y = (y * cos - x * sin)
+    corrected_x = (x * cos - y * sin)
+    corrected_y = (y * cos + x * sin)
     return corrected_x, corrected_y
+
+
+def wrap_theta(t):
+    return (t + np.pi) % (2 * np.pi) - np.pi
 
 
 """ Regulateur de position persistent."""
@@ -140,7 +219,7 @@ class ICommand(metaclass=ABCMeta):
 
 
 class MoveCommand(ICommand):
-    def __init__(self, robot_position):
+    def __init__(self, robot_position, delta_t=DEFAULT_DELTA_T):
         """"
         Args:
             :x: Position x sur le plan monde
@@ -149,6 +228,7 @@ class MoveCommand(ICommand):
         """
         super().__init__()
         self.robot_position = robot_position
+        self.delta_t = delta_t
 
     def pack_command(self) -> bytes:
         regulated_command = regulator.next_speed_command(self.robot_position)
@@ -172,6 +252,7 @@ class CameraOrientationCommand(ICommand):
 
 class PencilRaiseLowerCommand(ICommand):
     """" Une commande Pencil permet de controler le status du prehenseur."""
+
     def __init__(self, status: PencilStatus):
         super().__init__()
         self.status = status
@@ -187,3 +268,19 @@ class LedCommand(ICommand):
 
     def pack_command(self) -> bytes:
         return protocol.generate_led_command(self.led)
+
+
+class DecodeManchesterCommand(ICommand):
+    def __init__(self):
+        super().__init__()
+
+    def pack_command(self) -> bytes:
+        return protocol.generate_decode_manchester_command()
+
+
+class GetManchesterPowerCommand(ICommand):
+    def __init__(self):
+        super().__init__()
+
+    def pack_command(self) -> bytes:
+        return protocol.generate_get_manchester_power_command()

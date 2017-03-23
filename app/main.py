@@ -2,7 +2,7 @@ import sys
 from flask import Flask, jsonify, make_response
 
 from api import ledok
-from api.gotoposition import go_to_position
+
 from api.startai import start_ai
 from api.endinitialorientationtask import end_initial_orientation_task
 from api.endidentifyantennatask import end_identify_antenna_task
@@ -13,7 +13,7 @@ from api.endgotodrawzonetask import end_go_to_drawzone_task
 from api.enddrawtask import end_draw_task
 from api.endgooutofdrawzonetask import end_go_out_of_drawzone_task
 from api.endlightredledtask import end_light_red_led_task
-
+from api.gotoposition.gotoposition import go_to_position
 from domain.command.visionregulation import vision_regulator
 
 app = Flask(__name__)

@@ -4,7 +4,9 @@ import time
 
 from domain.gameboard.position import Position
 from mcu import protocol
+from mcu import servos
 from mcu.commands import regulator, MoveCommand
+from mcu.protocol import PencilStatus
 
 if __name__ == "__main__":
     from mcu.protocol import Leds
@@ -14,10 +16,10 @@ else:
     from .commands import ICommand, LedCommand
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
-SERIAL_POLULU_DEV_NAME = "ttyPolulu"
+SERIAL_POLULU_DEV_NAME = "ttyPololu"
 
 
-constants = [(0.027069, 0.040708, 0, 14),  # REAR X
+constants = [(0.027069, 0.040708, 0, 16),  # REAR X
              (0.0095292, 0.029466, 0, 13),  # FRONT Y
              (0.015431, 0.042286, 0, 15),  # FRONT X
              (0.030357, 0.02766, 0, 13)]  # REAR Y
@@ -49,6 +51,7 @@ class RobotController(object):
             print("No serial link for polulu!")
             self.ser_polulu = SerialMock()
 
+        self.last_timestamp = time.time()
         self._init_mcu_pid()
         self._startup_test()
 
@@ -65,15 +68,67 @@ class RobotController(object):
         while ret_code != 0:
             self.ser_mcu.write(cmd.pack_command())
 
-    def send_move_command(self, robot_position: Position):
-        cmd = MoveCommand(robot_position)
-        self.send_command(cmd)
+    def display_encoder(self):
+        readings = []
+        for motor in protocol.Motors:
+            readings.append(self.read_encoder(motor, self.ser_mcu))
+        print("(rear_x) {} -- (front_y) {} -- (front_x) {} -- (rear_y) {}".format(readings[0], readings[1], readings[2], readings[3]))
+
+
+    def send_move_command(self, robot_position: Position, delta_t=None):
+        now = time.time()
+        if delta_t:
+            regulator_delta_t = delta_t
+        else:
+            regulator_delta_t = now - self.last_timestamp
+        self.last_timestamp = now
+        cmd = MoveCommand(robot_position, regulator_delta_t)
+
+    def send_servo_command(self, cmd: ICommand):
+        """"
+        Prend une commande et s'occupe de l'envoyer au Pololu.
+        Args:
+            :cmd: La commande a envoyer
+        Returns:
+            None
+        """
+        self.ser_polulu.write(cmd.pack_command())
+        # TODO: get command response? (i.e: in case GET_POSITION command is sent)
+
+    def read_encoder(self, motor_id: protocol.Motors, ser) -> int:
+        ser.read(ser.inWaiting())
+        ser.write(protocol.generate_read_encoder(motor_id))
+        ser.read(1)
+        speed = ser.read(2)
+        return int.from_bytes(speed, byteorder='big')
+
 
     def lower_pencil(self):
-        pass
+        cmd = PencilRaiseLowerCommand(PencilStatus.LOWERED)
+        self.send_servo_command(cmd)
 
     def raise_pencil(self):
-        pass
+        cmd = PencilRaiseLowerCommand(PencilStatus.RAISED)
+        self.send_servo_command(cmd)
+
+    def decode_manchester(self):
+        cmd = mcu.commands.DecodeManchesterCommand()
+        self.send_command(cmd)
+
+        res = int.from_bytes(ser.read(1), byteorder='big') # Decode result (success or error)
+        figNo = int.from_bytes(ser.read(1), byteorder='big')
+        orien = int.from_bytes(ser.read(1), byteorder='big')
+        scale = int.from_bytes(ser.read(1), byteorder='big')
+
+        return [res, figNo, orien, scale]
+
+    def get_manchester_power(self):
+        cmd = mcu.commands.GetManchesterPowerCommand()
+        self.send_command(cmd)
+
+        pow = int.from_bytes(ser.read(2), byteorder='big')
+
+        return pow
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:

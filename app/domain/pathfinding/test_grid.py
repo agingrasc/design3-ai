@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import MagicMock
 from unittest.mock import Mock
-from app.domain.pathfinding.grid import Grid
-from app.domain.gameboard.gameboard import Coordinate
-from app.domain.gameboard.gameboard import GameBoard
+from domain.pathfinding.grid import Grid
+from domain.gameboard.gameboard import Coordinate
+from domain.gameboard.gameboard import GameBoard
 
 WIDTH = 50
 LENGHT = 25
