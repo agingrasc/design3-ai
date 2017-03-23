@@ -1,8 +1,8 @@
 from flask import Blueprint, request, make_response, jsonify
 
 from mcu.robotcontroller import RobotController
-from robot.robotai import RobotAi
-from robot.task.taskfactory import TaskFactory
+from domain.robot.robotai import RobotAi
+from domain.robot.task.taskfactory import TaskFactory
 
 start_ai = Blueprint('start-ai', __name__)
 
@@ -24,10 +24,9 @@ def start_ai_():
 
 
 def _decide_task_list(task_id):
-    robot_controler = RobotController()
     tasks = {0: "COMPETITION", 1:"INITIAL_ORIENTATION", 2: "IDENTIFY_ANTENNA", 3: "RECEIVE_INFORMATION", 4: "GO_TO_IMAGE", 5: "TAKE_PICTURE"
         , 6: "GO_TO_DRAWZONE", 7: "DRAW", 8: "GO_OUT_OF_DRAWZONE", 9: "LIGHT_RED_LED"}
-    task_factory = TaskFactory(robot_controler)
+    task_factory = TaskFactory()
     task_execute_list = []
     if(tasks[task_id] == "COMPETITION"):
         task_execute_list = task_factory.create_competition_tasks()

@@ -9,13 +9,11 @@ MESSAGE = "End of drawing task!"
 class DrawTask(Task):
     def __init__(self,
                  feedback: Feedback,
-                 drawer: Drawer,
-                 geometricinterpreter: GeometricInterpreter):
-        self.geometricinterpreter = geometricinterpreter
+                 drawer: Drawer):
+        super().__init__()
         self.drawer = drawer
         self.feedback = feedback
 
     def execute(self):
-        picture_corners = self.geometricinterpreter.polygone_interpreter()
-        self.drawer.draw(picture_corners)
+        self.drawer.draw(self.segments_image)
         self.feedback.send_comment(MESSAGE)

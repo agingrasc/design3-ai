@@ -4,15 +4,7 @@ from flask import Flask, jsonify, make_response
 from api import ledok
 
 from api.startai import start_ai
-from api.endinitialorientationtask import end_initial_orientation_task
-from api.endidentifyantennatask import end_identify_antenna_task
-from api.endreceiveinformationtask import end_receive_information_task
-from api.endgotoimagetask import end_go_to_image_task
-from api.endtakepicturetask import end_take_picture_task
-from api.endgotodrawzonetask import end_go_to_drawzone_task
-from api.enddrawtask import end_draw_task
-from api.endgooutofdrawzonetask import end_go_out_of_drawzone_task
-from api.endlightredledtask import end_light_red_led_task
+
 from api.gotoposition.gotoposition import go_to_position
 from domain.command.visionregulation import vision_regulator
 
@@ -54,15 +46,6 @@ if __name__ == '__main__':
     vision_regulator.set_url(base_station_url)
 
     app.register_blueprint(start_ai)
-    app.register_blueprint(end_initial_orientation_task)
-    app.register_blueprint(end_identify_antenna_task)
-    app.register_blueprint(end_receive_information_task)
-    app.register_blueprint(end_go_to_image_task)
-    app.register_blueprint(end_take_picture_task)
-    app.register_blueprint(end_go_to_drawzone_task)
-    app.register_blueprint(end_draw_task)
-    app.register_blueprint(end_go_out_of_drawzone_task)
-    app.register_blueprint(end_light_red_led_task)
 
     if status == AUTOMATIC:
         print("AUTOMATIC MODE not implemented")

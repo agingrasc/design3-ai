@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import Mock, call
 
 from mcu.robotcontroller import RobotController
-from domain.robot.task.identificationantenna.identifyantennatask import IdentifyAntennaTask
-from domain.robot.task.identificationantenna import identifyantennatask
+from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAntennaTask
+from domain.robot.task.identifyantennatask import identifyantennatask
 
 VALID_WIDTH = 20
 VALID_MAX_SIGNAL_POSITION = Mock(pos_x=10, pos_y=10)
