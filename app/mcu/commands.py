@@ -14,15 +14,16 @@ from .protocol import PencilStatus, Leds
 
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 50 #mm
+DEADZONE = 8 #mm
 THETA_DEADZONE = 0.009 #rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
+POSITION_ACC_DECAY = 0.5
 THETA_ACC_DECAY = 0.79 #3 iteration pour diminuer de moitie
 
-DEFAULT_KP = 1
-DEFAULT_KI = 0
+DEFAULT_KP = 1.0
+DEFAULT_KI = 0.01
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.1
 DEFAULT_THETA_KI = 0.5
@@ -79,8 +80,23 @@ class PIPositionRegulator(object):
         # wrap theta [-PI, PI]
 
         # calcul PID pour x/y
-        cmd_x = err_x * self.constants.kp
-        cmd_y = err_y * self.constants.kp
+        up_x = err_x * self.constants.kp
+        up_y = err_y * self.constants.kp
+
+        ui_x = self.accumulator[0] + self.constants.ki * err_x * delta_t
+        ui_y = self.accumulator[1] + self.constants.ki * err_y * delta_t
+
+        cmd_x = up_x + ui_x
+        cmd_y = up_y + ui_y
+
+        self.accumulator[0] += ui_x
+        self.accumulator[1] += ui_y
+
+        self.accumulator[0] *= POSITION_ACC_DECAY
+        self.accumulator[1] *= POSITION_ACC_DECAY
+
+        print("ACC: {} -- {}".format(self.accumulator[0], self.accumulator[1]))
+
         cmd_x = self._relinearize(cmd_x)
         cmd_y = self._relinearize(cmd_y)
         cmd_x, cmd_y = _correct_for_referential_frame(cmd_x, cmd_y, actual_theta)
