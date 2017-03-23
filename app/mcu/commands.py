@@ -268,3 +268,19 @@ class LedCommand(ICommand):
 
     def pack_command(self) -> bytes:
         return protocol.generate_led_command(self.led)
+
+
+class DecodeManchesterCommand(ICommand):
+    def __init__(self):
+        super().__init__()
+
+    def pack_command(self) -> bytes:
+        return protocol.generate_decode_manchester_command()
+
+
+class GetManchesterPowerCommand(ICommand):
+    def __init__(self):
+        super().__init__()
+
+    def pack_command(self) -> bytes:
+        return protocol.generate_get_manchester_power_command()
