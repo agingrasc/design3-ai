@@ -17,7 +17,7 @@ SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPolulu"
 
 
-constants = [(0.027069, 0.040708, 0, 14),  # REAR X
+constants = [(0.027069, 0.040708, 0, 16),  # REAR X
              (0.0095292, 0.029466, 0, 13),  # FRONT Y
              (0.015431, 0.042286, 0, 15),  # FRONT X
              (0.030357, 0.02766, 0, 13)]  # REAR Y
