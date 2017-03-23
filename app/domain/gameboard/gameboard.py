@@ -17,11 +17,12 @@ class Tag(Enum):
 
 
 class GameBoard:
-    def __init__(self, width, length, obstacles):
+    def __init__(self, width, length, obstacles, robot_radius=1):
         self.width = width
         self.length = length
         self.robot_coordinate = Coordinate(0, 0)
         self.game_board = []
+        self.robot_radius = robot_radius
         self.__build_board()
         for obstacle in obstacles:
             self.__add_obstacle(obstacle)
@@ -48,30 +49,40 @@ class GameBoard:
                     line += " " + str(self.game_board[i][j].weight) + " "
             print(line)
 
+    def __add_padding_borders(self):
+        for i in range(0, self.width):
+            for j in range(0, self.robot_radius):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+            for j in range(self.length - self.robot_radius, self.length):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+        for j in range(0, self.length):
+            for i in range(0, self.robot_radius):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+            for i in range(self.width - self.robot_radius, self.width):
+                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+
     def __build_board(self):
         for i in range(0, self.width):
             row = []
             for j in range(0, self.length):
                 coord = Coordinate(i, j)
-                if i == 0 or (i == self.width - 1) or j == 0 or (
-                        j == self.length - 1):
-                    coord.set_tag(Tag.OBSTACLE)
                 row.append(coord)
             self.game_board.append(row)
+        self.__add_padding_borders()
 
     def __add_obstacle(self, obstacle_value_object):
         obstacles = build_obstacle(obstacle_value_object, self.width,
-                                   self.length)
+                                   self.length, self.robot_radius)
         for obstacle in obstacles:
             self.game_board[obstacle.pos_x][obstacle.pos_y] = obstacle
 
 
-def build_obstacle(obstacle, width, length):
+def build_obstacle(obstacle, width, length, robot_radius):
     obstacle_coord = []
-    startx_pos = __verify_start_x(obstacle)
-    starty_pos = __verify_start_y(obstacle)
-    endx_pos = __verify_end_x(obstacle, width)
-    endy_pos = __verify_end_y(obstacle, length)
+    startx_pos = __verify_start_x(obstacle, robot_radius)
+    starty_pos = __verify_start_y(obstacle, robot_radius)
+    endx_pos = __verify_end_x(obstacle, robot_radius, width)
+    endy_pos = __verify_end_y(obstacle, robot_radius, length)
     for i in range(startx_pos, endx_pos):
         for j in range(starty_pos, endy_pos):
             new_obstacle_coord = Coordinate(i, j)
@@ -81,29 +92,29 @@ def build_obstacle(obstacle, width, length):
     return obstacle_coord
 
 
-def __verify_start_x(obstacle):
-    startx_pos = obstacle.pos_x - obstacle.radius
+def __verify_start_x(obstacle, robot_radius):
+    startx_pos = obstacle.pos_x - obstacle.radius - robot_radius
     if startx_pos < 0 or obstacle.tag == Tag.CANT_PASS_LEFT:
         startx_pos = 0
     return startx_pos
 
 
-def __verify_end_x(obstacle, width):
-    endx_pos = obstacle.pos_x + obstacle.radius
+def __verify_end_x(obstacle, robot_radius, width):
+    endx_pos = obstacle.pos_x + obstacle.radius + robot_radius
     if endx_pos > width - 1 or obstacle.tag == Tag.CANT_PASS_RIGHT:
         endx_pos = width - 1
     return endx_pos
 
 
-def __verify_end_y(obstacle, length):
-    endy_pos = obstacle.pos_y + obstacle.radius
+def __verify_end_y(obstacle, robot_radius, length):
+    endy_pos = obstacle.pos_y + obstacle.radius + robot_radius
     if endy_pos > length - 1:
         endy_pos = length - 1
     return endy_pos
 
 
-def __verify_start_y(obstacle):
-    starty_pos = obstacle.pos_y - obstacle.radius
+def __verify_start_y(obstacle, robot_radius):
+    starty_pos = obstacle.pos_y - obstacle.radius - robot_radius
     if starty_pos < 0:
         starty_pos = 0
     return starty_pos
