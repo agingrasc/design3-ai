@@ -92,32 +92,32 @@ def build_obstacle(obstacle, width, length, robot_radius):
     return obstacle_coord
 
 
-def __verify_start_x(obstacle, robot_radius):
-    startx_pos = obstacle.pos_x - obstacle.radius - robot_radius
-    if startx_pos < 0 or obstacle.tag == Tag.CANT_PASS_LEFT:
-        startx_pos = 0
-    return startx_pos
+def __verify_start_y(obstacle, robot_radius):
+    starty_pos = obstacle.pos_y - obstacle.radius - robot_radius
+    if starty_pos < 0 or obstacle.tag == Tag.CANT_PASS_LEFT:
+        starty_pos = 0
+    return starty_pos
 
 
-def __verify_end_x(obstacle, robot_radius, width):
-    endx_pos = obstacle.pos_x + obstacle.radius + robot_radius
-    if endx_pos > width - 1 or obstacle.tag == Tag.CANT_PASS_RIGHT:
-        endx_pos = width - 1
-    return endx_pos
-
-
-def __verify_end_y(obstacle, robot_radius, length):
+def __verify_end_y(obstacle, robot_radius, width):
     endy_pos = obstacle.pos_y + obstacle.radius + robot_radius
-    if endy_pos > length - 1:
-        endy_pos = length - 1
+    if endy_pos > width - 1 or obstacle.tag == Tag.CANT_PASS_RIGHT:
+        endy_pos = width - 1
     return endy_pos
 
 
-def __verify_start_y(obstacle, robot_radius):
-    starty_pos = obstacle.pos_y - obstacle.radius - robot_radius
-    if starty_pos < 0:
-        starty_pos = 0
-    return starty_pos
+def __verify_end_x(obstacle, robot_radius, length):
+    endx_pos = obstacle.pos_x + obstacle.radius + robot_radius
+    if endx_pos > length - 1:
+        endx_pos = length - 1
+    return endx_pos
+
+
+def __verify_start_x(obstacle, robot_radius):
+    startx_pos = obstacle.pos_x - obstacle.radius - robot_radius
+    if startx_pos < 0:
+        startx_pos = 0
+    return startx_pos
 
 
 class Coordinate(position.Position):

@@ -2,7 +2,7 @@ import sys
 from flask import Flask, jsonify, make_response
 
 from api import ledok
-from api.gotoposition import go_to_position
+from api.gotoposition.gotoposition import go_to_position
 from mcu.robotcontroller import RobotController, robot_controller
 from domain.command.visionregulation import vision_regulator
 
