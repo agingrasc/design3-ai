@@ -12,6 +12,7 @@ from mcu.robotcontroller import robot_controller
 from mcu.commands import regulator, MoveCommand
 from mcu import protocol
 from domain.command.visionregulation import vision_regulator
+from api.gotoposition.gotopositionAssembler import GoToPositionAssembler
 
 from domain.pathfinding import get_segments
 
@@ -22,6 +23,8 @@ SCALING = 10
 ROBOT_RADIUS = 100
 OBSTACLE_PADDING = ROBOT_RADIUS / 4
 
+go_to_positiont_assembler = GoToPositionAssembler(SCALING)
+
 
 @go_to_position.route('/go-to-position', methods=['POST'])
 def go_to_position_():
@@ -31,24 +34,21 @@ def go_to_position_():
     except Exception as e:
         print(e.with_traceback())
         return make_response(jsonify(), 400)
-    robot = req_info["robot"]
     obstacles = req_info['obstacles']
-    robot_pos = robot['position']
-    theta = robot_pos['theta']
 
     destination = req_info["destination"]
-    destination_x = int(float(destination["x"]) / SCALING)
-    destination_y = int(float(destination["y"]) / SCALING)
-    destination_t = float(destination['theta'])
-    destination_position = Position(destination_x, destination_y,
-                                    destination_t)
+    destination_position = go_to_positiont_assembler.convert_position_from_json(
+        destination)
 
-    robot_pos_x = int(float(robot_pos["x"]) / SCALING)
-    robot_pos_y = int(float(robot_pos["y"]) / SCALING)
-    robot_position = Position(robot_pos_x, robot_pos_y)
+    robot = req_info["robot"]["position"]
+    robot_position = go_to_positiont_assembler.convert_position_from_json(
+        robot)
 
-    width = int(float(req_info["width"]) / SCALING)
-    lenght = int(float(req_info["length"]) / SCALING)
+    world_dimension = go_to_positiont_assembler.convert_dimension_from_json(
+        req_info)
+    width = world_dimension[0]
+    lenght = world_dimension[1]
+
     obj_obstacles = []
     for obs_json in obstacles:
         x = int(float(obs_json['position']['x']) / SCALING)
