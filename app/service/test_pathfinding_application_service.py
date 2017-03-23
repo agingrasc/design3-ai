@@ -7,6 +7,6 @@ from domain.gameboard.position import Position
 class PathFindingApplicationServiceTest(TestCase):
     def test_speed(self):
         robot_position = Position(10, 20)
-        destination_position = Position(79, 150)
-        pathfinding_application_service.find([], 100, 200, robot_position,
+        destination_position = Position(2000, 1000)
+        pathfinding_application_service.find([], 2300, 1100, robot_position,
                                              destination_position)

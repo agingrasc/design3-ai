@@ -49,6 +49,7 @@ class RobotController(object):
             print("No serial link for polulu!")
             self.ser_polulu = SerialMock()
 
+        self.last_timestamp = time.time()
         self._init_mcu_pid()
         self._startup_test()
 
@@ -65,8 +66,15 @@ class RobotController(object):
         while ret_code != 0:
             self.ser_mcu.write(cmd.pack_command())
 
-    def send_move_command(self, robot_position: Position):
-        cmd = MoveCommand(robot_position)
+    def send_move_command(self, robot_position: Position, delta_t=None):
+        now = time.time()
+        if delta_t:
+            regulator_delta_t = delta_t
+        else:
+            regulator_delta_t = now - self.last_timestamp
+        self.last_timestamp = now
+        print("Move command, delta_t: {}".format(delta_t))
+        cmd = MoveCommand(robot_position, regulator_delta_t)
         self.send_command(cmd)
 
     def lower_pencil(self):
