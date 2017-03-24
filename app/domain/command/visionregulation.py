@@ -5,12 +5,17 @@ from websocket import create_connection
 from domain.gameboard.position import Position
 from mcu.commands import regulator
 from mcu import robotcontroller
+from mcu.robotcontroller import RobotController
+
+from service.globalinformation import GlobalInformation
 
 DELTA_T = 0.1
 
 
 class VisionRegulation:
-    def __init__(self, robot_controller, set_move_destination):
+    def __init__(self, robot_controller: RobotController, set_move_destination, global_information: GlobalInformation=None):
+        if global_information:
+            self.global_information = global_information
         self.connection = None
         self.robot_controller =robot_controller
         self.set_move_destination = set_move_destination
@@ -77,8 +82,13 @@ class VisionRegulation:
         robotcontroller.set_move_destination(robot_position)
         self.robot_controller.send_move_command(robot_position)
 
-    def oriente_robot(self, angle):
-        pass
+    def oriente_robot(self, theta):
+        pos = self.global_information.get_robot_position()
+        pos.theta = theta
+        self.set_move_destination(pos)
+        self.robot_controller.move(self.global_information)
+
+
 
 
 vision_regulator = VisionRegulation()

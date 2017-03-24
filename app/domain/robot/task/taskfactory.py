@@ -25,10 +25,10 @@ ROBOT_API_URL = "http://localhost:5000"
 
 class TaskFactory():
     def __init__(self):
-        self.robot_controler = RobotController()
-        self.feedback = Feedback(ROBOT_API_URL)
-        self.vision_regulation = VisionRegulation(robot_controller, set_move_destination)
         self.global_information = GlobalInformation()
+        self.feedback = Feedback(ROBOT_API_URL)
+        self.robot_controler = RobotController(self.global_information)
+        self.vision_regulation = VisionRegulation(robot_controller, set_move_destination, self.global_information)
         self.drawer = Drawer(self.robot_controler)
         self.antenna = Antenna(self.global_information, self.robot_controler)
         self.decoder = Decoder(self.robot_controler)

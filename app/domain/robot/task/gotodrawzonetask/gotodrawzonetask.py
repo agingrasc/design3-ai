@@ -1,3 +1,4 @@
+import numpy as np
 
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
@@ -9,6 +10,7 @@ from service import pathfinding_application_service
 
 DRAWZONE_POSITION = Position(pos_x=300, pos_y=250)
 DRAW_ANGLE = 45
+
 
 class GoToDrawzoneTask(Task):
     def __init__(self, feedback: Feedback,
@@ -34,7 +36,7 @@ class GoToDrawzoneTask(Task):
         for destination in path_destinations:
             self.vision_regulation.go_to_position(destination)
 
-        self.vision_regulation.oriente_robot(DRAW_ANGLE)
+        self.vision_regulation.oriente_robot(np.deg2rad(DRAW_ANGLE))
         self.feedback.send_comment("end of task going to drawzone")
 
 

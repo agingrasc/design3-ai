@@ -7,6 +7,7 @@ from mcu import protocol
 from mcu import servos
 from mcu.commands import regulator, MoveCommand, DecodeManchesterCommand, PencilRaiseLowerCommand, GetManchesterPowerCommand
 from mcu.protocol import PencilStatus
+from service.globalinformation import GlobalInformation
 
 if __name__ == "__main__":
     from mcu.protocol import Leds
@@ -17,6 +18,7 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
+REGULATOR_FREQUENCY = 0.1 #secondes
 
 
 constants = [(0.027069, 0.040708, 0, 16),  # REAR X
@@ -37,7 +39,7 @@ class SerialMock:
 
 class RobotController(object):
     """" Controleur du robot, permet d'envoyer les commandes et de recevoir certaines informations du MCU."""
-    def __init__(self):
+    def __init__(self, global_information: GlobalInformation):
         """" Si aucun lien serie n'est disponible, un SerialMock est instancie."""
         try:
             self.ser_mcu = serial.Serial("/dev/{}".format(SERIAL_MCU_DEV_NAME))
@@ -54,6 +56,7 @@ class RobotController(object):
         self.last_timestamp = time.time()
         self._init_mcu_pid()
         self._startup_test()
+        self.global_information = global_information
 
     def send_command(self, cmd: ICommand):
         """"
@@ -141,6 +144,20 @@ class RobotController(object):
         pow = int.from_bytes(self.ser_polulu.read(2), byteorder='big')
 
         return pow
+
+    def move(self):
+        """" S'occupe d'amener le robot a la bonne position. BLOQUANT! """
+        retroaction = self.global_information.get_robot_position()
+        now = time.time()
+        last_time = now
+
+        while not regulator.is_arrived(retroaction):
+            retroaction = self.global_information.get_robot_position()
+            now = time.time()
+            delta_t = now - last_time
+            if delta_t > REGULATOR_FREQUENCY:
+                last_time = now
+                self.send_move_command(retroaction, delta_t)
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:
