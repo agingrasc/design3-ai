@@ -15,13 +15,13 @@ class Antenna:
         self.global_information = global_information
 
     def start_recording(self):
-        pass
+        self.robot_controler.start_power_recording()
 
     def end_recording(self):
-        pass
+        self.robot_controler.stop_power_recording()
 
     def get_max_signal_position(self) -> Position:
-        pass
+        return self.robot_controler.get_max_power_position()
 
     def get_start_antenna_position(self) -> Position:
         robot_width = self.global_information.get_robot_width()

@@ -57,6 +57,8 @@ class RobotController(object):
         self._init_mcu_pid()
         self._startup_test()
         self.global_information = global_information
+        self.record = False
+        self.powers = {}
 
     def send_command(self, cmd: ICommand):
         """"
@@ -76,7 +78,6 @@ class RobotController(object):
         for motor in protocol.Motors:
             readings.append(self.read_encoder(motor, self.ser_mcu))
         print("(rear_x) {} -- (front_y) {} -- (front_x) {} -- (rear_y) {}".format(readings[0], readings[1], readings[2], readings[3]))
-
 
     def send_move_command(self, robot_position: Position, delta_t=None):
         now = time.time()
@@ -99,11 +100,11 @@ class RobotController(object):
         self.ser_polulu.write(cmd.pack_command())
         # TODO: get command response? (i.e: in case GET_POSITION command is sent)
 
-    def read_encoder(self, motor_id: protocol.Motors, ser) -> int:
-        ser.read(ser.inWaiting())
-        ser.write(protocol.generate_read_encoder(motor_id))
-        ser.read(1)
-        speed = ser.read(2)
+    def read_encoder(self, motor_id: protocol.Motors) -> int:
+        self.ser_mcu.read(self.ser_mcu.inWaiting())
+        self.ser_mcu.write(protocol.generate_read_encoder(motor_id))
+        self.ser_mcu.read(1)
+        speed = self.ser_mcu.read(2)
         return int.from_bytes(speed, byteorder='big')
 
     def lower_pencil(self):
@@ -140,10 +141,8 @@ class RobotController(object):
     def get_manchester_power(self):
         cmd = GetManchesterPowerCommand()
         self.send_command(cmd)
-
-        pow = int.from_bytes(self.ser_polulu.read(2), byteorder='big')
-
-        return pow
+        power = int.from_bytes(self.ser_polulu.read(2), byteorder='big')
+        return power
 
     def move(self):
         """" S'occupe d'amener le robot a la bonne position. BLOQUANT! """
@@ -158,6 +157,19 @@ class RobotController(object):
             if delta_t > REGULATOR_FREQUENCY:
                 last_time = now
                 self.send_move_command(retroaction, delta_t)
+                if self.record:
+                    power_level = self.get_manchester_power()
+                    self.powers[retroaction] = power_level
+
+    def start_power_recording(self):
+        self.record = True
+        self.powers = {}
+
+    def stop_power_recording(self):
+        self.record = False
+
+    def get_max_power_position(self) -> Position:
+        return max(self.powers)
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:
