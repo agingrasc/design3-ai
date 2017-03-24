@@ -29,6 +29,7 @@ dimension_assembler = DimensionAssembler(SCALING)
 position_assembler = PositionAssembler(SCALING)
 obstacle_assembler = ObstacleAssembler(position_assembler, dimension_assembler)
 
+
 @go_to_position.route('/go-to-position', methods=['POST'])
 def go_to_position_():
     print("go-to-position")
@@ -37,38 +38,18 @@ def go_to_position_():
     except Exception as e:
         print(e.with_traceback())
         return make_response(jsonify(), 400)
-    obstacles = req_info['obstacles']
 
-    destination = req_info["destination"]
-    destination_position = position_assembler.convert_position_from_json(
-        destination)
-
-    robot = req_info["robot"]["position"]
+    destination_x = int(float(req_info['destination']['x']))
+    destination_y = int(float(req_info['destination']['y']))
     destination_t = float(req_info['destination']['theta'])
-    robot_position = position_assembler.convert_position_from_json(robot)
 
-    world_dimension = dimension_assembler.convert_dimension_from_json(req_info)
-    width = world_dimension[0]
-    lenght = world_dimension[1]
-
-    obj_obstacles = obstacle_assembler.convert_obstacles_from_json(obstacles)
-
-    path = pathfinding_application_service.find(
-        obj_obstacles, width, lenght, robot_position, destination_position,
-        int(ROBOT_RADIUS / SCALING))
-    path = get_segments.get_filter_path(path)
-    upscale_path = []
-    for p in path:
-        upscale_path.append(
-            Position(p.pos_x * SCALING, p.pos_y * SCALING, destination_t))
-
-    vision_regulator.push_path(upscale_path)
-
-    vision_regulator.go_to_positions(upscale_path)
+    destination = Position(destination_x, destination_y, destination_t)
+    vision_regulator.go_to_position(destination)
 
     return make_response(
         jsonify({
-            'x': 0,
-            'y': 0
+            'x': destination_x,
+            'y': destination_y,
+            'theta': destination_t
         }), 200)
 
