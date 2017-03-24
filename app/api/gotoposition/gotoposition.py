@@ -22,7 +22,7 @@ go_to_position = Blueprint('go-to-position', __name__)
 
 commandcontroller = CommandController(robotcontroller.robot_controller)
 SCALING = 10
-ROBOT_RADIUS = 120
+ROBOT_RADIUS = 130
 OBSTACLE_PADDING = ROBOT_RADIUS / 4
 
 dimension_assembler = DimensionAssembler(SCALING)
