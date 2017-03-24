@@ -201,7 +201,8 @@ class RobotController(object):
         return int.from_bytes(self.ser_mcu.read(1), byteorder='little')
 
 """ Instance persistante du Controler."""
-robot_controller = RobotController()
+global_info = GlobalInformation()
+robot_controller = RobotController(global_info)
 
 
 def set_move_destination(move_destination: Position):

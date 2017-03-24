@@ -44,6 +44,7 @@ def go_to_position_():
     destination_t = float(req_info['destination']['theta'])
 
     destination = Position(destination_x, destination_y, destination_t)
+    print("Destination: {}\n".format(destination))
     vision_regulator.go_to_position(destination)
 
     return make_response(

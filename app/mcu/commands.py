@@ -14,7 +14,7 @@ from .protocol import PencilStatus, Leds
 
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 20 #mm
+DEADZONE = 10 #mm
 THETA_DEADZONE = 0.009 #rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
@@ -26,12 +26,12 @@ DEFAULT_KP = 1.0
 DEFAULT_KI = 0.1
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.1
-DEFAULT_THETA_KI = 0.5
+DEFAULT_THETA_KI = 0.3
 DEFAULT_MAX_CMD = 55
-DEFAULT_DEADZONE_CMD = 20
-DEFAULT_MIN_CMD = 20
+DEFAULT_DEADZONE_CMD = 5
+DEFAULT_MIN_CMD = 5
 DEFAULT_THETA_MAX_CMD = 0.2
-DEFAULT_THETA_MIN_CMD = 0.015
+DEFAULT_THETA_MIN_CMD = 0.025
 # 2Pi rad en 10,66 secondes (0.5) et 17,25 secondes (0.3)
 
 
@@ -83,17 +83,27 @@ class PIPositionRegulator(object):
         up_x = err_x * self.constants.kp
         up_y = err_y * self.constants.kp
 
-        ui_x = self.accumulator[0] + self.constants.ki * err_x * delta_t
-        ui_y = self.accumulator[1] + self.constants.ki * err_y * delta_t
+        ui_x = self.accumulator[0] + (self.constants.ki * err_x * delta_t)
+        ui_y = self.accumulator[1] + (self.constants.ki * err_y * delta_t)
 
         cmd_x = up_x + ui_x
         cmd_y = up_y + ui_y
 
-        self.accumulator[0] += ui_x
-        self.accumulator[1] += ui_y
+        self.accumulator[0] = ui_x
+        self.accumulator[1] = ui_y
 
         self.accumulator[0] *= POSITION_ACC_DECAY
         self.accumulator[1] *= POSITION_ACC_DECAY
+
+        if self.accumulator[0] > self.constants.max_cmd:
+            self.accumulator[0] = self.constants.max_cmd
+        elif self.accumulator[0] < -self.constants.max_cmd:
+            self.accumulator[0] = -self.constants.max_cmd
+
+        if self.accumulator[1] > self.constants.max_cmd:
+            self.accumulator[1] = self.constants.max_cmd
+        elif self.accumulator[1] < -self.constants.max_cmd:
+            self.accumulator[1] = -self.constants.max_cmd
 
         cmd_x = self._relinearize(cmd_x)
         cmd_y = self._relinearize(cmd_y)
@@ -135,12 +145,10 @@ class PIPositionRegulator(object):
 
     def _relinearize(self, cmd):
         """" Force la valeur de cmd dans [deadzone_cmd, max_cmd] ou 0 si dans [-min_cmd, min_cmd]"""
-        if self.constants.min_cmd < cmd < self.constants.deadzone_cmd:
+        if 0 < cmd < self.constants.deadzone_cmd:
             return self.constants.deadzone_cmd
-        elif -self.constants.deadzone_cmd < cmd < -self.constants.min_cmd:
+        elif -self.constants.deadzone_cmd < cmd < 0:
             return -self.constants.deadzone_cmd
-        elif -self.constants.min_cmd <= cmd <= self.constants.min_cmd:
-            return 0
         else:
             return cmd
 
@@ -171,7 +179,7 @@ class PIPositionRegulator(object):
             return -self.constants.theta_max_cmd
         return cmd
 
-    def is_arrived(self, robot_position: Position, deadzone=DEADZONE*2):
+    def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
         err_theta = robot_position.theta - self.setpoint.theta

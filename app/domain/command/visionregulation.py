@@ -91,4 +91,4 @@ class VisionRegulation:
 
 
 
-vision_regulator = VisionRegulation()
+vision_regulator = VisionRegulation(robotcontroller.robot_controller, robotcontroller.set_move_destination)
