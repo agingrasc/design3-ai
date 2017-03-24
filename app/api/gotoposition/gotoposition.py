@@ -22,13 +22,12 @@ go_to_position = Blueprint('go-to-position', __name__)
 
 commandcontroller = CommandController(robotcontroller.robot_controller)
 SCALING = 10
-ROBOT_RADIUS = 100
+ROBOT_RADIUS = 120
 OBSTACLE_PADDING = ROBOT_RADIUS / 4
 
 dimension_assembler = DimensionAssembler(SCALING)
 position_assembler = PositionAssembler(SCALING)
 obstacle_assembler = ObstacleAssembler(position_assembler, dimension_assembler)
-
 
 @go_to_position.route('/go-to-position', methods=['POST'])
 def go_to_position_():
@@ -72,3 +71,4 @@ def go_to_position_():
             'x': 0,
             'y': 0
         }), 200)
+
