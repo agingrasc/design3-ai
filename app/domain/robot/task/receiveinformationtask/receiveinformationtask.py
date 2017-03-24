@@ -6,8 +6,7 @@ from domain.robot.task.task import Task
 
 
 class ReceiveInformationTask(Task):
-    def __init__(self, feedback: Feedback,
-                        decoder: Decoder):
+    def __init__(self, feedback: Feedback, decoder: Decoder):
         self.feedback = feedback
         self.decoder = decoder
 

@@ -88,15 +88,29 @@ class MotorsRotation(Enum):
     CLOCKWISE = 0
     COUNTERCLOCKWISE = 1
 
+
 class ManchesterOrientation(Enum):
     NORTH = 0
     EAST = 1
     SOUTH = 2
     WEST = 3
 
+
 class ManchesterScale(Enum):
     X2 = 0
     X4 = 1
+
+
+class ManchesterResultCode(Enum):
+    NONE = -100
+    SUCCESS = 0
+    NO_VALID_LOGIC_LEVEL = -1
+    SPURIOUS_LEVEL = -2
+    PATTERN_NOT_FOUND = -3
+    CODE_TOO_LONG = -4
+    DUMB_ERROR = -5
+    INVALID_CODE = -6
+
 
 def generate_move_command(x, y, theta) -> bytes:
     speeds = compute_wheels_speed(x, y, theta)

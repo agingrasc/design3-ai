@@ -130,12 +130,12 @@ class RobotController(object):
         cmd = DecodeManchesterCommand()
         self.send_command(cmd)
 
-        res = int.from_bytes(self.ser_polulu.read(1), byteorder='big') # Decode result (success or error)
-        figNo = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
-        orien = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
-        scale = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
+        result_code = int.from_bytes(self.ser_polulu.read(1), byteorder='big') # Decode result (success or error)
+        figure_number = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
+        orientation = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
+        scaling_factor = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
 
-        return [res, figNo, orien, scale]
+        return [result_code, figure_number, orientation, scaling_factor]
 
     def get_manchester_power(self):
         cmd = GetManchesterPowerCommand()
