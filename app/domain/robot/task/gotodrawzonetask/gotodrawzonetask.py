@@ -36,7 +36,6 @@ class GoToDrawzoneTask(Task):
         for destination in path_destinations:
             self.vision_regulation.go_to_position(destination)
 
-        self.vision_regulation.oriente_robot(np.deg2rad(DRAW_ANGLE))
         self.feedback.send_comment("end of task going to drawzone")
 
 
