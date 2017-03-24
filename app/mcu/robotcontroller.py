@@ -5,7 +5,7 @@ import time
 from domain.gameboard.position import Position
 from mcu import protocol
 from mcu import servos
-from mcu.commands import regulator, MoveCommand
+from mcu.commands import regulator, MoveCommand, DecodeManchesterCommand, PencilRaiseLowerCommand, GetManchesterPowerCommand
 from mcu.protocol import PencilStatus
 
 if __name__ == "__main__":
@@ -103,7 +103,6 @@ class RobotController(object):
         speed = ser.read(2)
         return int.from_bytes(speed, byteorder='big')
 
-
     def lower_pencil(self):
         cmd = PencilRaiseLowerCommand(PencilStatus.LOWERED)
         self.send_servo_command(cmd)
@@ -112,22 +111,34 @@ class RobotController(object):
         cmd = PencilRaiseLowerCommand(PencilStatus.RAISED)
         self.send_servo_command(cmd)
 
-    def decode_manchester(self):
-        cmd = mcu.commands.DecodeManchesterCommand()
+    def light_red_led(self):
+        cmd = LedCommand(Leds.UP_RED)
         self.send_command(cmd)
 
-        res = int.from_bytes(ser.read(1), byteorder='big') # Decode result (success or error)
-        figNo = int.from_bytes(ser.read(1), byteorder='big')
-        orien = int.from_bytes(ser.read(1), byteorder='big')
-        scale = int.from_bytes(ser.read(1), byteorder='big')
+    def shutdown_red_led(self):
+        cmd = LedCommand(Leds.DOWN_RED)
+        self.send_command(cmd)
+
+    def blink_green_led(self):
+        cmd = LedCommand(Leds.BLINK_GREEN)
+        self.send_command(cmd)
+
+    def decode_manchester(self):
+        cmd = DecodeManchesterCommand()
+        self.send_command(cmd)
+
+        res = int.from_bytes(self.ser_polulu.read(1), byteorder='big') # Decode result (success or error)
+        figNo = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
+        orien = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
+        scale = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
 
         return [res, figNo, orien, scale]
 
     def get_manchester_power(self):
-        cmd = mcu.commands.GetManchesterPowerCommand()
+        cmd = GetManchesterPowerCommand()
         self.send_command(cmd)
 
-        pow = int.from_bytes(ser.read(2), byteorder='big')
+        pow = int.from_bytes(self.ser_polulu.read(2), byteorder='big')
 
         return pow
 
