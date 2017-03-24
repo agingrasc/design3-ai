@@ -17,9 +17,10 @@ class GlobalInformation:
         self.connection.send(json.dumps(data))
         robot_position_json = self.connection.recv()
         robot_position_info = json.loads(robot_position_json)
-        pos_x = float(robot_position_info['x'])
-        pos_y = float(robot_position_info['y'])
-        robot_position = Position(int(pos_x), int(pos_y))
+        pos_x = int(float(robot_position_info['x']))
+        pos_y = int(float(robot_position_info['y']))
+        theta = float(robot_position_info['theta'])
+        robot_position = Position(pos_x, pos_y, theta)
         return robot_position
 
     def get_obstacles(self):
