@@ -13,4 +13,5 @@ def find(obstacles, width, length, robot_position, destination,
     pathfinder = PathFinding(game_board, robot_coordinate,
                              destination_coordinate)
     path = pathfinder.find_path()
+    game_board.print_game_board()
     return path

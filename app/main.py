@@ -5,6 +5,7 @@ from api import ledok
 from api.gotoposition.gotoposition import go_to_position
 from mcu.robotcontroller import RobotController, robot_controller
 from domain.command.visionregulation import vision_regulator
+import requests
 
 app = Flask(__name__)
 
@@ -33,6 +34,11 @@ def after_request(data):
 
 def bad_request(error):
     return make_response(jsonify({'error': 'Bad Request'}), 400)
+
+@app.route('/take-picture', methods=['POST'])
+def take_picture():
+    robot_response = requests.post('http://127.0.0.1:4000/take-picture').json()
+    return make_response(jsonify(robot_response))
 
 
 @app.errorhandler(404)
