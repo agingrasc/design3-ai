@@ -67,7 +67,7 @@ class PIPositionRegulator(object):
         Returns:
             La vitesse en x, y et en theta.
         """
-        print("Retroaction position: {}".format(actual_position))
+        print("Retroaction position: {}\n".format(actual_position))
         actual_x = actual_position.pos_x
         actual_y = actual_position.pos_y
         actual_theta = actual_position.theta
@@ -94,8 +94,6 @@ class PIPositionRegulator(object):
 
         self.accumulator[0] *= POSITION_ACC_DECAY
         self.accumulator[1] *= POSITION_ACC_DECAY
-
-        print("ACC: {} -- {}".format(self.accumulator[0], self.accumulator[1]))
 
         cmd_x = self._relinearize(cmd_x)
         cmd_y = self._relinearize(cmd_y)
@@ -126,14 +124,13 @@ class PIPositionRegulator(object):
 
         # deadzone theta
         if abs(err_theta) < THETA_DEADZONE:
-            print("theta ok")
             saturated_theta = 0
 
         command = []
         for cmd in saturated_cmd:
             command.append(int(cmd))
         command.append(saturated_theta)
-        print("Regulator cmd: {}, {}, {}".format(command[0], command[1], command[2]))
+        print("Regulator cmd: {}, {}, {}\n".format(command[0], command[1], command[2]))
         return command
 
     def _relinearize(self, cmd):

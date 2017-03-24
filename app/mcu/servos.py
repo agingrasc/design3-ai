@@ -1,7 +1,7 @@
 """" Ce module contient les structures de données nécessaires pour le contrôle des servomoteurs (Pololu)."""
 
 from enum import Enum
-from protocol import PencilStatus
+from .protocol import PencilStatus
 
 class CommandType(Enum):
     SET_TARGET = 0x84
