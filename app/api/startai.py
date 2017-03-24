@@ -1,6 +1,5 @@
 from flask import Blueprint, request, make_response, jsonify
 
-from mcu.robotcontroller import RobotController
 from domain.robot.robotai import RobotAi
 from domain.robot.task.taskfactory import TaskFactory
 
