@@ -205,14 +205,6 @@ class RobotController(object):
     def _get_return_code(self):
         return int.from_bytes(self.ser_mcu.read(1), byteorder='little')
 
-""" Instance persistante du Controler."""
-global_info = GlobalInformation()
-robot_controller = RobotController(global_info)
-
 
 def set_move_destination(move_destination: Position):
     regulator.setpoint = move_destination
-
-
-if __name__ == "__main__":
-    robot_controller._startup_test()
