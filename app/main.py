@@ -2,13 +2,11 @@ import sys
 from flask import Flask, jsonify, make_response
 import requests
 
-from api import ledok
 from api.sendfeedbacktask import send_feedback
 
 from api.startai import start_ai
 
 from api.gotoposition.gotoposition import go_to_position
-from domain.command.visionregulation import vision_regulator
 
 from domain.robot.task.taskfactory import task_factory
 
@@ -62,7 +60,6 @@ def main():
     elif status == MANUAL:
         print("MANUAL MODE")
         app.register_blueprint(go_to_position)
-        app.register_blueprint(ledok.led_ok)
 
     else:
         print("Bad arguments : manual or automatic")
