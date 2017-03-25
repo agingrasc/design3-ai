@@ -15,7 +15,7 @@ class Channels(Enum):
 
 class PencilTarget(Enum):
     RAISED = 1104
-    LOWERED = 1769 # TODO: Still to be increased in order to get visible pencil mark
+    LOWERED = 1900# TODO: Still to be increased in order to get visible pencil mark
 
 class MinTargets(Enum):
     CAMERA_X = 1104

@@ -172,7 +172,8 @@ def generate_read_last_adc(adc: Adc):
     payload = _generate_payload([adc.value])
     return header + payload
 
-def generate_get_manchester_power_cmd():
+
+def generate_get_manchester_power():
     """
     Genere une commande qui une demande le dernier voltage du code manchester mesuré par le MCU
     Return:
@@ -181,6 +182,7 @@ def generate_get_manchester_power_cmd():
     header = _generate_header(CommandType.GET_MANCHESTER_CODE_POWER, PayloadLength.GET_MANCHESTER_CODE_POWER)
     payload = _generate_payload([0])
     return header + payload
+
 
 def generate_decode_manchester():
     """

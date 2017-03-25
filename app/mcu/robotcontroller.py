@@ -17,7 +17,7 @@ else:
     from .commands import ICommand, LedCommand
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
-SERIAL_POLULU_DEV_NAME = "ttyPololu"
+SERIAL_POLULU_DEV_NAME = "ttyACM1"
 REGULATOR_FREQUENCY = 0.1 #secondes
 
 

@@ -278,7 +278,7 @@ class DecodeManchesterCommand(ICommand):
         super().__init__()
 
     def pack_command(self) -> bytes:
-        return protocol.generate_decode_manchester_command()
+        return protocol.generate_decode_manchester()
 
 
 class GetManchesterPowerCommand(ICommand):
@@ -286,4 +286,4 @@ class GetManchesterPowerCommand(ICommand):
         super().__init__()
 
     def pack_command(self) -> bytes:
-        return protocol.generate_get_manchester_power_command()
+        return protocol.generate_get_manchester_power()
