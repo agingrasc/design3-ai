@@ -116,3 +116,9 @@ class TaskFactory():
         self.task_list.append(LightRedLedTask(self.feedback, self.lighter))
 
         return self.task_list
+
+    def set_url(self, url: str):
+        self.global_information.set_url(url)
+
+
+task_factory = TaskFactory()

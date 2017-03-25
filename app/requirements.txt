@@ -1,3 +1,4 @@
 pyserial
 flask
 requests
+websocket-client

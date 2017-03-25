@@ -7,7 +7,7 @@ class GlobalInformation:
     def __init__(self):
         self.connection = None
 
-    def set_url(self, url):
+    def set_url(self, url: str):
         self.connection = create_connection("ws://" + url + ":3000")
 
     def get_robot_position(self):
@@ -22,6 +22,10 @@ class GlobalInformation:
         theta = float(robot_position_info['theta'])
         robot_position = Position(pos_x, pos_y, theta)
         return robot_position
+
+    def get_robot_orientation(self):
+        pos = self.get_robot_position()
+        return pos.theta
 
     def get_obstacles(self):
         pass

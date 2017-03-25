@@ -1,5 +1,6 @@
 import sys
 from flask import Flask, jsonify, make_response
+import requests
 
 from api import ledok
 from api.sendfeedbacktask import send_feedback
@@ -8,6 +9,8 @@ from api.startai import start_ai
 
 from api.gotoposition.gotoposition import go_to_position
 from domain.command.visionregulation import vision_regulator
+
+from domain.robot.task.taskfactory import task_factory
 
 app = Flask(__name__)
 
@@ -46,10 +49,10 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not Found'}), 404)
 
 
-if __name__ == '__main__':
+def main():
     status = sys.argv[1]
     base_station_url = sys.argv[2]
-    vision_regulator.set_url(base_station_url)
+    task_factory.set_url(base_station_url)
 
     app.register_blueprint(start_ai)
     app.register_blueprint(send_feedback)
@@ -64,3 +67,7 @@ if __name__ == '__main__':
     else:
         print("Bad arguments : manual or automatic")
     app.run(host='0.0.0.0')
+
+
+if __name__ == '__main__':
+    main()

@@ -1,22 +1,12 @@
 from flask import Blueprint, request, make_response, jsonify
-from service import pathfinding_application_service
-from domain.gameboard.position import Position
-from domain.pathfinding import get_segments
 from domain.command.commandcontroller import CommandController
 from mcu import robotcontroller
 
 from domain.gameboard.position import Position
-from domain.gameboard.gameboard import ObstacleValueObject
-from domain.gameboard.gameboard import Tag
-from mcu.robotcontroller import robot_controller
-from mcu.commands import regulator, MoveCommand
-from mcu import protocol
-from domain.command.visionregulation import vision_regulator
+from domain.robot.task.taskfactory import task_factory
 from api.gotoposition.dimensionassembler import DimensionAssembler
 from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
-
-from domain.pathfinding import get_segments
 
 go_to_position = Blueprint('go-to-position', __name__)
 
@@ -45,7 +35,7 @@ def go_to_position_():
 
     destination = Position(destination_x, destination_y, destination_t)
     print("Destination: {}\n".format(destination))
-    vision_regulator.go_to_position(destination)
+    task_factory.vision_regulation.go_to_position(destination)
 
     return make_response(
         jsonify({

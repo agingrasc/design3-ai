@@ -2,7 +2,7 @@ from flask import Blueprint, request, make_response, jsonify
 from threading import Thread
 
 from domain.robot.robotai import RobotAi
-from domain.robot.task.taskfactory import TaskFactory
+from domain.robot.task.taskfactory import task_factory
 
 start_ai = Blueprint('start-ai', __name__)
 
@@ -28,7 +28,6 @@ def _decide_task_list(task_id):
     task_id = int(task_id)
     tasks = {0: "COMPETITION", 1:"INITIAL_ORIENTATION", 2: "IDENTIFY_ANTENNA", 3: "RECEIVE_INFORMATION", 4: "GO_TO_IMAGE", 5: "TAKE_PICTURE"
         , 6: "GO_TO_DRAWZONE", 7: "DRAW", 8: "GO_OUT_OF_DRAWZONE", 9: "LIGHT_RED_LED"}
-    task_factory = TaskFactory()
     task_execute_list = []
     if tasks[task_id] == "COMPETITION":
         task_execute_list = task_factory.create_competition_tasks()
