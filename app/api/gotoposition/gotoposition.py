@@ -1,6 +1,4 @@
 from flask import Blueprint, request, make_response, jsonify
-from domain.command.commandcontroller import CommandController
-from mcu import robotcontroller
 
 from domain.gameboard.position import Position
 from domain.robot.task.taskfactory import task_factory
@@ -10,7 +8,6 @@ from api.gotoposition.obstaclesassembler import ObstacleAssembler
 
 go_to_position = Blueprint('go-to-position', __name__)
 
-commandcontroller = CommandController(robotcontroller.robot_controller)
 SCALING = 10
 ROBOT_RADIUS = 130
 OBSTACLE_PADDING = ROBOT_RADIUS / 4

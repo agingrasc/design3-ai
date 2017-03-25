@@ -14,7 +14,7 @@ from domain.robot.task.initialorientationtask.initialorientationtask import Init
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
 from domain.robot.task.takepicturetask import TakePictureTask
-from mcu.robotcontroller import robot_controller, set_move_destination, RobotController
+from mcu.robotcontroller import set_move_destination, RobotController
 from service import pathfinding_application_service
 from service.destinationcalculator import DestinationCalculator
 from service.globalinformation import GlobalInformation
@@ -29,7 +29,7 @@ class TaskFactory():
         self.global_information = GlobalInformation()
         self.feedback = Feedback(BASE_STATION_API_URL)
         self.robot_controller = RobotController(self.global_information)
-        self.vision_regulation = VisionRegulation(robot_controller, set_move_destination, self.global_information)
+        self.vision_regulation = VisionRegulation(self.robot_controller, set_move_destination, self.global_information)
         self.drawer = Drawer(self.robot_controller, self.vision_regulation)
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
