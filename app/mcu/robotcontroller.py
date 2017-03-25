@@ -1,4 +1,6 @@
 """" Interface entre le système de prise de décision et le MCU. Se charge d'envoyer les commandes. """
+import enum
+
 import serial
 import time
 
@@ -19,6 +21,11 @@ else:
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyACM2"
 REGULATOR_FREQUENCY = 0.1 #secondes
+
+
+class RobotSpeed(enum.Enum):
+    NORMAL_SPEED = (80, 25)
+    DRAW_SPEED = (20, 4)
 
 
 constants = [(0.027069, 0.040708, 0, 16),  # REAR X
@@ -179,6 +186,10 @@ class RobotController(object):
                 max_level = power_level
                 max_pos = pos
         return max_pos
+
+    def set_robot_speed(self, speed: RobotSpeed):
+        move_speed, deadzone = speed.value
+        regulator.set_speed(move_speed, deadzone)
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:

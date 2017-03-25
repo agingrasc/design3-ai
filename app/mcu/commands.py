@@ -13,8 +13,8 @@ from . import protocol
 from .protocol import PencilStatus, Leds
 
 PIDConstants = namedtuple("PIDConstants",
-                          'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 10 #mm
+                          'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
+DEADZONE = 25 #mm
 THETA_DEADZONE = 0.009 #rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
@@ -27,7 +27,7 @@ DEFAULT_KI = 0.1
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.1
 DEFAULT_THETA_KI = 0.3
-DEFAULT_MAX_CMD = 55
+DEFAULT_MAX_CMD = 80
 DEFAULT_DEADZONE_CMD = 5
 DEFAULT_MIN_CMD = 5
 DEFAULT_THETA_MAX_CMD = 0.2
@@ -39,12 +39,12 @@ class PIPositionRegulator(object):
     """ Implémente un régulateur PI qui agit avec une rétroaction en position et génère une commande de vitesse."""
 
     def __init__(self, kp=DEFAULT_KP, ki=DEFAULT_KI, kd=DEFAULT_KD, theta_kp=DEFAULT_THETA_KP,
-                 theta_ki=DEFAULT_THETA_KI, max_cmd=DEFAULT_MAX_CMD,
+                 theta_ki=DEFAULT_THETA_KI, position_deadzone=DEADZONE, max_cmd=DEFAULT_MAX_CMD,
                  deadzone_cmd=DEFAULT_DEADZONE_CMD, min_cmd=DEFAULT_MIN_CMD, theta_max=DEFAULT_THETA_MAX_CMD,
                  theta_min=DEFAULT_THETA_MIN_CMD):
         self._setpoint: Position = Position()
         self.accumulator = [0, 0, 0]
-        self.constants = PIDConstants(kp, ki, kd, theta_kp, theta_ki, max_cmd, deadzone_cmd, min_cmd, theta_max,
+        self.constants = PIDConstants(kp, ki, kd, position_deadzone, theta_kp, theta_ki, max_cmd, deadzone_cmd, min_cmd, theta_max,
                                       theta_min)
 
     @property
@@ -57,6 +57,10 @@ class PIPositionRegulator(object):
         if self._setpoint != new_setpoint:
             self.accumulator = [0, 0, 0]
             self._setpoint = new_setpoint
+
+    def set_speed(self, move_speed, deadzone):
+        self.constants.max_cmd = move_speed
+        self.constants.position_deadzone = deadzone
 
     def next_speed_command(self, actual_position: Position, delta_t: float = DEFAULT_DELTA_T) -> List[int]:
         """"
@@ -117,9 +121,9 @@ class PIPositionRegulator(object):
             saturated_cmd.append(self._saturate_cmd(cmd))
 
         # deadzone pour arret du mouvement
-        if abs(corrected_err_x) < DEADZONE:
+        if abs(corrected_err_x) < self.constants.position_deadzone:
             saturated_cmd[0] = 0
-        if abs(corrected_err_y) < DEADZONE:
+        if abs(corrected_err_y) < self.constants.position_deadzone:
             saturated_cmd[1] = 0
 
         # calcul de la vitesse angulaire
@@ -184,7 +188,7 @@ class PIPositionRegulator(object):
         return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone and abs(err_theta) < THETA_DEADZONE
 
 
-def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float]:
+def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:
     """"
     Rotation du vecteur (x, y) dans le plan monde pour l'orienter avec l'angle t du robot.
     Args:

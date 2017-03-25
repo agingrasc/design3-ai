@@ -22,7 +22,7 @@ class Drawer:
         time.sleep(WAIT_TIME)
         robot_pos = self.global_information.get_robot_position()
         for point in segments:
-            vector = Position(point.pos_x - robot_pos.pos_x, point.pos_y - robot_pos.pos_y)
+            vector = Position(robot_pos.pos_x - point.pos_x, robot_pos.pos_y - point.pos_y)
             angle = vector.get_angle() + draw_angle
             self.vision_regulation.oriente_robot(angle)
             point.theta = angle
