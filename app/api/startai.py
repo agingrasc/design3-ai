@@ -1,9 +1,11 @@
 from flask import Blueprint, request, make_response, jsonify
+from threading import Thread
 
 from domain.robot.robotai import RobotAi
 from domain.robot.task.taskfactory import TaskFactory
 
 start_ai = Blueprint('start-ai', __name__)
+
 
 @start_ai.route('/start-ai', methods=['POST'])
 def start_ai_():
@@ -16,7 +18,7 @@ def start_ai_():
     task_id = req_info["task_id"]
 
     ai = RobotAi(_decide_task_list(task_id))
-    ai.execute()
+    Thread(target=ai.execute).start()
 
     send_response = make_response(jsonify(), 200)
     return send_response

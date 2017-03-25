@@ -20,13 +20,14 @@ from service.destinationcalculator import DestinationCalculator
 from service.globalinformation import GlobalInformation
 from service.image_position_finder import ImagePositionFinder
 
-ROBOT_API_URL = "http://0.0.0.0:5000"
+ROBOT_API_URL = "http://localhost:5000"
+BASE_STATION_API_URL = "http://192.168.0.30:12345/feedback-task"
 
 
 class TaskFactory():
     def __init__(self):
         self.global_information = GlobalInformation()
-        self.feedback = Feedback(ROBOT_API_URL)
+        self.feedback = Feedback(BASE_STATION_API_URL)
         self.robot_controller = RobotController(self.global_information)
         self.vision_regulation = VisionRegulation(robot_controller, set_move_destination, self.global_information)
         self.drawer = Drawer(self.robot_controller, self.vision_regulation)
