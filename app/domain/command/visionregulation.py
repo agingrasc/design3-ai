@@ -49,4 +49,4 @@ class VisionRegulation:
         pos = self.global_information.get_robot_position()
         pos.theta = theta
         self.set_move_destination(pos)
-        self.robot_controller.move(self.global_information)
+        self.robot_controller.move()

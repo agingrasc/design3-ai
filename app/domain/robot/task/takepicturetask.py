@@ -6,16 +6,17 @@ import requests as req
 from domain.robot.geometricinterpreter import GeometricInterpreter
 from domain.robot.task.task import Task
 
+
 class TakePictureTask(Task):
-    def __init__(self, robot_controller):
-        Task.__init__(self, robot_controller)
+    def __init__(self):
+        Task.__init__(self)
         self.status_flag = 0
         self.x_theta = -(math.pi/2)
         self.y_theta = -(math.pi/2)
         self.geometric_interpreter = GeometricInterpreter()
         self.image = None
 
-    def execute(self, x_robot_position, y_robot_position):
+    def execute(self):
         print("taking image")
         print(self.id_image)
         print(self.magnification)
