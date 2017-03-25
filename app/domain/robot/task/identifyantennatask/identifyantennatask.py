@@ -38,7 +38,7 @@ class IdentifyAntennaTask(Task):
     def draw_line(self):
         max_signal_position = self.antenna.get_max_signal_position()
         self.vision_regulation.go_to_position(max_signal_position)
-        end_position = self.antenna.get_segment_max_signal_antenna(
-            max_signal_position)
+        robot_pos = self.global_information.get_robot_position()
+        end_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
         self.drawer.draw([end_position], ANTENNA_DRAW_MARK_ANGLE)
         self.drawer.stop()

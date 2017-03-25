@@ -30,7 +30,7 @@ class TaskFactory():
         self.feedback = Feedback(BASE_STATION_API_URL)
         self.robot_controller = RobotController(self.global_information)
         self.vision_regulation = VisionRegulation(self.robot_controller, set_move_destination, self.global_information)
-        self.drawer = Drawer(self.robot_controller, self.vision_regulation)
+        self.drawer = Drawer(self.global_information, self.robot_controller, self.vision_regulation)
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
         self.image_position_finder = ImagePositionFinder()

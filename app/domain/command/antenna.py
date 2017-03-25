@@ -29,4 +29,4 @@ class Antenna:
         return STOP_POSITION
 
     def get_segment_max_signal_antenna(self, position) -> Position:
-        return Position(position.pos_x, position.pos_y + LINE_SEGMENT_SIZE)
+        return Position(position.pos_x, position.pos_y - LINE_SEGMENT_SIZE, position.theta)
