@@ -30,6 +30,7 @@ class PayloadLength(Enum):
     GET_MANCHESTER_CODE_POWER = 2
     GET_MOTOR_ROTATION_DIRECTION = 2
 
+
 class CommandType(Enum):
     MOVE = 0x00
     CAMERA = 0x01

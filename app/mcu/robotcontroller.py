@@ -129,19 +129,22 @@ class RobotController(object):
 
     def decode_manchester(self):
         cmd = DecodeManchesterCommand()
+        self.ser_mcu.read(self.ser_mcu.inWaiting())
         self.send_command(cmd)
 
-        result_code = int.from_bytes(self.ser_polulu.read(1), byteorder='big') # Decode result (success or error)
-        figure_number = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
-        orientation = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
-        scaling_factor = int.from_bytes(self.ser_polulu.read(1), byteorder='big')
+        result_code = int.from_bytes(self.ser_mcu.read(1), byteorder='big') # Decode result (success or error)
+        figure_number = int.from_bytes(self.ser_mcu.read(1), byteorder='big')
+        orientation = int.from_bytes(self.ser_mcu.read(1), byteorder='big')
+        scaling_factor = int.from_bytes(self.ser_mcu.read(1), byteorder='big')
 
         return [result_code, figure_number, orientation, scaling_factor]
 
     def get_manchester_power(self):
         cmd = GetManchesterPowerCommand()
+        self.ser_mcu.read(self.ser_mcu.inWaiting())
         self.send_command(cmd)
-        power = int.from_bytes(self.ser_polulu.read(2), byteorder='big')
+        self.ser_mcu.read(1)
+        power = int.from_bytes(self.ser_mcu.read(2), byteorder='big')
         return power
 
     def move(self):
@@ -169,7 +172,13 @@ class RobotController(object):
         self.record = False
 
     def get_max_power_position(self) -> Position:
-        return max(self.powers)
+        max_level = 0
+        max_pos = None
+        for pos, power_level in self.powers.items():
+            if power_level > max_level:
+                max_level = power_level
+                max_pos = pos
+        return max_pos
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:
