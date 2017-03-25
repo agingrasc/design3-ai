@@ -9,6 +9,7 @@ from domain.gameboard.position import Position
 from domain.command.antenna import Antenna
 
 LINE_LENGHT = 1
+ANTENNA_DRAW_MARK_ANGLE = 0
 
 
 class IdentifyAntennaTask(Task):
@@ -39,4 +40,5 @@ class IdentifyAntennaTask(Task):
         self.vision_regulation.go_to_position(max_signal_position)
         end_position = self.antenna.get_segment_max_signal_antenna(
             max_signal_position)
-        self.drawer.draw([max_signal_position, end_position])
+        self.drawer.draw([end_position], ANTENNA_DRAW_MARK_ANGLE)
+        self.drawer.stop()

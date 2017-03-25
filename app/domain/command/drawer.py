@@ -15,11 +15,11 @@ class Drawer:
         self.robot_controller = robot_controller
         self.vision_regulation = vision_regulation
 
-    def draw(self, segments: List[Position]):
+    def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
         self.robot_controller.lower_pencil()
         time.sleep(WAIT_TIME)
         for point in segments:
-            angle = point.get_angle() + DRAW_ANGLE
+            angle = point.get_angle() + draw_angle
             self.vision_regulation.oriente_robot(angle)
             point.theta = angle
             self.vision_regulation.go_to_position(point)
