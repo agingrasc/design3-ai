@@ -6,7 +6,6 @@ class RobotAi():
 
     def execute(self):
         for task in self.task_execute_list:
-            while task.status_flag == 0:
-                task.execute()
+            task.execute()
 
 

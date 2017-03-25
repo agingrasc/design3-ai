@@ -20,21 +20,21 @@ from service.destinationcalculator import DestinationCalculator
 from service.globalinformation import GlobalInformation
 from service.image_position_finder import ImagePositionFinder
 
-ROBOT_API_URL = "http://localhost:5000"
+ROBOT_API_URL = "http://0.0.0.0:5000"
 
 
 class TaskFactory():
     def __init__(self):
         self.global_information = GlobalInformation()
         self.feedback = Feedback(ROBOT_API_URL)
-        self.robot_controler = RobotController(self.global_information)
+        self.robot_controller = RobotController(self.global_information)
         self.vision_regulation = VisionRegulation(robot_controller, set_move_destination, self.global_information)
-        self.drawer = Drawer(self.robot_controler)
-        self.antenna = Antenna(self.global_information, self.robot_controler)
-        self.decoder = Decoder(self.robot_controler)
+        self.drawer = Drawer(self.robot_controller, self.vision_regulation)
+        self.antenna = Antenna(self.global_information, self.robot_controller)
+        self.decoder = Decoder(self.robot_controller)
         self.image_position_finder = ImagePositionFinder()
         self.destination_calculator = DestinationCalculator(self.global_information)
-        self.lighter = Lighter(self.robot_controler)
+        self.lighter = Lighter(self.robot_controller)
         self.task_list = []
 
     def create_initial_orientation_task(self):
@@ -60,7 +60,7 @@ class TaskFactory():
         return self.task_list
 
     def create_take_picture_task(self):
-        self.task_list.append(TakePictureTask(self.robot_controler))
+        self.task_list.append(TakePictureTask(self.robot_controller))
         return self.task_list
 
     def create_go_to_drawzone_task(self):
@@ -99,7 +99,7 @@ class TaskFactory():
                                             pathfinding_application_service,
                                             get_segments,
                                             self.image_position_finder))
-        self.task_list.append(TakePictureTask(self.robot_controler))
+        self.task_list.append(TakePictureTask(self.robot_controller))
         self.task_list.append(GoToDrawzoneTask(self.feedback,
                                                self.vision_regulation,
                                                self.global_information,

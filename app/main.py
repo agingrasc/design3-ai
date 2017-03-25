@@ -2,12 +2,12 @@ import sys
 from flask import Flask, jsonify, make_response
 
 from api import ledok
+from api.sendfeedbacktask import send_feedback
 
 from api.startai import start_ai
 
 from api.gotoposition.gotoposition import go_to_position
 from domain.command.visionregulation import vision_regulator
-import requests
 
 app = Flask(__name__)
 
@@ -52,6 +52,7 @@ if __name__ == '__main__':
     vision_regulator.set_url(base_station_url)
 
     app.register_blueprint(start_ai)
+    app.register_blueprint(send_feedback)
 
     if status == AUTOMATIC:
         print("AUTOMATIC MODE not implemented")

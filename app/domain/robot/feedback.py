@@ -8,10 +8,10 @@ class Feedback:
         self.robot_api_url = robot_api_url
 
     def send_comment(self, comment: str):
-        data =  {"feedback" : comment}
+        data = {"feedback": comment}
 
         json_data = json.dumps(data)
 
-        req.post(url=self.robot_api_url + "/send_feedback", json=json_data)
+        req.post(url=self.robot_api_url + "/send-feedback", json=json_data)
         send_response = make_response(jsonify(), 200)
         return send_response

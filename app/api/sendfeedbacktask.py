@@ -1,9 +1,10 @@
 import requests as req
 from flask import Blueprint, request, make_response, jsonify
 
-BASE_STATION_API_URL = "http://192.168.0.30:12345/feedback_task"
+BASE_STATION_API_URL = "http://192.168.0.30:12345/feedback-task"
 
 send_feedback = Blueprint('send-feedback', __name__)
+
 
 @send_feedback.route('/send-feedback', methods=['POST'])
 def send_feedback_():

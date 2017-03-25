@@ -67,7 +67,6 @@ class PIPositionRegulator(object):
         Returns:
             La vitesse en x, y et en theta.
         """
-        print("Retroaction position: {}\n".format(actual_position))
         actual_x = actual_position.pos_x
         actual_y = actual_position.pos_y
         actual_theta = actual_position.theta
@@ -140,7 +139,6 @@ class PIPositionRegulator(object):
         for cmd in saturated_cmd:
             command.append(int(cmd))
         command.append(saturated_theta)
-        print("Regulator cmd: {}, {}, {}\n".format(command[0], command[1], command[2]))
         return command
 
     def _relinearize(self, cmd):
