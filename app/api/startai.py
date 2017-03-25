@@ -26,28 +26,17 @@ def start_ai_():
 
 def _decide_task_list(task_id):
     task_id = int(task_id)
-    tasks = {0: "COMPETITION", 1:"INITIAL_ORIENTATION", 2: "IDENTIFY_ANTENNA", 3: "RECEIVE_INFORMATION", 4: "GO_TO_IMAGE", 5: "TAKE_PICTURE"
-        , 6: "GO_TO_DRAWZONE", 7: "DRAW", 8: "GO_OUT_OF_DRAWZONE", 9: "LIGHT_RED_LED"}
-    task_execute_list = []
-    if tasks[task_id] == "COMPETITION":
-        task_execute_list = task_factory.create_competition_tasks()
-    if tasks[task_id] == "INITIAL_ORIENTATION":
-        task_execute_list = task_factory.create_initial_orientation_task()
-    if tasks[task_id] == "IDENTIFY_ANTENNA":
-        task_execute_list = task_factory.create_indentify_antenna_task()
-    if tasks[task_id] == "RECEIVE_INFORMATION":
-        task_execute_list = task_factory.create_receive_informations_task()
-    if tasks[task_id] == "GO_TO_IMAGE":
-        task_execute_list = task_factory.create_go_to_image_task()
-    if tasks[task_id] == "TAKE_PICTURE":
-        task_execute_list = task_factory.create_take_picture_task()
-    if tasks[task_id] == "GO_TO_DRAWZONE":
-        task_execute_list = task_factory.create_go_to_drawzone_task()
-    if tasks[task_id] == "DRAW":
-        task_execute_list = task_factory.create_draw_task()
-    if tasks[task_id] == "GO_OUT_OF_DRAWZONE":
-        task_execute_list = task_factory.create_go_out_of_drawzone_task()
-    if tasks[task_id] == "LIGHT_RED_LED":
-        task_execute_list = task_factory.create_light_red_led_task()
+    tasks = {0: task_factory.create_competition_tasks(),
+             1: task_factory.create_initial_orientation_task(),
+             2: task_factory.create_indentify_antenna_task(),
+             3: task_factory.create_receive_informations_task(),
+             4: task_factory.create_go_to_image_task(),
+             5: task_factory.create_take_picture_task(),
+             6: task_factory.create_go_to_drawzone_task(),
+             7: task_factory.create_draw_task(),
+             8: task_factory.create_go_out_of_drawzone_task(),
+             9: task_factory.create_light_red_led_task()}
+
+    task_execute_list = tasks[task_id]
 
     return task_execute_list
