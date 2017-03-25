@@ -4,7 +4,7 @@ import time
 
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
-from mcu.robotcontroller import RobotController
+from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
 
 DRAW_ANGLE = np.deg2rad(45)
@@ -19,6 +19,7 @@ class Drawer:
 
     def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
         self.robot_controller.lower_pencil()
+        self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
         time.sleep(WAIT_TIME)
         robot_pos = self.global_information.get_robot_position()
         for point in segments:
@@ -30,3 +31,4 @@ class Drawer:
 
     def stop(self):
         self.robot_controller.raise_pencil()
+        self.robot_controller.set_robot_speed(RobotSpeed.NORMAL_SPEED)
