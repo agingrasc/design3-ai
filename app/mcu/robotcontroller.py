@@ -185,6 +185,11 @@ class RobotController(object):
         time.sleep(1)
         cmd = LedCommand(Leds.DOWN_GREEN)
         self.send_command(cmd)
+        cmd = LedCommand(Leds.UP_RED)
+        self.send_command(cmd)
+        time.sleep(1)
+        cmd = LedCommand(Leds.DOWN_RED)
+        self.send_command(cmd)
 
         # Hack pour contourner le probleme que les moteurs parfois ne roule pas en positif avant d'avoir recu une
         # commande negative
