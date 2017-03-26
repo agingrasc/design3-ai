@@ -150,7 +150,6 @@ class RobotController(object):
         cmd = GetManchesterPowerCommand()
         self.ser_mcu.read(self.ser_mcu.inWaiting())
         self.send_command(cmd)
-        self.ser_mcu.read(1)
         power = int.from_bytes(self.ser_mcu.read(2), byteorder='big')
         return power
 
