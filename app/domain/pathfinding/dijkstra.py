@@ -58,7 +58,7 @@ class Cell:
 
 
 class Grid:
-    def __init__(self, x_dim: int, y_dim: int, scale: int, robot_radius: int, obstacles: List[Tuple[Position, int, ]]):
+    def __init__(self, x_dim: int, y_dim: int, scale: int, robot_radius: int, obstacles: List[Tuple[Position, int, ObstacleType]]):
         self.scale = scale
         self.x_dim = x_dim
         self.y_dim = y_dim
@@ -261,7 +261,7 @@ class Dijkstra:
 
         return [Position(int(point.i * self.grid.scale + self.grid.scale/2), int(point.j * self.grid.scale + self.grid.scale/2), robot_position.theta) for point in path]
 
-    def get_minimal_path(self, robot, target):
+    def get_segmented_path(self, robot, target):
         return get_corner_from_path(self.get_path(robot, target))
 
 
@@ -290,7 +290,7 @@ def main():
     obs2 = Position(600, 600), 80, ObstacleType.PASS_BY_RIGHT
     test_grid = Grid(2200, 1000, 20, 130, [obs1, obs2])
     dijkstra = Dijkstra(test_grid)
-    path = dijkstra.get_minimal_path(Position(100, 100), Position(2100, 100))
+    path = dijkstra.get_segmented_path(Position(100, 100), Position(2100, 100))
     for idx, pos in enumerate(path):
         print("Pos ({}): {} -- {} -- {}\n".format(idx, pos.pos_x, pos.pos_y, pos.theta))
     test_grid.print_grid()

@@ -1,6 +1,12 @@
 import json
+from typing import Tuple, List
+
 from domain.gameboard.position import Position
 from websocket import create_connection
+
+from domain.pathfinding.dijkstra import ObstacleType
+
+ROBOT_RADIUS = 150
 
 
 class GlobalInformation:
@@ -27,17 +33,17 @@ class GlobalInformation:
         pos = self.get_robot_position()
         return pos.theta
 
-    def get_obstacles(self):
+    def get_obstacles(self) -> List[Tuple[Position, int, ObstacleType]]:
+        # pos, radius, tag
         pass
 
     def get_drawzone_corner_position(self):
         pass
 
-    def get_robot_width(self):
-        pass
+    def get_robot_radius(self):
+        return ROBOT_RADIUS
 
-    def get_gameboard_length(self):
-        pass
+    def get_board_dimensions(self) -> Tuple[int, int]:
+        # FIXME!
+        return 10, 10
 
-    def get_gameboard_width(self):
-        pass
