@@ -3,8 +3,8 @@ from mcu.robotcontroller import RobotController
 from service.globalinformation import GlobalInformation
 
 
-START_POSITION = Position(314, 870, 1.57)
-STOP_POSITION = Position(1344, 870, 1.57)
+START_POSITION = Position(310, 865, 2.356)
+STOP_POSITION = Position(1280, 865, 2.356)
 LINE_SEGMENT_SIZE = 10
 
 
