@@ -261,13 +261,40 @@ class Dijkstra:
 
         return [Position(int(point.i * self.grid.scale + self.grid.scale/2), int(point.j * self.grid.scale + self.grid.scale/2), robot_position.theta) for point in path]
 
+    def get_minimal_path(self, robot, target):
+        return get_corner_from_path(self.get_path(robot, target))
 
-if __name__ == "__main__":
+
+def get_corner_from_path(path: List[Position]):
+    if len(path) <= 2:
+        return path
+    i = 1
+    last_angle = get_angle(path[i], path[0])
+    i += 1
+    angle = get_angle(path[i], path[0])
+    while angle == last_angle and i+1 < len(path):
+        i += 1
+        angle = get_angle(path[i], path[0])
+    initial_pos = path[0]
+    rest = path[i:]
+    return [initial_pos] + get_corner_from_path(rest)
+
+
+def get_angle(pos1: Position, pos2: Position):
+    vector = Position(pos1.pos_x - pos2.pos_x, pos1.pos_y - pos2.pos_y)
+    return vector.get_angle()
+
+
+def main():
     obs1 = Position(400, 350), 80, ObstacleType.NORMAL
     obs2 = Position(600, 600), 80, ObstacleType.PASS_BY_RIGHT
     test_grid = Grid(2200, 1000, 20, 130, [obs1, obs2])
     dijkstra = Dijkstra(test_grid)
-    path = dijkstra.get_path(Position(100, 100), Position(2100, 100))
+    path = dijkstra.get_minimal_path(Position(100, 100), Position(2100, 100))
     for idx, pos in enumerate(path):
         print("Pos ({}): {} -- {} -- {}\n".format(idx, pos.pos_x, pos.pos_y, pos.theta))
     test_grid.print_grid()
+
+
+if __name__ == "__main__":
+    main()
