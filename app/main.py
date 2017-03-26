@@ -63,6 +63,7 @@ def main():
 
     else:
         print("Bad arguments : manual or automatic")
+    task_factory.global_information.get_obstacles()
     app.run(host='0.0.0.0')
 
 
