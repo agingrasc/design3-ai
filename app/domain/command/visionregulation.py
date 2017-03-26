@@ -38,8 +38,9 @@ class VisionRegulation:
 
     def go_to_positions(self, positions):
         for position in positions:
-            print("####DEBUG####\n{}\n".format(position))
+            print("Path position: {}".format(position))
             self.go_to_position(position)
+        print("Path finisehd!")
 
     def go_to_position(self, position):
         self.set_move_destination(position)

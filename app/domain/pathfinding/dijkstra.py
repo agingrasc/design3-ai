@@ -8,6 +8,7 @@ from domain.gameboard.position import Position
 
 
 PADDING = 20
+WALL_PADDING = 15
 
 
 class ObstacleType(Enum):
@@ -75,16 +76,28 @@ class Grid:
     def block_wall(self):
         # mur en X
         j_min = 0
+        j_top_padded = math.ceil((self.robot_radius + WALL_PADDING)/self.scale)
+        j_bottom_padded = math.ceil((self.y_dim - self.robot_radius - WALL_PADDING)/self.scale)
         j_max = self.j_dim - 1
         for i in range(self.i_dim):
-            self.get_element(i, j_min).set_blocked()
-            self.get_element(i, j_max).set_blocked()
+            for j in range(j_min, j_top_padded):
+                self.get_element(i, j).set_blocked()
+
+        for i in range(self.i_dim):
+            for j in range(j_bottom_padded, j_max):
+                self.get_element(i, j).set_blocked()
         # mur en Y
         i_min = 0
+        i_padded_left = math.ceil((self.robot_radius + WALL_PADDING)/self.scale)
+        i_padded_right = math.ceil((self.x_dim - self.robot_radius - WALL_PADDING)/self.scale)
         i_max = self.i_dim - 1
         for j in range(self.j_dim):
-            self.get_element(i_min, j).set_blocked()
-            self.get_element(i_max, j).set_blocked()
+            for i in range(i_min, i_padded_left):
+                self.get_element(i, j).set_blocked()
+
+        for j in range(self.j_dim):
+            for i in range(i_padded_right, i_max):
+                self.get_element(i, j).set_blocked()
 
     def place_obstacle(self, obstacle: Tuple[Position, int, ObstacleType]):
         pos, radius, obs_type = obstacle
@@ -220,6 +233,10 @@ class Heap:
             raise StopIteration
 
 
+class NoPathFound(Exception):
+    pass
+
+
 class Dijkstra:
     def __init__(self, grid: Grid):
         self.heap = Heap()
@@ -252,11 +269,14 @@ class Dijkstra:
         path = [target_cell]
         prev_cell: Cell = target_cell.previous
 
-        while prev_cell is not init_cell:
-            prev_cell.mark_path()
-            path.append(prev_cell)
-            prev_cell = prev_cell.previous
-        path.append(init_cell)
+        try:
+            while prev_cell is not init_cell:
+                prev_cell.mark_path()
+                path.append(prev_cell)
+                prev_cell = prev_cell.previous
+        except Exception as e:
+            raise NoPathFound()
+
         path.reverse()
 
         return [Position(int(point.i * self.grid.scale + self.grid.scale/2), int(point.j * self.grid.scale + self.grid.scale/2), robot_position.theta) for point in path]
@@ -286,11 +306,12 @@ def get_angle(pos1: Position, pos2: Position):
 
 
 def main():
-    obs1 = Position(400, 350), 80, ObstacleType.NORMAL
-    obs2 = Position(600, 600), 80, ObstacleType.PASS_BY_RIGHT
-    test_grid = Grid(2200, 1000, 20, 130, [obs1, obs2])
+    obs1 = Position(1000, 350), 140, ObstacleType.NORMAL
+    obs2 = Position(1500, 600), 140, ObstacleType.PASS_BY_RIGHT
+    test_grid = Grid(2300, 1120, 10, 150, [obs1, obs2])
+    test_grid.print_grid()
     dijkstra = Dijkstra(test_grid)
-    path = dijkstra.get_segmented_path(Position(100, 100), Position(2100, 100))
+    path = dijkstra.get_segmented_path(Position(250, 250), Position(1900, 300))
     for idx, pos in enumerate(path):
         print("Pos ({}): {} -- {} -- {}\n".format(idx, pos.pos_x, pos.pos_y, pos.theta))
     test_grid.print_grid()

@@ -25,13 +25,13 @@ THETA_ACC_DECAY = 0.79
 DEFAULT_KP = 0.5
 DEFAULT_KI = 0.001
 DEFAULT_KD = 0
-DEFAULT_THETA_KP = 0.1
-DEFAULT_THETA_KI = 0.3
+DEFAULT_THETA_KP = 0.2
+DEFAULT_THETA_KI = 0.2
 DEFAULT_MAX_CMD = 55
 DEFAULT_DEADZONE_CMD = 20
 DEFAULT_MIN_CMD = 5
 DEFAULT_THETA_MAX_CMD = 0.2
-DEFAULT_THETA_MIN_CMD = 0.025
+DEFAULT_THETA_MIN_CMD = 0.03
 # 2Pi rad en 10,66 secondes (0.5) et 17,25 secondes (0.3)
 
 
@@ -199,11 +199,11 @@ class PIPositionRegulator(object):
             return -self.constants.theta_max_cmd
         return cmd
 
-    def is_arrived(self, robot_position: Position, deadzone=DEADZONE*1.25):
+    def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
         err_theta = robot_position.theta - self.setpoint.theta
-        return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone and abs(err_theta) < THETA_DEADZONE
+        return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone * 1.5 and abs(err_theta) < THETA_DEADZONE * 1.5
 
 
 def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:

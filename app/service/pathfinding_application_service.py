@@ -3,7 +3,7 @@ from domain.pathfinding.dijkstra import Dijkstra
 from service.globalinformation import GlobalInformation
 
 
-DEFAULT_CELL_SCALE = 20
+DEFAULT_CELL_SCALE = 10
 
 
 def find(global_information: GlobalInformation, destination):
@@ -14,4 +14,5 @@ def find(global_information: GlobalInformation, destination):
     grid = dijkstra.Grid(x_dimension, y_dimension, DEFAULT_CELL_SCALE, robot_radius, obstacles)
     pathfinder = Dijkstra(grid)
     path = pathfinder.get_segmented_path(robot_position, destination)
+    global_information.send_path(path)
     return path

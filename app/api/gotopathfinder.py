@@ -1,3 +1,5 @@
+from threading import Thread
+
 from flask import Blueprint, request, make_response, jsonify
 
 from domain.gameboard.position import Position
@@ -25,8 +27,8 @@ def go_to_position_():
 
     destination = Position(destination_x, destination_y, destination_t)
     print("Destination: {}\n".format(destination))
-    path = pathfinding_application_service.find(task_factory.global_information, destination)
-    task_factory.vision_regulation.go_to_positions(path)
+
+    Thread(target=__goto_pathfinder_run, args=[destination]).start()
 
     return make_response(
         jsonify({
@@ -34,3 +36,8 @@ def go_to_position_():
             'y': destination_y,
             'theta': destination_t
         }), 200)
+
+
+def __goto_pathfinder_run(destination):
+    path = pathfinding_application_service.find(task_factory.global_information, destination)
+    task_factory.vision_regulation.go_to_positions(path)

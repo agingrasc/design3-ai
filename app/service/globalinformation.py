@@ -9,7 +9,8 @@ from websocket import create_connection
 from domain.pathfinding.dijkstra import ObstacleType
 
 
-ROBOT_RADIUS = 150
+ROBOT_RADIUS = 170
+BASE_URL_PATTERN = "http://{}:12345/{}"
 
 
 class GlobalInformation:
@@ -38,13 +39,13 @@ class GlobalInformation:
 
     def get_obstacles(self) -> List[Tuple[Position, int, ObstacleType]]:
         # pos, radius, tag
-        data_json = requests.get("http://{}:12345/obstacles".format(self.base_station_url)).json()
+        data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "obstacles")).json()
         obstacles = data_json['data']['obstacles']
 
         formated_obstacles = []
         for obstacle in obstacles:
             pos = Position(int(obstacle['position']['x']), int(obstacle['position']['y']))
-            radius = int(obstacle['dimension']['length'])
+            radius = int(int(obstacle['dimension']['length'])/2)
             tag = obstacle['tag']
             if tag == "RIGHT":
                 obs_type = ObstacleType.PASS_BY_RIGHT
@@ -65,7 +66,15 @@ class GlobalInformation:
         return ROBOT_RADIUS
 
     def get_board_dimensions(self) -> Tuple[int, int]:
-        data_json = requests.get("http://{}:12345/world-dimensions".format(self.base_station_url)).json()
+        data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "world-dimensions")).json()
         x_dimension, y_dimension = int(float(data_json['world_dimensions']['width'])), int(float(data_json['world_dimensions']['height']))
         return x_dimension, y_dimension
+
+    def send_path(self, path):
+        payload = {'data': {'path': []}}
+        for pos in path:
+            payload['data']['path'].append([pos.pos_x, pos.pos_y])
+
+        payload_json = json.dumps(payload)
+        requests.post(BASE_URL_PATTERN.format(self.base_station_url, "path"), json=payload_json)
 
