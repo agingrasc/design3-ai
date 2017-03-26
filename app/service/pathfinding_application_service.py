@@ -8,7 +8,7 @@ DEFAULT_CELL_SCALE = 20
 
 def find(global_information: GlobalInformation, destination):
     robot_position = global_information.get_robot_position()
-    x_dimension, y_dimension = global_information.get_gameboard_dimensions()
+    x_dimension, y_dimension = global_information.get_board_dimensions()
     robot_radius = global_information.get_robot_radius()
     obstacles = global_information.get_obstacles()
     grid = dijkstra.Grid(x_dimension, y_dimension, DEFAULT_CELL_SCALE, robot_radius, obstacles)

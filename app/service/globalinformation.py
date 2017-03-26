@@ -44,7 +44,7 @@ class GlobalInformation:
         formated_obstacles = []
         for obstacle in obstacles:
             pos = Position(int(obstacle['position']['x']), int(obstacle['position']['y']))
-            radius = obstacle['dimension']['length']
+            radius = int(obstacle['dimension']['length'])
             tag = obstacle['tag']
             if tag == "RIGHT":
                 obs_type = ObstacleType.PASS_BY_RIGHT
