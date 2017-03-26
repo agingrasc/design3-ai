@@ -169,6 +169,7 @@ class RobotController(object):
                 self.send_move_command(retroaction, delta_t)
                 if self.record:
                     power_level = self.get_manchester_power()
+                    print("getting power level from adc: {}".format(power_level))
                     self.powers[retroaction] = power_level
 
     def start_power_recording(self):
