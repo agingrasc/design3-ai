@@ -14,20 +14,20 @@ from .protocol import PencilStatus, Leds
 
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 25 #mm
-THETA_DEADZONE = 0.009 #rad
+DEADZONE = 10 # mm
+THETA_DEADZONE = 0.009 # rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
-POSITION_ACC_DECAY = 0.79
-THETA_ACC_DECAY = 0.79 #3 iteration pour diminuer de moitie
+POSITION_ACC_DECAY = 0.79 # 3 iteration pour diminuer de moitie
+THETA_ACC_DECAY = 0.79
 
 DEFAULT_KP = 1.0
-DEFAULT_KI = 0.1
+DEFAULT_KI = 0.01
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.1
 DEFAULT_THETA_KI = 0.3
-DEFAULT_MAX_CMD = 80
+DEFAULT_MAX_CMD = 30
 DEFAULT_DEADZONE_CMD = 5
 DEFAULT_MIN_CMD = 5
 DEFAULT_THETA_MAX_CMD = 0.2
@@ -59,8 +59,26 @@ class PIPositionRegulator(object):
             self._setpoint = new_setpoint
 
     def set_speed(self, move_speed, deadzone):
-        self.constants.max_cmd = move_speed
-        self.constants.position_deadzone = deadzone
+        kp = self.constants.kp
+        ki = self.constants.ki
+        kd = self.constants.kd
+        theta_kp = self.constants.theta_kp
+        theta_ki = self.constants.theta_ki
+        deadzone_cmd = self.constants.deadzone_cmd
+        min_cmd = self.constants.min_cmd
+        theta_max = self.constants.theta_max_cmd
+        theta_min = self.constants.theta_min_cmd
+        self.constants = PIDConstants(kp,
+                                      ki,
+                                      kd,
+                                      deadzone,
+                                      theta_kp,
+                                      theta_ki,
+                                      move_speed,
+                                      deadzone_cmd,
+                                      min_cmd,
+                                      theta_max,
+                                      theta_min)
 
     def next_speed_command(self, actual_position: Position, delta_t: float = DEFAULT_DELTA_T) -> List[int]:
         """"
