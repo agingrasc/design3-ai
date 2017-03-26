@@ -65,6 +65,7 @@ class GlobalInformation:
         return ROBOT_RADIUS
 
     def get_board_dimensions(self) -> Tuple[int, int]:
-        # FIXME!
-        return 10, 10
+        data_json = requests.get("http://{}:12345/world-dimensions".format(self.base_station_url)).json()
+        x_dimension, y_dimension = int(float(data_json['world_dimensions']['width'])), int(float(data_json['world_dimensions']['height']))
+        return x_dimension, y_dimension
 
