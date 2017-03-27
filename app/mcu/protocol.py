@@ -29,7 +29,8 @@ class PayloadLength(Enum):
     DECODE_MANCHESTER = 4
     GET_MANCHESTER_CODE_POWER = 2
     GET_MOTOR_ROTATION_DIRECTION = 2
-
+    RESET_TRAVELED_DISTANCE = 0
+    GET_TRAVELED_DISTANCE = 0
 
 class CommandType(Enum):
     MOVE = 0x00
@@ -46,7 +47,8 @@ class CommandType(Enum):
     DECODE_MANCHESTER = 0xb1
     GET_MANCHESTER_CODE_POWER = 0xb2
     GET_MOTOR_ROTATION_DIRECTION = 0xb3
-
+    RESET_TRAVELED_DISTANCE = 0xb4
+    GET_TRAVELED_DISTANCE = 0xb5
 
 class Leds(Enum):
     UP_RED = 0
@@ -194,6 +196,30 @@ def generate_decode_manchester():
     header = _generate_header(CommandType.DECODE_MANCHESTER, PayloadLength.DECODE_MANCHESTER)
     payload = _generate_payload([0])
     return header + payload
+
+
+def generate_reset_traveled_distance_command():
+    """
+    Genere une commande qui demande de reinitialiser l'intégration de la vitesse au MCU
+    Return:
+        :cmd bytes: La commande serialise
+    """
+
+    header = _generate_header(CommandType.RESET_TRAVELED_DISTANCE, PayloadLength.RESET_TRAVELED_DISTANCE)
+    payload = _generate_payload([0])
+    return header + payload
+
+def generate_get_traveled_distance_command():
+    """
+    Genere une commande qui demande au MCU la distance parcourue pour en X et en Y depuis la dernière réinitialisation
+    Return:
+        :cmd bytes: La commande serialise
+    """
+
+    header = _generate_header(CommandType.GET_TRAVELED_DISTANCE, PayloadLength.GET_TRAVELED_DISTANCE)
+    payload = _generate_payload([0])
+    return header + payload
+
 
 def generate_read_encoder(motor: Motors):
     """
