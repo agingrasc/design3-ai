@@ -242,6 +242,7 @@ class RobotController(object):
         time.sleep(1)
         cmd = LedCommand(Leds.DOWN_RED)
         self.send_command(cmd)
+        self.raise_pencil()
 
         # Hack pour contourner le probleme que les moteurs parfois ne roule pas en positif avant d'avoir recu une
         # commande negative

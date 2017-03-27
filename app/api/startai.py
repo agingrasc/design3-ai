@@ -26,6 +26,7 @@ def start_ai_():
 
 def _decide_task_list(task_id):
     task_id = int(task_id)
+    task_factory.task_list.clear()
     tasks = {0: task_factory.create_competition_tasks,
              1: task_factory.create_initial_orientation_task,
              2: task_factory.create_indentify_antenna_task,

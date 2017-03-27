@@ -6,7 +6,7 @@ from service.globalinformation import GlobalInformation
 START_POSITION = Position(260, 880, 0.785398) # 310, 865
 STOP_POSITION = Position(1250, 880, 0.785398) # 1280, 865
 MAX_Y = 870
-LINE_SEGMENT_SIZE = 10
+LINE_SEGMENT_SIZE = 8
 
 
 class Antenna:
@@ -25,6 +25,7 @@ class Antenna:
 
     def get_max_signal_position(self) -> Position:
         pos = self.robot_controller.get_max_power_position()
+        pos.pos_x += 35
         pos.pos_y = MAX_Y
         return pos
 

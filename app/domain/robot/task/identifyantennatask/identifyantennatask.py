@@ -1,5 +1,6 @@
 import math
 
+from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from domain.robot.feedback import Feedback
 from service.globalinformation import GlobalInformation
@@ -18,12 +19,14 @@ class IdentifyAntennaTask(Task):
                  antenna: Antenna,
                  feedback: Feedback,
                  vision_regulation: VisionRegulation,
-                 global_information: GlobalInformation):
+                 global_information: GlobalInformation,
+                 blackboard: Blackboard):
         self.drawer = drawer
         self.antenna = antenna
         self.vision_regulation = vision_regulation
         self.global_information = global_information
         self.feedback = feedback
+        self.blackboard = blackboard
 
     def execute(self):
         start_position = self.antenna.get_start_antenna_position()
@@ -37,8 +40,9 @@ class IdentifyAntennaTask(Task):
 
     def draw_line(self):
         max_signal_position = self.antenna.get_max_signal_position()
+        self.blackboard.antenna_position = max_signal_position
         self.vision_regulation.go_to_position(max_signal_position)
         robot_pos = self.global_information.get_robot_position()
         end_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
-        self.drawer.draw([end_position], -ANTENNA_DRAW_MARK_ANGLE * 2)
+        self.drawer.draw([end_position], 0)
         self.drawer.stop()
