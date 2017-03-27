@@ -128,10 +128,10 @@ class PIPositionRegulator(object):
 
         cmd_x = self._relinearize(cmd_x)
         cmd_y = self._relinearize(cmd_y)
-        cmd_x, cmd_y = _correct_for_referential_frame(cmd_x, cmd_y, actual_theta)
+        cmd_x, cmd_y = correct_for_referential_frame(cmd_x, cmd_y, actual_theta)
 
         # correction referentiel
-        corrected_err_x, corrected_err_y = _correct_for_referential_frame(err_x, err_y, actual_theta)
+        corrected_err_x, corrected_err_y = correct_for_referential_frame(err_x, err_y, actual_theta)
 
         # saturation de la commande x/y
         saturated_cmd = []
@@ -206,7 +206,7 @@ class PIPositionRegulator(object):
         return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone * 1.5 and abs(err_theta) < THETA_DEADZONE * 1.5
 
 
-def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:
+def correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:
     """"
     Rotation du vecteur (x, y) dans le plan monde pour l'orienter avec l'angle t du robot.
     Args:

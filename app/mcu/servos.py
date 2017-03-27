@@ -13,17 +13,21 @@ class Channels(Enum):
     CAMERA_Y = 0x1
     PENCIL = 0x2
 
+
 class PencilTarget(Enum):
     RAISED = 1104
     LOWERED = 1900# TODO: Still to be increased in order to get visible pencil mark
+
 
 class MinTargets(Enum):
     CAMERA_X = 1104
     CAMERA_Y = 1104
 
+
 class MaxTargets(Enum):
     CAMERA_X = 1904
     CAMERA_Y = 1600
+
 
 def rad_to_camera_target(x, y):
     # Converts radian to microseconds pulse length
@@ -43,6 +47,7 @@ def rad_to_camera_target(x, y):
 
     return (xt, yt)
 
+
 def generate_camera_command(x, y) -> bytes:
     xt, yt = rad_to_camera_target(x, y)
 
@@ -54,6 +59,7 @@ def generate_camera_command(x, y) -> bytes:
 
     return header + payload
 
+
 def generate_pencil_command(status: PencilStatus) -> bytes:
     target = PencilTarget.RAISED
     if status == PencilStatus.LOWERED:
@@ -64,8 +70,12 @@ def generate_pencil_command(status: PencilStatus) -> bytes:
 
     return header + payload
 
+
 def _get_higher_bits(cmd):
+    cmd *= 4
     return cmd >> 7 & 0x7F
 
+
 def _get_lower_bits(cmd):
+    cmd *= 4
     return cmd & 0x7F

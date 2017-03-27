@@ -27,7 +27,7 @@ class Drawer:
             angle = vector.get_angle() + draw_angle
             self.vision_regulation.oriente_robot(angle)
             point.theta = angle
-            self.vision_regulation.go_to_position(point)
+            self.robot_controller.manual_move(point, Position(0, -20))
 
     def stop(self):
         self.robot_controller.raise_pencil()
