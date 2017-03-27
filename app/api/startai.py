@@ -26,6 +26,7 @@ def start_ai_():
 
 def _decide_task_list(task_id):
     task_id = int(task_id)
+    task_factory.task_list.clear()
     tasks = {0: task_factory.create_competition_tasks,
              1: task_factory.create_initial_orientation_task,
              2: task_factory.create_indentify_antenna_task,
@@ -35,7 +36,8 @@ def _decide_task_list(task_id):
              6: task_factory.create_go_to_drawzone_task,
              7: task_factory.create_draw_task,
              8: task_factory.create_go_out_of_drawzone_task,
-             9: task_factory.create_light_red_led_task}
+             9: task_factory.create_light_red_led_task,
+             10: task_factory.create_pololu_task}
 
     task_execute_list = tasks[task_id]()
 

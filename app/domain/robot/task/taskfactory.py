@@ -4,6 +4,7 @@ from domain.command.drawer import Drawer
 from domain.command.lighter import Lighter
 from domain.command.visionregulation import VisionRegulation
 from domain.pathfinding import get_segments
+from domain.robot.blackboard import Blackboard
 from domain.robot.feedback import Feedback
 from domain.robot.task.drawtask.drawtask import DrawTask
 from domain.robot.task.gooutofdrawzonetask.gooutofdrawzonetask import GoOutOfDrawzoneTask
@@ -12,6 +13,7 @@ from domain.robot.task.gotoimagetask.gotoimagetask import GoToImageTask
 from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAntennaTask
 from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
+from domain.robot.task.pololutask.pololu import Pololu
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
 from domain.robot.task.takepicturetask import TakePictureTask
 from mcu.robotcontroller import set_move_destination, RobotController
@@ -27,6 +29,7 @@ BASE_STATION_API_URL = "http://192.168.0.30:12345/feedback-task"
 class TaskFactory():
     def __init__(self):
         self.global_information = GlobalInformation()
+        self.blackboard = Blackboard()
         self.feedback = Feedback(BASE_STATION_API_URL)
         self.robot_controller = RobotController(self.global_information)
         self.vision_regulation = VisionRegulation(self.robot_controller, set_move_destination, self.global_information)
@@ -44,11 +47,11 @@ class TaskFactory():
 
     def create_indentify_antenna_task(self):
         self.task_list.append(IdentifyAntennaTask(self.drawer, self.antenna, self.feedback, self.vision_regulation,
-                                                  self.global_information))
+                                                  self.global_information, self.blackboard))
         return self.task_list
 
     def create_receive_informations_task(self):
-        self.task_list.append(ReceiveInformationTask(self.feedback, self.decoder))
+        self.task_list.append(ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard))
         return self.task_list
 
     def create_go_to_image_task(self):
@@ -87,6 +90,10 @@ class TaskFactory():
 
     def create_light_red_led_task(self):
         self.task_list.append(LightRedLedTask(self.feedback, self.lighter))
+        return self.task_list
+
+    def create_pololu_task(self):
+        self.task_list.append(Pololu(self.robot_controller))
         return self.task_list
 
     def create_competition_tasks(self):

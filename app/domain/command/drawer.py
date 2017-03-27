@@ -18,16 +18,21 @@ class Drawer:
         self.vision_regulation = vision_regulation
 
     def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
-        self.robot_controller.lower_pencil()
         self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
-        time.sleep(WAIT_TIME)
         robot_pos = self.global_information.get_robot_position()
         for point in segments:
+            self.robot_controller.raise_pencil()
             vector = Position(robot_pos.pos_x - point.pos_x, robot_pos.pos_y - point.pos_y)
-            angle = vector.get_angle() + draw_angle
+            angle = vector.get_angle() - draw_angle
             self.vision_regulation.oriente_robot(angle)
+            self.robot_controller.lower_pencil()
+            init_time = time.time()
+            while time.time() - init_time < 1.0:
+                pass
             point.theta = angle
-            self.vision_regulation.go_to_position(point)
+            # FIXME!
+            self.robot_controller.manual_move(point, Position(0, -20))
+        self.robot_controller.raise_pencil()
 
     def stop(self):
         self.robot_controller.raise_pencil()

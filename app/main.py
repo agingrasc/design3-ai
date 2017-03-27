@@ -2,6 +2,7 @@ import sys
 from flask import Flask, jsonify, make_response
 import requests
 
+from api.gotopathfinder import goto_pathfinder
 from api.sendfeedbacktask import send_feedback
 
 from api.startai import start_ai
@@ -60,6 +61,7 @@ def main():
     elif status == MANUAL:
         print("MANUAL MODE")
         app.register_blueprint(go_to_position)
+        app.register_blueprint(goto_pathfinder)
 
     else:
         print("Bad arguments : manual or automatic")

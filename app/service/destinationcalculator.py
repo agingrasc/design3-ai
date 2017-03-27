@@ -11,7 +11,7 @@ class DestinationCalculator():
 
     def get_safezone(self, obstacles, robot_position) -> Position:
         drawzone_corner_position = self.global_information.get_drawzone_corner_position()
-        robot_width = self.global_information.get_robot_width()
+        robot_width = self.global_information.get_robot_radius()
         x_destination = drawzone_corner_position.pos_x + ((robot_width/2) + 2)
         if len(obstacles) > 0:
             closer_obstacle = self.get_the_closer_obstacle(obstacles)

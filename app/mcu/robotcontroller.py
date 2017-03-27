@@ -3,11 +3,12 @@ import enum
 
 import serial
 import time
+import math
 
 from domain.gameboard.position import Position
 from mcu import protocol
 from mcu import servos
-from mcu.commands import regulator, MoveCommand, DecodeManchesterCommand, PencilRaiseLowerCommand, GetManchesterPowerCommand
+from mcu.commands import regulator, correct_for_referential_frame, MoveCommand, DecodeManchesterCommand, GetManchesterPowerCommand
 from mcu.protocol import PencilStatus
 from service.globalinformation import GlobalInformation
 
@@ -19,8 +20,8 @@ else:
     from .commands import ICommand, LedCommand
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
-SERIAL_POLULU_DEV_NAME = "ttyACM2"
-REGULATOR_FREQUENCY = 0.1 #secondes
+SERIAL_POLULU_DEV_NAME = "ttyPololu"
+REGULATOR_FREQUENCY = 0.1 # secondes
 
 
 class RobotSpeed(enum.Enum):
@@ -64,7 +65,7 @@ class RobotController(object):
         self._init_mcu_pid()
         self._startup_test()
         self.global_information = global_information
-        self.record = False
+        self.record_power = False
         self.powers = {}
 
     def send_command(self, cmd: ICommand):
@@ -76,9 +77,6 @@ class RobotController(object):
             None
         """
         self.ser_mcu.write(cmd.pack_command())
-        ret_code = self._get_return_code()
-        while ret_code != 0:
-            self.ser_mcu.write(cmd.pack_command())
 
     def display_encoder(self):
         readings = []
@@ -96,7 +94,7 @@ class RobotController(object):
         cmd = MoveCommand(robot_position, regulator_delta_t)
         self.ser_mcu.write(cmd.pack_command())
 
-    def send_servo_command(self, cmd: ICommand):
+    def send_servo_command(self, cmd):
         """"
         Prend une commande et s'occupe de l'envoyer au Pololu.
         Args:
@@ -104,7 +102,7 @@ class RobotController(object):
         Returns:
             None
         """
-        self.ser_polulu.write(cmd.pack_command())
+        self.ser_polulu.write(cmd)
         # TODO: get command response? (i.e: in case GET_POSITION command is sent)
 
     def read_encoder(self, motor_id: protocol.Motors) -> int:
@@ -115,11 +113,11 @@ class RobotController(object):
         return int.from_bytes(speed, byteorder='big')
 
     def lower_pencil(self):
-        cmd = PencilRaiseLowerCommand(PencilStatus.LOWERED)
+        cmd = servos.generate_pencil_command(servos.PencilStatus.LOWERED)
         self.send_servo_command(cmd)
 
     def raise_pencil(self):
-        cmd = PencilRaiseLowerCommand(PencilStatus.RAISED)
+        cmd = servos.generate_pencil_command(servos.PencilStatus.RAISED)
         self.send_servo_command(cmd)
 
     def light_red_led(self):
@@ -147,10 +145,11 @@ class RobotController(object):
         return [result_code, figure_number, orientation, scaling_factor]
 
     def get_manchester_power(self):
-        cmd = GetManchesterPowerCommand()
+        cmd = protocol.generate_get_manchester_power()
         self.ser_mcu.read(self.ser_mcu.inWaiting())
-        self.send_command(cmd)
-        power = int.from_bytes(self.ser_mcu.read(2), byteorder='big')
+        self.ser_mcu.write(cmd)
+        power_bytes = self.ser_mcu.read(2)
+        power = int.from_bytes(power_bytes, byteorder='big')
         return power
 
     def move(self):
@@ -166,17 +165,49 @@ class RobotController(object):
             if delta_t > REGULATOR_FREQUENCY:
                 last_time = now
                 self.send_move_command(retroaction, delta_t)
-                if self.record:
+                if self.record_power:
                     power_level = self.get_manchester_power()
-                    print("getting power level from adc: {}".format(power_level))
+                    print("Power level: {}".format(power_level))
                     self.powers[retroaction] = power_level
 
+    def manual_move(self, vec: Position, speed: Position=Position(20, 20)):
+        retroaction = self.global_information.get_robot_position()
+        angle = retroaction.theta
+        speed_x, speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
+        last_timestamp = time.time()
+        last_manual_timestamp = time.time()
+        delta_t = time.time() - last_timestamp
+        delta_t_move = time.time() - last_manual_timestamp
+
+        move_norm = vec.get_norm()
+        speed_norm = math.sqrt(speed_x**2 + speed_y**2)
+        cmd = protocol.generate_move_command(speed_x, speed_y, 0)
+        self.ser_mcu.write(cmd)
+        self.ser_mcu.read(self.ser_mcu.inWaiting())
+
+        move_time = move_norm/speed_norm
+        print("Move time: {}".format(move_time))
+        while delta_t < move_time:
+            delta_t = time.time() - last_timestamp
+            if delta_t > REGULATOR_FREQUENCY:
+                last_timestamp = time.time()
+                retroaction = self.global_information.get_robot_position()
+                self.ser_mcu.write(cmd)
+                delta_t = time.time() - last_manual_timestamp
+                if self.record_power:
+                    power_level = self.get_manchester_power()
+                    print("Power level: {}".format(power_level))
+                    self.powers[retroaction] = power_level
+
+        cmd = protocol.generate_move_command(0, 0, 0)
+        self.ser_mcu.write(cmd)
+
     def start_power_recording(self):
-        self.record = True
+        self.record_power = True
         self.powers = {}
 
     def stop_power_recording(self):
-        self.record = False
+        self.record_power = False
 
     def get_max_power_position(self) -> Position:
         max_level = 0
@@ -210,6 +241,7 @@ class RobotController(object):
         time.sleep(1)
         cmd = LedCommand(Leds.DOWN_RED)
         self.send_command(cmd)
+        self.raise_pencil()
 
         # Hack pour contourner le probleme que les moteurs parfois ne roule pas en positif avant d'avoir recu une
         # commande negative

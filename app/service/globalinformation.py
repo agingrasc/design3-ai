@@ -1,6 +1,16 @@
 import json
+
+import requests
+from typing import Tuple, List
+
 from domain.gameboard.position import Position
 from websocket import create_connection
+
+from domain.pathfinding.dijkstra import ObstacleType
+
+
+ROBOT_RADIUS = 170
+BASE_URL_PATTERN = "http://{}:12345/{}"
 
 
 class GlobalInformation:
@@ -8,12 +18,12 @@ class GlobalInformation:
         self.connection = None
 
     def set_url(self, url: str):
+        self.base_station_url = url
         self.connection = create_connection("ws://" + url + ":3000")
 
     def get_robot_position(self):
-        data = {}
-        data["headers"] = "pull_robot_position"
-        data["data"] = {}
+        data = {'headers': 'pull_robot_position',
+                'data': {}}
         self.connection.send(json.dumps(data))
         robot_position_json = self.connection.recv()
         robot_position_info = json.loads(robot_position_json)
@@ -27,17 +37,44 @@ class GlobalInformation:
         pos = self.get_robot_position()
         return pos.theta
 
-    def get_obstacles(self):
-        pass
+    def get_obstacles(self) -> List[Tuple[Position, int, ObstacleType]]:
+        # pos, radius, tag
+        data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "obstacles")).json()
+        obstacles = data_json['data']['obstacles']
+
+        formated_obstacles = []
+        for obstacle in obstacles:
+            pos = Position(int(obstacle['position']['x']), int(obstacle['position']['y']))
+            radius = int(int(obstacle['dimension']['length'])/2)
+            tag = obstacle['tag']
+            if tag == "RIGHT":
+                obs_type = ObstacleType.PASS_BY_RIGHT
+            elif tag == "LEFT":
+                obs_type = ObstacleType.PASS_BY_LEFT
+            else:
+                obs_type = ObstacleType.NORMAL
+
+            obs = pos, radius, obs_type
+            formated_obstacles.append(obs)
+
+        return formated_obstacles
 
     def get_drawzone_corner_position(self):
         pass
 
-    def get_robot_width(self):
-        pass
+    def get_robot_radius(self):
+        return ROBOT_RADIUS
 
-    def get_gameboard_length(self):
-        pass
+    def get_board_dimensions(self) -> Tuple[int, int]:
+        data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "world-dimensions")).json()
+        x_dimension, y_dimension = int(float(data_json['world_dimensions']['width'])), int(float(data_json['world_dimensions']['height']))
+        return x_dimension, y_dimension
 
-    def get_gameboard_width(self):
-        pass
+    def send_path(self, path):
+        payload = {'data': {'path': []}}
+        for pos in path:
+            payload['data']['path'].append([pos.pos_x, pos.pos_y])
+
+        payload_json = json.dumps(payload)
+        requests.post(BASE_URL_PATTERN.format(self.base_station_url, "path"), json=payload_json)
+
