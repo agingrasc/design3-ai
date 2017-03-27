@@ -1,33 +1,39 @@
 from domain.command.visionregulation import VisionRegulation
+from domain.gameboard.position import Position
 from domain.robot.feedback import Feedback
 from domain.robot.task.task import Task
 from domain.pathfinding import get_segments
 from service.globalinformation import GlobalInformation
 from service import pathfinding_application_service
-from service.image_position_finder import ImagePositionFinder
+
+
+images_position = {0: Position(1959, 366, 1.57),
+                   1: Position(2024, 305, 1.22),
+                   2: Position(1933, 267, 0.35),
+                   3: Position(1933, 267, -0.17),
+                   4: Position(1929, 615, 0),
+                   5: Position(1895, 842, 0),
+                   6: Position(2096, 551, -1.57),
+                   7: Position(1925, 657, -1.57)}
+
 
 class GoToImageTask(Task):
-    def __init__(self, feedback: Feedback,
-                        vision_regulation: VisionRegulation,
-                        global_information: GlobalInformation,
-                        pathfinding_application_service: pathfinding_application_service,
-                        get_segments: get_segments,
-                        image_position_finder: ImagePositionFinder):
+    def __init__(self,
+                 feedback: Feedback,
+                 vision_regulation: VisionRegulation,
+                 global_information: GlobalInformation,
+                 pathfinding_application_service: pathfinding_application_service,
+                 get_segments: get_segments):
         super().__init__()
         self.feedback = feedback
         self.vision_regulation = vision_regulation
         self.global_information = global_information
         self.pathfinding_application_service = pathfinding_application_service
         self.get_segments = get_segments
-        self.image_position_finder = image_position_finder
 
     def execute(self):
-        obstacles_list = self.global_information.get_obstacles()
         robot_position = self.global_information.get_robot_position()
-        gameboard_width = self.global_information.get_gameboard_width()
-        gameboard_length = self.global_information.get_gameboard_length()
-        destination_position = self.image_position_finder.getImagePosition(self.id_image)
-        path = self.pathfinding_application_service.find(obstacles_list, gameboard_width, gameboard_length, robot_position, destination_position[0])
+        path = self.pathfinding_application_service.find()
         path_destinations = self.get_segments.get_filter_path(path)
         for destination in path_destinations:
             self.vision_regulation.go_to_position(destination)
