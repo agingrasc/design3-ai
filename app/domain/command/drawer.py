@@ -27,9 +27,10 @@ class Drawer:
             self.vision_regulation.oriente_robot(angle)
             self.robot_controller.lower_pencil()
             init_time = time.time()
-            while time.time() - init_time < 0.5:
+            while time.time() - init_time < 1.0:
                 pass
             point.theta = angle
+            # FIXME!
             self.robot_controller.manual_move(point, Position(0, -20))
         self.robot_controller.raise_pencil()
 

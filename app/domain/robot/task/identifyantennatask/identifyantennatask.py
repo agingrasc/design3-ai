@@ -1,5 +1,7 @@
 import math
 
+import time
+
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from domain.robot.feedback import Feedback
@@ -10,7 +12,7 @@ from domain.gameboard.position import Position
 from domain.command.antenna import Antenna
 
 LINE_LENGHT = 1
-ANTENNA_DRAW_MARK_ANGLE = 0
+ANTENNA_DRAW_MARK_ANGLE = 0.79
 
 
 class IdentifyAntennaTask(Task):
@@ -44,5 +46,11 @@ class IdentifyAntennaTask(Task):
         self.vision_regulation.go_to_position(max_signal_position)
         robot_pos = self.global_information.get_robot_position()
         end_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
-        self.drawer.draw([end_position], 0)
-        self.drawer.stop()
+        move_vec = Position(end_position.pos_x - robot_pos.pos_x, end_position.pos_y - robot_pos.pos_y)
+        self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
+        self.antenna.robot_controller.lower_pencil()
+        init_time = time.time()
+        while time.time() - init_time < 1:
+            pass
+        self.antenna.robot_controller.manual_move(move_vec, Position(0, -20))
+        self.antenna.robot_controller.raise_pencil()

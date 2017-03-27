@@ -170,9 +170,8 @@ class RobotController(object):
                     print("Power level: {}".format(power_level))
                     self.powers[retroaction] = power_level
 
-    def manual_move(self, pos: Position, speed: Position=Position(20, 20)):
+    def manual_move(self, vec: Position, speed: Position=Position(20, 20)):
         retroaction = self.global_information.get_robot_position()
-        vec = Position(pos.pos_x - retroaction.pos_x, pos.pos_y - retroaction.pos_y)
         angle = retroaction.theta
         speed_x, speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
         last_timestamp = time.time()
