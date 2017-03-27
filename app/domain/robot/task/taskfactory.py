@@ -29,7 +29,7 @@ BASE_STATION_API_URL = "http://192.168.0.30:12345/feedback-task"
 class TaskFactory():
     def __init__(self):
         self.global_information = GlobalInformation()
-        self.blackboard = Blackboard()
+        self.blackboard: Blackboard = Blackboard()
         self.feedback = Feedback(BASE_STATION_API_URL)
         self.robot_controller = RobotController(self.global_information)
         self.vision_regulation = VisionRegulation(self.robot_controller, set_move_destination, self.global_information)
@@ -105,8 +105,7 @@ class TaskFactory():
                                             self.vision_regulation,
                                             self.global_information,
                                             pathfinding_application_service,
-                                            get_segments,
-                                            self.image_position_finder))
+                                            self.blackboard))
         self.task_list.append(TakePictureTask(self.robot_controller))
         self.task_list.append(GoToDrawzoneTask(self.feedback,
                                                self.vision_regulation,
