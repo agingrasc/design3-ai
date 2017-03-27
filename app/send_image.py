@@ -1,20 +1,15 @@
-import json
+#!/usr/bin/python3.4
+
 import cv2
 import base64
-import requests
 from threading import Thread
 from flask import Flask, make_response, jsonify
 from collections import deque
-import datetime
 import time
 
 
 DELTA_T = 1/15
-
-
 app = Flask(__name__)
-
-
 frames = deque()
 
 
