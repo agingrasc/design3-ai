@@ -23,7 +23,7 @@ class Decoder:
         self.image_magnification = SCALING_FACTOR_TWO
 
     def decode_information(self):
-        while self.result is not ManchesterResultCode.SUCCESS.value:
+        while self.result != ManchesterResultCode.SUCCESS.value:
             self.result, self.image_number, self.image_orientation, self.image_magnification\
                 = self.robot_controler.decode_manchester()
             self.image_orientation = ORIENTATION[self.image_orientation]

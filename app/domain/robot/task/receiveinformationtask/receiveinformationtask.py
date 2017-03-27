@@ -10,7 +10,7 @@ class ReceiveInformationTask(Task):
     def __init__(self, feedback: Feedback, decoder: Decoder, vision_regulation: VisionRegulation, blackboard: Blackboard):
         self.feedback = feedback
         self.decoder = decoder
-        self.vision_regulation = VisionRegulation
+        self.vision_regulation = vision_regulation
         self.blackboard = blackboard
 
     def execute(self):

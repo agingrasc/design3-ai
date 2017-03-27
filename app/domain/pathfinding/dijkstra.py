@@ -7,7 +7,7 @@ from typing import List, Tuple
 from domain.gameboard.position import Position
 
 
-PADDING = 20
+PADDING = 10
 WALL_PADDING = 15
 
 

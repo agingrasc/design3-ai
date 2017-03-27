@@ -9,7 +9,7 @@ from websocket import create_connection
 from domain.pathfinding.dijkstra import ObstacleType
 
 
-ROBOT_RADIUS = 170
+ROBOT_RADIUS = 150
 BASE_URL_PATTERN = "http://{}:12345/{}"
 
 

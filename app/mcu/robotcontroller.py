@@ -115,10 +115,16 @@ class RobotController(object):
     def lower_pencil(self):
         cmd = servos.generate_pencil_command(servos.PencilStatus.LOWERED)
         self.send_servo_command(cmd)
+        init_time = time.time()
+        while time.time() - init_time < 1:
+            pass
 
     def raise_pencil(self):
         cmd = servos.generate_pencil_command(servos.PencilStatus.RAISED)
         self.send_servo_command(cmd)
+        init_time = time.time()
+        while time.time() - init_time < 1:
+            pass
 
     def light_red_led(self):
         cmd = LedCommand(Leds.UP_RED)

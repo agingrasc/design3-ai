@@ -10,5 +10,5 @@ class Pololu(Task):
 
     def execute(self):
         self.robot_controller.lower_pencil()
-        time.sleep(5)
+        time.sleep(2)
         self.robot_controller.raise_pencil()
