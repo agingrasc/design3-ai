@@ -3,10 +3,12 @@
 from enum import Enum
 from .protocol import PencilStatus
 
+
 class CommandType(Enum):
     SET_TARGET = 0x84
     GET_POSITION = 0x90
     SET_MULTIPLE_TARGET = 0x9F
+
 
 class Channels(Enum):
     CAMERA_X = 0x0
@@ -15,8 +17,8 @@ class Channels(Enum):
 
 
 class PencilTarget(Enum):
-    RAISED = 1104
-    LOWERED = 1900# TODO: Still to be increased in order to get visible pencil mark
+    RAISED = 1300
+    LOWERED = 1900
 
 
 class MinTargets(Enum):
@@ -65,17 +67,15 @@ def generate_pencil_command(status: PencilStatus) -> bytes:
     if status == PencilStatus.LOWERED:
         target = PencilTarget.LOWERED
 
-    header = bytes([CommandType.SET_TARGET, Channels.PENCIL])
+    header = bytes([CommandType.SET_TARGET.value, Channels.PENCIL.value])
     payload = bytes([_get_lower_bits(target), _get_higher_bits(target)])
 
     return header + payload
 
 
 def _get_higher_bits(cmd):
-    cmd *= 4
-    return cmd >> 7 & 0x7F
+    return (cmd.value * 4) >> 7 & 0x7F
 
 
 def _get_lower_bits(cmd):
-    cmd *= 4
-    return cmd & 0x7F
+    return (cmd.value * 4) & 0x7F

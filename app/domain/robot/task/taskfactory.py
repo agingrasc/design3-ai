@@ -12,6 +12,7 @@ from domain.robot.task.gotoimagetask.gotoimagetask import GoToImageTask
 from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAntennaTask
 from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
+from domain.robot.task.pololutask.pololu import Pololu
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
 from domain.robot.task.takepicturetask import TakePictureTask
 from mcu.robotcontroller import set_move_destination, RobotController
@@ -87,6 +88,10 @@ class TaskFactory():
 
     def create_light_red_led_task(self):
         self.task_list.append(LightRedLedTask(self.feedback, self.lighter))
+        return self.task_list
+
+    def create_pololu_task(self):
+        self.task_list.append(Pololu(self.robot_controller))
         return self.task_list
 
     def create_competition_tasks(self):

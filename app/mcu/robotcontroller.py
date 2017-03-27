@@ -8,7 +8,7 @@ import math
 from domain.gameboard.position import Position
 from mcu import protocol
 from mcu import servos
-from mcu.commands import regulator, correct_for_referential_frame, MoveCommand, DecodeManchesterCommand, PencilRaiseLowerCommand, GetManchesterPowerCommand
+from mcu.commands import regulator, correct_for_referential_frame, MoveCommand, DecodeManchesterCommand, GetManchesterPowerCommand
 from mcu.protocol import PencilStatus
 from service.globalinformation import GlobalInformation
 
@@ -94,7 +94,7 @@ class RobotController(object):
         cmd = MoveCommand(robot_position, regulator_delta_t)
         self.ser_mcu.write(cmd.pack_command())
 
-    def send_servo_command(self, cmd: ICommand):
+    def send_servo_command(self, cmd):
         """"
         Prend une commande et s'occupe de l'envoyer au Pololu.
         Args:
@@ -102,7 +102,7 @@ class RobotController(object):
         Returns:
             None
         """
-        self.ser_polulu.write(cmd.pack_command())
+        self.ser_polulu.write(cmd)
         # TODO: get command response? (i.e: in case GET_POSITION command is sent)
 
     def read_encoder(self, motor_id: protocol.Motors) -> int:
@@ -113,11 +113,11 @@ class RobotController(object):
         return int.from_bytes(speed, byteorder='big')
 
     def lower_pencil(self):
-        cmd = PencilRaiseLowerCommand(PencilStatus.LOWERED)
+        cmd = servos.generate_pencil_command(servos.PencilStatus.LOWERED)
         self.send_servo_command(cmd)
 
     def raise_pencil(self):
-        cmd = PencilRaiseLowerCommand(PencilStatus.RAISED)
+        cmd = servos.generate_pencil_command(servos.PencilStatus.RAISED)
         self.send_servo_command(cmd)
 
     def light_red_led(self):
