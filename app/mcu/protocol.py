@@ -31,6 +31,7 @@ class PayloadLength(Enum):
     GET_MOTOR_ROTATION_DIRECTION = 2
     RESET_TRAVELED_DISTANCE = 0
     GET_TRAVELED_DISTANCE = 0
+    RESET_STATE = 0
 
 class CommandType(Enum):
     MOVE = 0x00
@@ -38,6 +39,7 @@ class CommandType(Enum):
     PENCIL = 0x02
     LED = 0x03
     SET_PID_CONSTANTS = 0x04
+    RESET_STATE = 0x05
     MANUAL_SPEED = 0xa0
     READ_ENCODER = 0xa1
     TOGGLE_PID = 0xa2
@@ -220,6 +222,16 @@ def generate_get_traveled_distance_command():
     payload = _generate_payload([0])
     return header + payload
 
+def generate_reset_state_command():
+    """
+    Genere une commande qui demande au MCU de réinitialiser l'état des périphériques afin de débuter une nouvelle ronde de jeu
+    Return:
+        :cmd bytes: La commande serialise
+    """
+
+    header = _generate_header(CommandType.RESET_STATE, PayloadLength.RESET_STATE)
+    payload = _generate_payload([0])
+    return header + payload
 
 def generate_read_encoder(motor: Motors):
     """
