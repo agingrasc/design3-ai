@@ -275,17 +275,6 @@ class CameraOrientationCommand(ICommand):
         return protocol.generate_camera_command(self.x_theta, self.y_theta)
 
 
-class PencilRaiseLowerCommand(ICommand):
-    """" Une commande Pencil permet de controler le status du prehenseur."""
-
-    def __init__(self, status: PencilStatus):
-        super().__init__()
-        self.status = status
-
-    def pack_command(self) -> bytes:
-        return protocol.generate_pencil_command(self.status)
-
-
 class LedCommand(ICommand):
     def __init__(self, led: Leds):
         super().__init__()

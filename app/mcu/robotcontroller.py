@@ -103,7 +103,6 @@ class RobotController(object):
             None
         """
         self.ser_polulu.write(cmd)
-        # TODO: get command response? (i.e: in case GET_POSITION command is sent)
 
     def read_encoder(self, motor_id: protocol.Motors) -> int:
         self.ser_mcu.read(self.ser_mcu.inWaiting())
@@ -150,6 +149,26 @@ class RobotController(object):
 
         return [result_code, figure_number, orientation, scaling_factor]
 
+    def reset_state(self):
+        cmd = protocol.generate_reset_state_command()
+        self.ser_mcu.read(self.ser_mcu.inWaiting())
+        self.ser_mcu_write(cmd) # Command does not expect any response.
+
+    def reset_traveled_distance(self):
+        cmd = protocol.generate_reset_traveled_distance_command()
+        self.ser_mcu.read(self.ser_mcu.inWaiting())
+        self.ser_mcu_write(cmd) # Command does not expect any response.
+
+    def get_traveled_distance(self):
+        cmd = protocol.generate_get_traveled_distance_command()
+        self.ser_mcu.read(self.ser_mcu.inWaiting())
+        self.ser_mcu_write(cmd)
+
+        traveled_distance_x = int.from_bytes(self.ser_mcu.read(2), byteorder='big')
+        traveled_distance_y = int.from_bytes(self.ser_mcu.read(2), byteorder='big')
+
+        return [traveled_distance_x, traveled_distance_y]
+        
     def get_manchester_power(self):
         cmd = protocol.generate_get_manchester_power()
         self.ser_mcu.read(self.ser_mcu.inWaiting())
