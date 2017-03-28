@@ -164,10 +164,12 @@ class RobotController(object):
         self.ser_mcu.read(self.ser_mcu.inWaiting())
         self.ser_mcu_write(cmd)
 
-        traveled_distance_x = int.from_bytes(self.ser_mcu.read(2), byteorder='big')
-        traveled_distance_y = int.from_bytes(self.ser_mcu.read(2), byteorder='big')
+        traveled_distance_frontx = int.from_bytes(self.ser_mcu.read(2), byteorder='big', signed=True)
+        traveled_distance_rearx = int.from_bytes(self.ser_mcu.read(2), byteorder='big', signed=True)
+        traveled_distance_fronty = int.from_bytes(self.ser_mcu.read(2), byteorder='big', signed=True)
+        traveled_distance_reary = int.from_bytes(self.ser_mcu.read(2), byteorder='big', signed=True)
 
-        return [traveled_distance_x, traveled_distance_y]
+        return [traveled_distance_frontx, traveled_distance_rearx, traveled_distance_fronty, traveled_distance_reary]
         
     def get_manchester_power(self):
         cmd = protocol.generate_get_manchester_power()
