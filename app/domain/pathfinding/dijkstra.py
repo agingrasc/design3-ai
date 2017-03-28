@@ -5,7 +5,7 @@ import math
 from typing import List, Tuple
 
 from domain.gameboard.position import Position
-
+from domain.pathfinding.pathfilter import PathFilter
 
 PADDING = 10
 WALL_PADDING = 15
@@ -25,6 +25,7 @@ class Cell:
         PATH = 2
 
     def __init__(self, j, i):
+        self.path_filter = PathFilter()
         self.state = self.CellState.EMPTY
         self.weight = math.inf
         self.visited = False
@@ -279,7 +280,8 @@ class Dijkstra:
 
         path.reverse()
 
-        return [Position(int(point.i * self.grid.scale + self.grid.scale/2), int(point.j * self.grid.scale + self.grid.scale/2), robot_position.theta) for point in path]
+        final_path = [Position(int(point.i * self.grid.scale + self.grid.scale/2), int(point.j * self.grid.scale + self.grid.scale/2), robot_position.theta) for point in path]
+        return final_path
 
     def get_segmented_path(self, robot, target):
         return get_corner_from_path(self.get_path(robot, target))
@@ -311,8 +313,10 @@ def main():
     test_grid = Grid(2300, 1120, 10, 150, [obs1, obs2])
     test_grid.print_grid()
     dijkstra = Dijkstra(test_grid)
+    path_filter = PathFilter()
     path = dijkstra.get_segmented_path(Position(250, 250), Position(1900, 300))
-    for idx, pos in enumerate(path):
+    path_segments = path_filter.filter_path(path)
+    for idx, pos in enumerate(path_segments):
         print("Pos ({}): {} -- {} -- {}\n".format(idx, pos.pos_x, pos.pos_y, pos.theta))
     test_grid.print_grid()
 
