@@ -32,6 +32,6 @@ def find(global_information: GlobalInformation, destination):
 
     game_board = GameBoard(x_dimension, y_dimension, obstacles, robot_radius)
     pathfinder = PathFinding(game_board, robot_position, destination)
-    path = get_segments.get_filter_path(pathfinder.find_path())
+    path = get_segments.get_filter_path(pathfinder.find_path(), DEFAULT_CELL_SCALE)
     global_information.send_path(path)
     return path

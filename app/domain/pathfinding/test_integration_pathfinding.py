@@ -103,6 +103,20 @@ class PathFindingITest(TestCase):
         self.validate_path(pathfinder.find_path())
         game_board.print_game_board()
 
+    def test_real_value_obstacles(self):
+        obstacle1 = ObstacleValueObject(pos_x=149, pos_y=70, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        obstacle2 = ObstacleValueObject(pos_x=149, pos_y=11, radius=3, tag=Tag.CANT_PASS_LEFT)
+        game_board = GameBoard(230, 110, [obstacle1, obstacle2])
+
+        end_position = game_board.get_coordinate(108, 80)
+        begin_position = game_board.get_coordinate(217, 27)
+
+        game_board.print_game_board()
+
+        pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
+        self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
+
     def test_no_obstacle_verticable(self):
         obstacle1 = ObstacleValueObject(pos_x=5, pos_y=5, radius=1, tag=Tag.CANT_PASS_RIGHT)
         game_board = GameBoard(23, 11, [obstacle1])

@@ -48,7 +48,7 @@ def find_minimum(neighbors, destination):
 
     for neighbor in new_min:
         new_distance = (neighbor.pos_x - destination.pos_x)**2 + (neighbor.pos_y - destination.pos_y)**2
-        if new_distance < old_distance:
+        if new_distance <= old_distance:
             old_distance = new_distance
             current_neighbor = neighbor
 
