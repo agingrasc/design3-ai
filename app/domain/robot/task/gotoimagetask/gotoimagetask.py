@@ -36,11 +36,11 @@ class GoToImageTask(Task):
         self.get_segments = get_segments
 
     def execute(self):
-        image_position = images_position[self.blackboard.id_image]
+        image_position: Position = images_position[self.blackboard.id_image]
         path = self.pathfinding_application_service.find(self.global_information, image_position)
         for destination in path:
             self.vision_regulation.go_to_position(destination)
 
-        self.vision_regulation.oriente_robot(images_position.theta)
+        self.vision_regulation.oriente_robot(image_position.theta)
         self.feedback.send_comment("end of task going to image")
 

@@ -70,8 +70,7 @@ class TaskFactory():
         self.task_list.append(GoToDrawzoneTask(self.feedback,
                                                self.vision_regulation,
                                                self.global_information,
-                                               pathfinding_application_service,
-                                               get_segments))
+                                               pathfinding_application_service))
         return self.task_list
 
     def create_draw_task(self):
