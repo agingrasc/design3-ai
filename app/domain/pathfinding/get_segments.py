@@ -44,5 +44,6 @@ def get_filter_path(path, scaling=1):
         last_y = position.pos_y
         last_x = position.pos_x
         index = index + 1
-    filter_path.append(path[len(path) - 1])
+    last_position = path[len(path) - 1]
+    filter_path.append(Position(last_position.pos_x * scaling, last_position.pos_y * scaling))
     return filter_path
