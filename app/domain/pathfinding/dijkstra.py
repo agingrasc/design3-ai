@@ -1,8 +1,6 @@
-from enum import Enum
 import heapq
 
-import math
-from typing import List, Tuple
+from typing import List
 
 from domain.gameboard.position import Position
 from domain.pathfinding.grid import Grid, Cell, ObstacleType
@@ -98,7 +96,8 @@ class Dijkstra:
         return final_path
 
     def get_segmented_path(self, robot, target):
-        return self.path_filter.get_corner_from_path(self.get_path(robot, target))
+        path = self.path_filter.get_corner_from_path(self.get_path(robot, target))
+        return self.path_filter.filter_path(path, target)
 
 
 
@@ -110,10 +109,8 @@ def main():
     test_grid = Grid(2300, 1120, 10, 150, [obs1, obs2])
     test_grid.print_grid()
     dijkstra = Dijkstra(test_grid)
-    path_filter = PathFilter()
     path = dijkstra.get_segmented_path(Position(250, 250), Position(1900, 300))
-    path_segments = path_filter.filter_path(path)
-    for idx, pos in enumerate(path_segments):
+    for idx, pos in enumerate(path):
         print("Pos ({}): {} -- {} -- {}\n".format(idx, pos.pos_x, pos.pos_y, pos.theta))
     test_grid.print_grid()
 

@@ -25,7 +25,7 @@ class PathFilter:
         vector = Position(pos1.pos_x - pos2.pos_x, pos1.pos_y - pos2.pos_y)
         return vector.get_angle()
 
-    def filter_path(self, path: List[Position]) -> List[Position]:
+    def filter_path(self, path: List[Position], target: Position) -> List[Position]:
         segments = []
         segments.append(path[0])
 
@@ -33,6 +33,7 @@ class PathFilter:
             if (path[i].pos_x - segments[len(segments) - 1].pos_x > 40) or (path[i].pos_y - segments[len(segments) - 1].pos_y > 40 ):
                 segments.append(path[i])
         del segments[0]
+        segments.append(target)
         return segments
 
 
