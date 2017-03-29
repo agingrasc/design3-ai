@@ -13,11 +13,13 @@ DELTA_T = 0.1
 
 
 class VisionRegulation:
-    def __init__(self, robot_controller: RobotController, set_move_destination, global_information: GlobalInformation=None):
+    def __init__(
+        self, robot_controller: RobotController, set_move_destination, global_information: GlobalInformation=None
+    ):
         if global_information:
             self.global_information = global_information
         self.connection = None
-        self.robot_controller =robot_controller
+        self.robot_controller = robot_controller
         self.set_move_destination = set_move_destination
 
     def set_url(self, url):
