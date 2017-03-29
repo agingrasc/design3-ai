@@ -5,7 +5,7 @@ from service.globalinformation import GlobalInformation
 
 START_POSITION = Position(260, 880, 0.785398) # 310, 865
 STOP_POSITION = Position(1250, 880, 0.785398) # 1280, 865
-MAX_Y = 890
+MAX_Y = 885
 LINE_SEGMENT_SIZE = 12
 
 

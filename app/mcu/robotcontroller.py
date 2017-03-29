@@ -157,12 +157,12 @@ class RobotController(object):
     def reset_traveled_distance(self):
         cmd = protocol.generate_reset_traveled_distance_command()
         self.ser_mcu.read(self.ser_mcu.inWaiting())
-        self.ser_mcu_write(cmd) # Command does not expect any response.
+        self.ser_mcu.write(cmd) # Command does not expect any response.
 
     def get_traveled_distance(self):
         cmd = protocol.generate_get_traveled_distance_command()
         self.ser_mcu.read(self.ser_mcu.inWaiting())
-        self.ser_mcu_write(cmd)
+        self.ser_mcu.write(cmd)
 
         traveled_distance_frontx = int.from_bytes(self.ser_mcu.read(2), byteorder='big', signed=True)
         traveled_distance_rearx = int.from_bytes(self.ser_mcu.read(2), byteorder='big', signed=True)
@@ -198,6 +198,8 @@ class RobotController(object):
                     self.powers[retroaction] = power_level
 
     def precise_move(self, vec: Position, speed: Position=Position(20, 20)):
+        self.reset_traveled_distance()
+
         retroaction = self.global_information.get_robot_position()
         angle = retroaction.theta
         target_speed_x, target_speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
@@ -230,8 +232,8 @@ class RobotController(object):
 
     def get_remaining_distances(self, vec):
         distances = self.get_traveled_distance()
-        distance_x = distances[2]
-        distance_y = distances[0]
+        distance_x = distances[3]
+        distance_y = distances[1]
         remaining_x = vec.pos_x - distance_x
         remaining_y = vec.pos_y - distance_y
         return remaining_x, remaining_y

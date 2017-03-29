@@ -8,7 +8,7 @@ from domain.gameboard.position import Position
 
 
 PADDING = 10
-WALL_PADDING = 15
+WALL_PADDING = 20
 
 
 class ObstacleType(Enum):
