@@ -59,12 +59,11 @@ class TaskFactory():
                                             self.vision_regulation,
                                             self.global_information,
                                             pathfinding_application_service,
-                                            get_segments,
-                                            self.image_position_finder))
+                                            self.blackboard))
         return self.task_list
 
     def create_take_picture_task(self):
-        self.task_list.append(TakePictureTask(self.robot_controller))
+        self.task_list.append(TakePictureTask(self.blackboard))
         return self.task_list
 
     def create_go_to_drawzone_task(self):
@@ -72,11 +71,11 @@ class TaskFactory():
                                                self.vision_regulation,
                                                self.global_information,
                                                pathfinding_application_service,
-                                               get_segments))
+                                               self.blackboard))
         return self.task_list
 
     def create_draw_task(self):
-        self.task_list.append(DrawTask(self.feedback, self.drawer))
+        self.task_list.append(DrawTask(self.feedback, self.drawer, self.blackboard))
         return self.task_list
 
     def create_go_out_of_drawzone_task(self):

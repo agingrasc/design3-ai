@@ -52,5 +52,5 @@ class IdentifyAntennaTask(Task):
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
 
         self.antenna.robot_controller.lower_pencil()
-        self.antenna.robot_controller.manual_move(move_vec, Position(0, -20))
+        self.antenna.robot_controller.precise_move(move_vec, Position(0, -20))
         self.antenna.robot_controller.raise_pencil()
