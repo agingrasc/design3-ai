@@ -75,7 +75,7 @@ class TaskFactory():
         return self.task_list
 
     def create_draw_task(self):
-        self.task_list.append(DrawTask(self.feedback, self.drawer))
+        self.task_list.append(DrawTask(self.feedback, self.drawer, self.blackboard))
         return self.task_list
 
     def create_go_out_of_drawzone_task(self):

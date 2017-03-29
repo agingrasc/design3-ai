@@ -200,34 +200,41 @@ class RobotController(object):
     def precise_move(self, vec: Position, speed: Position=Position(20, 20)):
         retroaction = self.global_information.get_robot_position()
         angle = retroaction.theta
-        speed_x, speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
+        target_speed_x, target_speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
+
         last_timestamp = time.time()
-        last_manual_timestamp = time.time()
-        delta_t = time.time() - last_timestamp
-        delta_t_move = time.time() - last_manual_timestamp
 
-        move_norm = vec.get_norm()
-        speed_norm = math.sqrt(speed_x**2 + speed_y**2)
-        cmd = protocol.generate_move_command(speed_x, speed_y, 0)
-        self.ser_mcu.write(cmd)
-        self.ser_mcu.read(self.ser_mcu.inWaiting())
-
-        move_time = move_norm/speed_norm
-        print("Move time: {}".format(move_time))
-        while delta_t < move_time:
+        remaining_x, remaining_y = self.get_remaining_distances(vec)
+        while remaining_x > 0 or remaining_y > 0:
             delta_t = time.time() - last_timestamp
             if delta_t > REGULATOR_FREQUENCY:
                 last_timestamp = time.time()
-                retroaction = self.global_information.get_robot_position()
+                if remaining_x > 0:
+                    speed_x = target_speed_x
+                else:
+                    speed_x = 0
+
+                if remaining_y > 0:
+                    speed_y = target_speed_y
+                else:
+                    speed_y = 0
+
+                cmd = protocol.generate_move_command(speed_x, speed_y, 0)
                 self.ser_mcu.write(cmd)
-                delta_t = time.time() - last_manual_timestamp
-                if self.record_power:
-                    power_level = self.get_manchester_power()
-                    print("Power level: {}".format(power_level))
-                    self.powers[retroaction] = power_level
+                self.ser_mcu.read(self.ser_mcu.inWaiting())
+
+                remaining_x, remaining_y = self.get_remaining_distances(vec)
 
         cmd = protocol.generate_move_command(0, 0, 0)
         self.ser_mcu.write(cmd)
+
+    def get_remaining_distances(self, vec):
+        distances = self.get_traveled_distance()
+        distance_x = distances[2]
+        distance_y = distances[0]
+        remaining_x = vec.pos_x - distance_x
+        remaining_y = vec.pos_y - distance_y
+        return remaining_x, remaining_y
 
     def start_power_recording(self):
         self.record_power = True
