@@ -3,8 +3,7 @@ import collections
 from enum import Enum
 from . import position
 
-ObstacleValueObject = collections.namedtuple('ObstacleValueObject',
-                                             'pos_x pos_y radius tag')
+ObstacleValueObject = collections.namedtuple('ObstacleValueObject', 'pos_x pos_y radius tag')
 
 
 class Tag(Enum):
@@ -29,40 +28,40 @@ class GameBoard:
 
     def set_robot_position(self, pos_x, pos_y):
         self.robot_coordinate.set_tag(Tag.CAN_PASS)
-        self.robot_coordinate = self.game_board[pos_x][pos_y]
+        self.robot_coordinate = self.get_coordinate(pos_x, pos_y)
         self.robot_coordinate.set_tag(Tag.ROBOT)
 
     def print_game_board(self):
         for i in range(0, self.width):
             line = ""
             for j in range(0, self.length):
-                line += self.game_board[i][j].get_tag().value
+                line += self.get_real_coordinate(i, j).get_tag().value
             print(line)
 
     def print_game_board_weight(self):
         for i in range(0, self.width):
             line = ""
             for j in range(0, self.length):
-                if self.game_board[i][j].weight >= (sys.maxsize):
+                if self.get_real_coordinate(i, j).weight >= (sys.maxsize):
                     line += " X "
                 else:
-                    line += " " + str(self.game_board[i][j].weight) + " "
+                    line += " " + str(self.get_coordinate(i, j).weight) + " "
             print(line)
 
     def __add_padding_borders(self):
         for i in range(0, self.width):
             for j in range(0, self.robot_radius):
-                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+                self.get_real_coordinate(i, j).set_tag(Tag.OBSTACLE)
             for j in range(self.length - self.robot_radius, self.length):
-                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+                self.get_real_coordinate(i, j).set_tag(Tag.OBSTACLE)
         for j in range(0, self.length):
             for i in range(0, self.robot_radius):
-                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+                self.get_real_coordinate(i, j).set_tag(Tag.OBSTACLE)
             for i in range(self.width - self.robot_radius, self.width):
-                self.game_board[i][j].set_tag(Tag.OBSTACLE)
+                self.get_real_coordinate(i, j).set_tag(Tag.OBSTACLE)
 
     def __build_board(self):
-        for i in range(0, self.width):
+        for i in range(self.width - 1, -1, -1):
             row = []
             for j in range(0, self.length):
                 coord = Coordinate(i, j)
@@ -71,10 +70,15 @@ class GameBoard:
         self.__add_padding_borders()
 
     def __add_obstacle(self, obstacle_value_object):
-        obstacles = build_obstacle(obstacle_value_object, self.width,
-                                   self.length, self.robot_radius)
+        obstacles = build_obstacle(obstacle_value_object, self.width, self.length, self.robot_radius)
         for obstacle in obstacles:
-            self.game_board[obstacle.pos_x][obstacle.pos_y] = obstacle
+            self.game_board[self.width - 1 - obstacle.pos_x][obstacle.pos_y] = obstacle
+
+    def get_coordinate(self, x, y):
+        return self.game_board[self.width - 1 - x][y]
+
+    def get_real_coordinate(self, x, y):
+        return self.game_board[x][y]
 
 
 def build_obstacle(obstacle, width, length, robot_radius):

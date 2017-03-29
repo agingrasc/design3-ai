@@ -9,9 +9,10 @@ import time
 import json
 import numpy as np
 
-DELTA_T = 1/5
+DELTA_T = 1 / 5
 app = Flask(__name__)
 frames = deque()
+
 
 def read_camera():
     cap = cv2.VideoCapture(0)
@@ -26,9 +27,13 @@ def read_camera():
         if time.time() - last_time > DELTA_T:
             last_time = time.time()
             if cap.isOpened():
-                ret,image = cap.read()
+                ret, image = cap.read()
                 if ret:
-                    image = cv2.undistort(image, np.array(camera_model['intrinsic_parameters']), np.array(camera_model['distortion_coefficients']), None, None)
+                    image = cv2.undistort(
+                        image,
+                        np.array(camera_model['intrinsic_parameters']),
+                        np.array(camera_model['distortion_coefficients']), None, None
+                    )
                     frames.append(image)
 
 
@@ -40,7 +45,7 @@ def take_picture():
 
     success, encoded = cv2.imencode('.jpg', image)
     timestamp = time.time()
-    body = { "image": base64.b64encode(encoded).decode('utf-8'), "timestamp": timestamp }
+    body = {"image": base64.b64encode(encoded).decode('utf-8'), "timestamp": timestamp}
     return make_response(jsonify(body))
 
 
@@ -51,4 +56,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
