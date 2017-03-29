@@ -7,8 +7,7 @@ from flask import Flask, make_response, jsonify
 from collections import deque
 import time
 
-
-DELTA_T = 1/15
+DELTA_T = 1 / 15
 app = Flask(__name__)
 frames = deque()
 
@@ -23,7 +22,7 @@ def read_camera():
         if time.time() - last_time > DELTA_T:
             last_time = time.time()
             if cap.isOpened():
-                ret,image = cap.read()
+                ret, image = cap.read()
                 if ret:
                     frames.append(image)
 
@@ -36,7 +35,10 @@ def take_picture():
 
     success, encoded = cv2.imencode('.jpg', image)
     timestamp = time.time()
-    body = { "image": base64.b64encode(encoded).decode('utf-8'), "timestamp": timestamp }
+    body = {
+        "image": base64.b64encode(encoded).decode('utf-8'),
+        "timestamp": timestamp
+    }
     return make_response(jsonify(body))
 
 
@@ -47,4 +49,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

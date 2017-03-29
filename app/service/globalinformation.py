@@ -8,7 +8,6 @@ from websocket import create_connection
 
 from domain.pathfinding.dijkstra import ObstacleType
 
-
 ROBOT_RADIUS = 150
 BASE_URL_PATTERN = "http://{}:12345/{}"
 
@@ -22,8 +21,7 @@ class GlobalInformation:
         self.connection = create_connection("ws://" + url + ":3000")
 
     def get_robot_position(self):
-        data = {'headers': 'pull_robot_position',
-                'data': {}}
+        data = {'headers': 'pull_robot_position', 'data': {}}
         self.connection.send(json.dumps(data))
         robot_position_json = self.connection.recv()
         robot_position_info = json.loads(robot_position_json)
@@ -37,6 +35,11 @@ class GlobalInformation:
         pos = self.get_robot_position()
         return pos.theta
 
+    def get_obstacles_json(self):
+        data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "obstacles")).json()
+        obstacles = data_json['data']['obstacles']
+        return obstacles
+
     def get_obstacles(self) -> List[Tuple[Position, int, ObstacleType]]:
         # pos, radius, tag
         data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "obstacles")).json()
@@ -45,7 +48,7 @@ class GlobalInformation:
         formated_obstacles = []
         for obstacle in obstacles:
             pos = Position(int(obstacle['position']['x']), int(obstacle['position']['y']))
-            radius = int(int(obstacle['dimension']['length'])/2)
+            radius = int(int(obstacle['dimension']['length']) / 2)
             tag = obstacle['tag']
             if tag == "RIGHT":
                 obs_type = ObstacleType.PASS_BY_RIGHT
@@ -67,7 +70,8 @@ class GlobalInformation:
 
     def get_board_dimensions(self) -> Tuple[int, int]:
         data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "world-dimensions")).json()
-        x_dimension, y_dimension = int(float(data_json['world_dimensions']['width'])), int(float(data_json['world_dimensions']['height']))
+        x_dimension, y_dimension = int(float(data_json['world_dimensions']['width'])
+                                       ), int(float(data_json['world_dimensions']['height']))
         return x_dimension, y_dimension
 
     def send_path(self, path):
@@ -77,4 +81,3 @@ class GlobalInformation:
 
         payload_json = json.dumps(payload)
         requests.post(BASE_URL_PATTERN.format(self.base_station_url, "path"), json=payload_json)
-

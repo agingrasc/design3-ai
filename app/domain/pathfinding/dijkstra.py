@@ -6,7 +6,6 @@ from typing import List, Tuple
 
 from domain.gameboard.position import Position
 
-
 PADDING = 10
 WALL_PADDING = 15
 
@@ -18,7 +17,6 @@ class ObstacleType(Enum):
 
 
 class Cell:
-
     class CellState(Enum):
         EMPTY = 0
         BLOCKED = 1
@@ -59,12 +57,19 @@ class Cell:
 
 
 class Grid:
-    def __init__(self, x_dim: int, y_dim: int, scale: int, robot_radius: int, obstacles: List[Tuple[Position, int, ObstacleType]]):
+    def __init__(
+        self,
+        x_dim: int,
+        y_dim: int,
+        scale: int,
+        robot_radius: int,
+        obstacles: List[Tuple[Position, int, ObstacleType]]
+    ):
         self.scale = scale
         self.x_dim = x_dim
         self.y_dim = y_dim
-        self.i_dim = math.ceil(x_dim/self.scale)
-        self.j_dim = math.ceil(y_dim/self.scale)
+        self.i_dim = math.ceil(x_dim / self.scale)
+        self.j_dim = math.ceil(y_dim / self.scale)
         self.rows: List[List[Cell]] = []
         self.robot_radius = robot_radius
 
@@ -76,8 +81,8 @@ class Grid:
     def block_wall(self):
         # mur en X
         j_min = 0
-        j_top_padded = math.ceil((self.robot_radius + WALL_PADDING)/self.scale)
-        j_bottom_padded = math.ceil((self.y_dim - self.robot_radius - WALL_PADDING)/self.scale)
+        j_top_padded = math.ceil((self.robot_radius + WALL_PADDING) / self.scale)
+        j_bottom_padded = math.ceil((self.y_dim - self.robot_radius - WALL_PADDING) / self.scale)
         j_max = self.j_dim - 1
         for i in range(self.i_dim):
             for j in range(j_min, j_top_padded):
@@ -88,8 +93,8 @@ class Grid:
                 self.get_element(i, j).set_blocked()
         # mur en Y
         i_min = 0
-        i_padded_left = math.ceil((self.robot_radius + WALL_PADDING)/self.scale)
-        i_padded_right = math.ceil((self.x_dim - self.robot_radius - WALL_PADDING)/self.scale)
+        i_padded_left = math.ceil((self.robot_radius + WALL_PADDING) / self.scale)
+        i_padded_right = math.ceil((self.x_dim - self.robot_radius - WALL_PADDING) / self.scale)
         i_max = self.i_dim - 1
         for j in range(self.j_dim):
             for i in range(i_min, i_padded_left):
@@ -132,8 +137,8 @@ class Grid:
         return real_x, real_y
 
     def get_cell(self, x, y) -> Cell:
-        i = math.ceil(x/self.scale)
-        j = math.ceil(y/self.scale)
+        i = math.ceil(x / self.scale)
+        j = math.ceil(y / self.scale)
         return self.get_element(i, j)
 
     def get_element(self, i, j):
@@ -155,13 +160,13 @@ class Grid:
         i, j = cell.get_coordinate()
         neighbor = []
         if i - 1 >= 0:
-            neighbor.append(self.get_element(i-1, j))
+            neighbor.append(self.get_element(i - 1, j))
         if i + 1 < self.i_dim:
-            neighbor.append(self.get_element(i+1, j))
+            neighbor.append(self.get_element(i + 1, j))
         if j - 1 >= 0:
-            neighbor.append(self.get_element(i, j-1))
+            neighbor.append(self.get_element(i, j - 1))
         if j + 1 < self.j_dim:
-            neighbor.append(self.get_element(i, j+1))
+            neighbor.append(self.get_element(i, j + 1))
         return neighbor
 
     def print_grid(self):
@@ -182,9 +187,9 @@ class Grid:
         print(grid_str)
 
     def _init_nodes(self, x_dim, y_dim):
-        for j in range(math.ceil(y_dim/self.scale)):
+        for j in range(math.ceil(y_dim / self.scale)):
             col = []
-            for i in range(math.ceil(x_dim/self.scale)):
+            for i in range(math.ceil(x_dim / self.scale)):
                 col.append(Cell(j, i))
             self.rows.append(col)
 
@@ -195,6 +200,8 @@ class Grid:
 
 
 """https://joernhees.de/blog/2010/07/19/min-heap-in-python/"""
+
+
 class Heap:
     """ A neat min-heap wrapper which allows storing items by priority
         and get the lowest item out first (pop()).
@@ -216,7 +223,7 @@ class Heap:
 
     def pop(self):
         """ Returns the item with lowest priority. """
-        item = heapq.heappop(self._heap)[1] # (prio, item)[1] == item
+        item = heapq.heappop(self._heap)[1]  # (prio, item)[1] == item
         return item
 
     def __len__(self):
@@ -243,7 +250,7 @@ class Dijkstra:
         self.grid = grid
 
     def get_path(self, robot_position: Position, target_position: Position) -> List[Position]:
-        x, y = robot_position.pos_x , robot_position.pos_y
+        x, y = robot_position.pos_x, robot_position.pos_y
         init_cell = self.grid.get_cell(x, y)
         init_cell.update_weight(0)
         init_cell.mark_path()
@@ -256,7 +263,7 @@ class Dijkstra:
                     continue
                 for neighbor in self.grid.get_neighbors(work_cell):
                     if not neighbor.visited and not neighbor.is_blocked():
-                        neighbor.update_weight(work_cell.weight+1)
+                        neighbor.update_weight(work_cell.weight + 1)
                         neighbor.previous = work_cell
                         self.heap.push(neighbor.weight, neighbor)
                 work_cell.visited = True
@@ -279,7 +286,12 @@ class Dijkstra:
 
         path.reverse()
 
-        return [Position(int(point.i * self.grid.scale + self.grid.scale/2), int(point.j * self.grid.scale + self.grid.scale/2), robot_position.theta) for point in path]
+        return [
+            Position(
+                int(point.i * self.grid.scale + self.grid.scale / 2),
+                int(point.j * self.grid.scale + self.grid.scale / 2), robot_position.theta
+            ) for point in path
+        ]
 
     def get_segmented_path(self, robot, target):
         return get_corner_from_path(self.get_path(robot, target))
@@ -292,7 +304,7 @@ def get_corner_from_path(path: List[Position]):
     last_angle = get_angle(path[i], path[0])
     i += 1
     angle = get_angle(path[i], path[0])
-    while angle == last_angle and i+1 < len(path):
+    while angle == last_angle and i + 1 < len(path):
         i += 1
         angle = get_angle(path[i], path[0])
     initial_pos = path[0]
