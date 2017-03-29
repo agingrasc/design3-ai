@@ -31,6 +31,12 @@ class GlobalInformation:
         robot_position = Position(pos_x, pos_y, theta)
         return robot_position
 
+    def get_robot_position_json(self):
+        data = {'headers': 'pull_robot_position', 'data': {}}
+        self.connection.send(json.dumps(data))
+        robot_position_json = self.connection.recv()
+        return robot_position_json
+
     def get_robot_orientation(self):
         pos = self.get_robot_position()
         return pos.theta

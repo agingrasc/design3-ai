@@ -92,12 +92,13 @@ class PathFindingITest(TestCase):
         self.validate_path(pathfinder.find_path())
         game_board.print_game_board()
 
-    def test_real_value_no_obstacle(self):
-        obstacle1 = ObstacleValueObject(pos_x=50, pos_y=50, radius=3, tag=Tag.CANT_PASS_RIGHT)
-        game_board = GameBoard(230, 111, [obstacle1])
+    def test_real_value_two_obstacles(self):
+        obstacle1 = ObstacleValueObject(pos_x=148, pos_y=23, radius=3, tag=Tag.CANT_PASS_LEFT)
+        obstacle2 = ObstacleValueObject(pos_x=149, pos_y=80, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        game_board = GameBoard(230, 111, [obstacle1, obstacle2], 5)
 
-        end_position = game_board.get_coordinate(148, 47)
-        begin_position = game_board.get_coordinate(75, 52)
+        end_position = game_board.get_coordinate(211, 104)
+        begin_position = game_board.get_coordinate(56, 63)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
@@ -130,7 +131,7 @@ class PathFindingITest(TestCase):
         game_board.print_game_board_weight()
 
     def validate_path(self, path):
-        new_path = get_segments.get_filter_path(path)
+        new_path = get_segments.get_filter_path(path, 10)
         for pp in new_path:
             print(pp)
         previous_weight = sys.maxsize
