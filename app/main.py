@@ -2,6 +2,7 @@ import sys
 from flask import Flask, jsonify, make_response
 import requests
 
+from api.getimagesegments import set_image_segments
 from api.gotopathfinder import goto_pathfinder
 from api.sendfeedbacktask import send_feedback
 
@@ -55,6 +56,7 @@ def main():
 
     app.register_blueprint(start_ai)
     app.register_blueprint(send_feedback)
+    app.register_blueprint(set_image_segments)
 
     if status == AUTOMATIC:
         print("AUTOMATIC MODE not implemented")
