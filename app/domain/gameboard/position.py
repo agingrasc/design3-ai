@@ -15,5 +15,5 @@ class Position:
         return math.sqrt(float(self.pos_x**2) + float(self.pos_y**2))
 
     def get_angle(self):
-        return np.arctan2(float(self.pos_y), float(self.pos_x))
+        return np.arctan2(float(-self.pos_y), float(self.pos_x))
 

@@ -19,13 +19,14 @@ class Drawer:
 
     def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
         self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
-        robot_pos = self.global_information.get_robot_position()
 
+        segments.pop(0)
         for point in segments:
+            robot_pos = self.global_information.get_robot_position()
             self.robot_controller.raise_pencil()
 
-            vector = Position(robot_pos.pos_x - point.pos_x, robot_pos.pos_y - point.pos_y)
-            angle = vector.get_angle() - draw_angle
+            vector = Position(point.pos_x - robot_pos.pos_x, point.pos_y - robot_pos.pos_y)
+            angle = vector.get_angle() + draw_angle
             self.vision_regulation.oriente_robot(angle)
 
             self.robot_controller.lower_pencil()

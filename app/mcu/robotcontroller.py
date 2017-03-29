@@ -202,11 +202,13 @@ class RobotController(object):
 
         retroaction = self.global_information.get_robot_position()
         angle = retroaction.theta
+
+        distance_to_move_x, distance_to_move_y = correct_for_referential_frame(vec.pos_x, vec.pos_y, angle)
         target_speed_x, target_speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
 
         last_timestamp = time.time()
 
-        remaining_x, remaining_y = self.get_remaining_distances(vec)
+        remaining_x, remaining_y = self.get_remaining_distances(distance_to_move_x, distance_to_move_y)
         while remaining_x > 0 or remaining_y > 0:
             delta_t = time.time() - last_timestamp
             if delta_t > REGULATOR_FREQUENCY:
@@ -225,17 +227,17 @@ class RobotController(object):
                 self.ser_mcu.write(cmd)
                 self.ser_mcu.read(self.ser_mcu.inWaiting())
 
-                remaining_x, remaining_y = self.get_remaining_distances(vec)
+                remaining_x, remaining_y = self.get_remaining_distances(distance_to_move_x, distance_to_move_y)
 
         cmd = protocol.generate_move_command(0, 0, 0)
         self.ser_mcu.write(cmd)
 
-    def get_remaining_distances(self, vec):
+    def get_remaining_distances(self, target_distance_x, target_distance_y):
         distances = self.get_traveled_distance()
         distance_x = distances[3]
         distance_y = distances[1]
-        remaining_x = vec.pos_x - distance_x
-        remaining_y = vec.pos_y - distance_y
+        remaining_x = target_distance_x - distance_x
+        remaining_y = target_distance_y - distance_y
         return remaining_x, remaining_y
 
     def start_power_recording(self):
