@@ -31,7 +31,7 @@ class Drawer:
                 pass
             point.theta = angle
             # FIXME!
-            self.robot_controller.manual_move(point, Position(0, -20))
+            self.robot_controller.precise_move(point, Position(0, -20))
         self.robot_controller.raise_pencil()
 
     def stop(self):

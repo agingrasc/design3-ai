@@ -197,7 +197,7 @@ class RobotController(object):
                     print("Power level: {}".format(power_level))
                     self.powers[retroaction] = power_level
 
-    def manual_move(self, vec: Position, speed: Position=Position(20, 20)):
+    def precise_move(self, vec: Position, speed: Position=Position(20, 20)):
         retroaction = self.global_information.get_robot_position()
         angle = retroaction.theta
         speed_x, speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
