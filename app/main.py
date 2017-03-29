@@ -2,7 +2,7 @@ import sys
 from flask import Flask, jsonify, make_response
 import requests
 
-from api.getimagesegments import set_image_segments
+from api.setimagesegments import set_image_segments
 from api.gotopathfinder import goto_pathfinder
 from api.sendfeedbacktask import send_feedback
 

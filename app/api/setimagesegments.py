@@ -16,7 +16,7 @@ def set_image_segments_():
         print(e.with_traceback())
         return make_response(jsonify(), 400)
 
-    segments = req_info['data']['segments']
+    segments = req_info['segments']
     task_factory.blackboard.segments_image = segments
 
     return make_response(

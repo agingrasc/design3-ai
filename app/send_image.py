@@ -6,25 +6,29 @@ from threading import Thread
 from flask import Flask, make_response, jsonify
 from collections import deque
 import time
+import json
+import numpy as np
 
-
-DELTA_T = 1/15
+DELTA_T = 1/5
 app = Flask(__name__)
 frames = deque()
 
-
 def read_camera():
     cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FPS, 15)
+    cap.set(cv2.CAP_PROP_FPS, 5)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1600)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1200)
     last_time = time.time()
+    with open('./camera_models.json', 'r') as file:
+        camera_model = json.load(file)[0]
+        print(camera_model)
     while True:
         if time.time() - last_time > DELTA_T:
             last_time = time.time()
             if cap.isOpened():
                 ret,image = cap.read()
                 if ret:
+                    image = cv2.undistort(image, np.array(camera_model['intrinsic_parameters']), np.array(camera_model['distortion_coefficients']), None, None)
                     frames.append(image)
 
 
