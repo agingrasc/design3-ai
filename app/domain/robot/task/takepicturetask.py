@@ -6,10 +6,12 @@ import requests as req
 from domain.robot.blackboard import Blackboard
 from domain.robot.geometricinterpreter import GeometricInterpreter
 from domain.robot.task.task import Task
+from service.globalinformation import GlobalInformation
 
 
 class TakePictureTask(Task):
-    def __init__(self, blackboard: Blackboard):
+    def __init__(self, global_information: GlobalInformation, blackboard: Blackboard):
+        self.global_information = global_information
         self.blackboard = blackboard
 
     def execute(self):

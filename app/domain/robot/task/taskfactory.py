@@ -63,7 +63,7 @@ class TaskFactory():
         return self.task_list
 
     def create_take_picture_task(self):
-        self.task_list.append(TakePictureTask(self.blackboard))
+        self.task_list.append(TakePictureTask(self.global_information, self.blackboard))
         return self.task_list
 
     def create_go_to_drawzone_task(self):
@@ -95,30 +95,15 @@ class TaskFactory():
         return self.task_list
 
     def create_competition_tasks(self):
-        self.task_list.append(InitialOrientationTask(self.feedback, self.vision_regulation, self.global_information))
-        self.task_list.append(IdentifyAntennaTask(self.drawer, self.antenna, self.feedback, self.vision_regulation,
-                                                  self.global_information))
-        self.task_list.append(ReceiveInformationTask(self.feedback, self.decoder))
-        self.task_list.append(GoToImageTask(self.feedback,
-                                            self.vision_regulation,
-                                            self.global_information,
-                                            pathfinding_application_service,
-                                            self.blackboard))
-        self.task_list.append(TakePictureTask(self.robot_controller))
-        self.task_list.append(GoToDrawzoneTask(self.feedback,
-                                               self.vision_regulation,
-                                               self.global_information,
-                                               pathfinding_application_service,
-                                               get_segments))
-        self.task_list.append(DrawTask(self.feedback, self.drawer))
-        self.task_list.append(GoOutOfDrawzoneTask(self.feedback,
-                                                  self.vision_regulation,
-                                                  self.destination_calculator,
-                                                  self.global_information,
-                                                  pathfinding_application_service,
-                                                  get_segments))
-        self.task_list.append(LightRedLedTask(self.feedback, self.lighter))
-
+        self.create_initial_orientation_task()
+        self.create_indentify_antenna_task()
+        self.create_receive_informations_task()
+        self.create_go_to_image_task()
+        self.create_take_picture_task()
+        self.create_go_to_drawzone_task()
+        self.create_draw_task()
+        self.create_go_to_drawzone_task()
+        self.create_light_red_led_task()
         return self.task_list
 
     def set_url(self, url: str):
