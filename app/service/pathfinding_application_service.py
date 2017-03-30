@@ -37,6 +37,6 @@ def find(global_information: GlobalInformation, destination):
     print('ici')
     for pos in path:
         print(pos)
-    game_board.print_game_board()
+    # game_board.print_game_board()
     global_information.send_path(path)
     return path
