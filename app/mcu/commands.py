@@ -19,7 +19,7 @@ DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
 POSITION_ACC_DECAY = 0.79  # 3 iteration pour diminuer de moitie
-THETA_ACC_DECAY = 0.79
+THETA_ACC_DECAY = 1
 
 #DEFAULT_KP = 0.1
 DEFAULT_KP = 0.75
@@ -27,14 +27,14 @@ DEFAULT_KP = 0.75
 DEFAULT_KI = 0
 DEFAULT_KD = 0
 #DEFAULT_THETA_KP = 0.2
-DEFAULT_THETA_KP = 0
+DEFAULT_THETA_KP = 0.07
 #DEFAULT_THETA_KI = 0.2
-DEFAULT_THETA_KI = 0
+DEFAULT_THETA_KI = 0.003
 DEFAULT_MAX_CMD = 100
 DEFAULT_DEADZONE_CMD = 20
 DEFAULT_MIN_CMD = 0
-DEFAULT_THETA_MAX_CMD = 0.2
-DEFAULT_THETA_MIN_CMD = 0.05
+DEFAULT_THETA_MAX_CMD = 0.3
+DEFAULT_THETA_MIN_CMD = 0.005
 # 2Pi rad en 10,66 secondes (0.5) et 17,25 secondes (0.3)
 
 
@@ -160,7 +160,7 @@ class PIPositionRegulator(object):
         if abs(err_theta) < THETA_DEADZONE:
             saturated_theta = 0
 
-        print("Acc: {} -- {}".format(self.accumulator[0], self.accumulator[1]))
+        print("Acc: {} -- {} -- {}".format(self.accumulator[0], self.accumulator[1], self.accumulator[2]))
         print("Distance ({}): {} -- {}".format(math.sqrt(err_x**2 + err_y**2), err_x, err_y))
 
         command = []
@@ -207,11 +207,11 @@ class PIPositionRegulator(object):
 
     def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
         deadzone *= 1.1
+        theta_deadzone = THETA_DEADZONE * 1.03
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
         err_theta = robot_position.theta - self.setpoint.theta
-        return abs(err_x) < deadzone and abs(err_y) < deadzone
-        #return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone * 1.5 and abs(err_theta) < THETA_DEADZONE * 1.5
+        return abs(err_x) < deadzone and abs(err_y) < deadzone and abs(err_theta) < theta_deadzone
 
 
 def correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:
