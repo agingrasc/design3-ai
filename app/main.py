@@ -5,7 +5,7 @@ import requests
 from api.setimagesegments import set_image_segments
 from api.gotopathfinder import goto_pathfinder
 from api.sendfeedbacktask import send_feedback
-
+from api.lightgreenled import light_green_led
 from api.startai import start_ai
 
 from api.gotoposition.gotoposition import go_to_position
@@ -57,6 +57,7 @@ def main():
     app.register_blueprint(start_ai)
     app.register_blueprint(send_feedback)
     app.register_blueprint(set_image_segments)
+    app.register_blueprint(light_green_led)
 
     if status == AUTOMATIC:
         print("AUTOMATIC MODE not implemented")

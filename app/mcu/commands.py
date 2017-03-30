@@ -13,23 +13,19 @@ from .protocol import Leds
 
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 2  # mm
-THETA_DEADZONE = 0.009  # rad
+DEADZONE = 4  # mm
+THETA_DEADZONE = 0.022  # rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
 POSITION_ACC_DECAY = 0.79  # 3 iteration pour diminuer de moitie
 THETA_ACC_DECAY = 1
 
-#DEFAULT_KP = 0.1
-DEFAULT_KP = 0.75
-#DEFAULT_KI = 0.001
-DEFAULT_KI = 0
+DEFAULT_KP = 0.015
+DEFAULT_KI = 0.600
 DEFAULT_KD = 0
-#DEFAULT_THETA_KP = 0.2
-DEFAULT_THETA_KP = 0.07
-#DEFAULT_THETA_KI = 0.2
-DEFAULT_THETA_KI = 0.003
+DEFAULT_THETA_KP = 0.10
+DEFAULT_THETA_KI = 0.007
 DEFAULT_MAX_CMD = 100
 DEFAULT_DEADZONE_CMD = 20
 DEFAULT_MIN_CMD = 0

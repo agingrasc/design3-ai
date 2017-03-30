@@ -13,6 +13,7 @@ from domain.command.antenna import Antenna
 
 LINE_LENGHT = 1
 ANTENNA_DRAW_MARK_ANGLE = 0.79
+ANTENNA_MARK_LENGTH = 3
 
 
 class IdentifyAntennaTask(Task):
@@ -47,10 +48,10 @@ class IdentifyAntennaTask(Task):
 
         robot_pos = self.global_information.get_robot_position()
         end_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
-        move_vec = Position(end_position.pos_x - robot_pos.pos_x, end_position.pos_y - robot_pos.pos_y)
+        move_vec = Position(0, -ANTENNA_MARK_LENGTH)
 
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
 
         self.antenna.robot_controller.lower_pencil()
-        self.antenna.robot_controller.precise_move(move_vec, Position(0, -20))
+        self.antenna.robot_controller.precise_move(move_vec, Position(20, -20))
         self.antenna.robot_controller.raise_pencil()

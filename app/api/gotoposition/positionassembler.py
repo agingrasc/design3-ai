@@ -6,8 +6,12 @@ class PositionAssembler:
         self.scaling = scaling
 
     def convert_position_from_json(self, position) -> Position:
-        x_position = int(float(position["x"]) / self.scaling)
-        y_position = int(float(position["y"]) / self.scaling)
+        try:
+            x_position = int(float(position["x"]) / self.scaling)
+            y_position = int(float(position["y"]) / self.scaling)
+        except:
+            x_position = -1000
+            y_position = -1000
         try:
             theta = float(position["theta"])
             return Position(x_position, y_position, theta)

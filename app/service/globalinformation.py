@@ -15,6 +15,7 @@ BASE_URL_PATTERN = "http://{}:12345/{}"
 class GlobalInformation:
     def __init__(self):
         self.connection = None
+        self.base_station_url = None
 
     def set_url(self, url: str):
         self.base_station_url = url

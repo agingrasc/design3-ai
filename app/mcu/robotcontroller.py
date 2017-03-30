@@ -236,8 +236,8 @@ class RobotController(object):
         distances = self.get_traveled_distance()
         distance_x = distances[3]
         distance_y = distances[1]
-        remaining_x = target_distance_x - distance_x
-        remaining_y = target_distance_y - distance_y
+        remaining_x = abs(target_distance_x) - abs(distance_x)
+        remaining_y = abs(target_distance_y) - abs(distance_y)
         return remaining_x, remaining_y
 
     def start_power_recording(self):
