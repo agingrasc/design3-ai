@@ -83,8 +83,7 @@ class TaskFactory():
                                                   self.vision_regulation,
                                                   self.destination_calculator,
                                                   self.global_information,
-                                                  pathfinding_application_service,
-                                                  get_segments))
+                                                  pathfinding_application_service))
         return self.task_list
 
     def create_light_red_led_task(self):

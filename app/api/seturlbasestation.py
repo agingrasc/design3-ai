@@ -1,6 +1,7 @@
 import requests as req
 from flask import Blueprint, request, make_response, jsonify
 
+from api.sendfeedbacktask import BASE_STATION_API_URL
 from domain.robot.task.taskfactory import task_factory
 
 set_url = Blueprint('set-url', __name__)

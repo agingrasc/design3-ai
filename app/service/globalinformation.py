@@ -11,6 +11,8 @@ from domain.pathfinding.dijkstra import ObstacleType
 ROBOT_RADIUS = 150
 BASE_URL_PATTERN = "http://{}:12345/{}"
 
+DRAWZONE_CORNER_POSITION_ENDPOINT = "drawzone-corners"
+
 
 class GlobalInformation:
     def __init__(self):
@@ -70,7 +72,10 @@ class GlobalInformation:
         return formated_obstacles
 
     def get_drawzone_corner_position(self):
-        pass
+        data_json = requests.get("http://{}:5000/{}".format(self.base_station_url, DRAWZONE_CORNER_POSITION_ENDPOINT)).json()
+        x = int(float(data_json['data']['top_right']['x']))
+        y = int(float(data_json['data']['top_right']['y']))
+        return Position(x, y)
 
     def get_robot_radius(self):
         return ROBOT_RADIUS
