@@ -18,7 +18,7 @@ class Channels(Enum):
 
 class PencilTarget(Enum):
     RAISED = 1300
-    LOWERED = 1900
+    LOWERED = 1952
 
 
 class MinTargets(Enum):

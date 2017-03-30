@@ -34,9 +34,7 @@ def find(global_information: GlobalInformation, destination):
 
     pathfinder = PathFinding(game_board, robot_position, destination)
     path = get_segments.get_filter_path(pathfinder.find_path(), DEFAULT_CELL_SCALE)
-    print('ici')
     for pos in path:
         print(pos)
-    # game_board.print_game_board()
     global_information.send_path(path)
     return path

@@ -204,7 +204,7 @@ class RobotController(object):
         angle = retroaction.theta
 
         distance_to_move_x, distance_to_move_y = correct_for_referential_frame(vec.pos_x, vec.pos_y, angle)
-        target_speed_x, target_speed_y = correct_for_referential_frame(speed.pos_x, speed.pos_y, angle)
+        target_speed_x, target_speed_y = speed.pos_x, speed.pos_y
 
         last_timestamp = time.time()
 

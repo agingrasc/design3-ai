@@ -14,7 +14,7 @@ from .protocol import PencilStatus, Leds
 
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 10  # mm
+DEADZONE = 50  # mm
 THETA_DEADZONE = 0.009  # rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
