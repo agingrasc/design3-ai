@@ -12,6 +12,7 @@ ROBOT_RADIUS = 150
 BASE_URL_PATTERN = "http://{}:12345/{}"
 
 DRAWZONE_CORNER_POSITION_ENDPOINT = "drawzone-corners"
+TAKE_PICTURE_ENDPOINT = "take-picture"
 
 
 class GlobalInformation:
@@ -93,3 +94,8 @@ class GlobalInformation:
 
         payload_json = json.dumps(payload)
         requests.post(BASE_URL_PATTERN.format(self.base_station_url, "path"), json=payload_json)
+
+    def send_take_picture_request(self, scale_factor, orientation):
+        payload = {'data': {'scaling': scale_factor,
+                            'orientation': orientation}}
+        requests.post(BASE_URL_PATTERN.format(self.base_station_url(), TAKE_PICTURE_ENDPOINT), payload)
