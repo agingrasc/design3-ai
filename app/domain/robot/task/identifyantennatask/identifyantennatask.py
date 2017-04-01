@@ -17,14 +17,14 @@ ANTENNA_MARK_LENGTH = 3
 
 
 class IdentifyAntennaTask(Task):
-    def __init__(self,
-                 drawer: Drawer,
-                 antenna: Antenna,
-                 feedback: Feedback,
-                 vision_regulation: VisionRegulation,
-                 global_information: GlobalInformation,
-                 blackboard: Blackboard):
-        self.drawer = drawer
+    def __init__(
+        self,
+        antenna: Antenna,
+        feedback: Feedback,
+        vision_regulation: VisionRegulation,
+        global_information: GlobalInformation,
+        blackboard: Blackboard
+    ):
         self.antenna = antenna
         self.vision_regulation = vision_regulation
         self.global_information = global_information
