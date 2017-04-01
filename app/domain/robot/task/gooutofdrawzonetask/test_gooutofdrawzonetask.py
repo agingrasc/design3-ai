@@ -3,7 +3,6 @@ from unittest.mock import Mock, call
 
 from domain.robot.task.gooutofdrawzonetask.gooutofdrawzonetask import GoOutOfDrawzoneTask
 
-
 VALID_OBSTACLES_LIST = [Mock(pos_x=50, pos_y=50, radius=2, Tag=""), Mock(pos_x=40, pos_y=40, radius=2, Tag="")]
 VALID_SAFEZONE_POSITION = Mock(pos_x=45, pos_y=45)
 WIDTH_TABLE = 1120
@@ -11,8 +10,8 @@ LENGTH_TABLE = 2300
 VALID_PATH = [(35, 35), (40, 40), (45, 45)]
 VALID_DESTINATIONS_PATH = [(40, 40), (45, 45)]
 
-class GoOutOfDrawzoneTaskTest(TestCase):
 
+class GoOutOfDrawzoneTaskTest(TestCase):
     def setUp(self):
         self.feedback = Mock()
         self.vision_regulation = Mock()
@@ -30,12 +29,10 @@ class GoOutOfDrawzoneTaskTest(TestCase):
         self.get_segments.get_filter_path.return_value = VALID_DESTINATIONS_PATH
 
     def test_get_information_of_the_gameboard_correctly(self):
-        task = GoOutOfDrawzoneTask(self.feedback,
-                                    self.vision_regulation,
-                                    self.destination_calculator,
-                                    self.global_information,
-                                    self.pathfinding_application_service,
-                                    self.get_segments)
+        task = GoOutOfDrawzoneTask(
+            self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
+            self.pathfinding_application_service, self.get_segments
+        )
 
         task.execute()
 
@@ -46,44 +43,34 @@ class GoOutOfDrawzoneTaskTest(TestCase):
         self.global_information.assert_has_calls(expected_calls)
 
     def test_get_safezone_correctly(self):
-        task = GoOutOfDrawzoneTask(self.feedback,
-                                   self.vision_regulation,
-                                   self.destination_calculator,
-                                   self.global_information,
-                                   self.pathfinding_application_service,
-                                   self.get_segments)
+        task = GoOutOfDrawzoneTask(
+            self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
+            self.pathfinding_application_service, self.get_segments
+        )
 
         task.execute()
 
-        expected_calls = [
-            call(VALID_OBSTACLES_LIST, self.robot_position)
-        ]
+        expected_calls = [call(VALID_OBSTACLES_LIST, self.robot_position)]
 
         self.destination_calculator.get_safezone.assert_has_calls(expected_calls)
 
     def test_call_go_to_position_correctly(self):
-        task = GoOutOfDrawzoneTask(self.feedback,
-                                   self.vision_regulation,
-                                   self.destination_calculator,
-                                   self.global_information,
-                                   self.pathfinding_application_service,
-                                   self.get_segments)
+        task = GoOutOfDrawzoneTask(
+            self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
+            self.pathfinding_application_service, self.get_segments
+        )
 
         task.execute()
 
-        expected_calls = [
-            call(VALID_DESTINATIONS_PATH[0]), call(VALID_DESTINATIONS_PATH[1])
-        ]
+        expected_calls = [call(VALID_DESTINATIONS_PATH[0]), call(VALID_DESTINATIONS_PATH[1])]
 
         self.vision_regulation.go_to_position.assert_has_calls(expected_calls)
 
     def test_get_path_to_safezone_correctly(self):
-        task = GoOutOfDrawzoneTask(self.feedback,
-                                   self.vision_regulation,
-                                   self.destination_calculator,
-                                   self.global_information,
-                                   self.pathfinding_application_service,
-                                   self.get_segments)
+        task = GoOutOfDrawzoneTask(
+            self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
+            self.pathfinding_application_service, self.get_segments
+        )
 
         task.execute()
 
@@ -94,28 +81,22 @@ class GoOutOfDrawzoneTaskTest(TestCase):
         self.pathfinding_application_service.find.assert_has_calls(expected_calls)
 
     def test_get_path_corners_correctly(self):
-        task = GoOutOfDrawzoneTask(self.feedback,
-                                   self.vision_regulation,
-                                   self.destination_calculator,
-                                   self.global_information,
-                                   self.pathfinding_application_service,
-                                   self.get_segments)
+        task = GoOutOfDrawzoneTask(
+            self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
+            self.pathfinding_application_service, self.get_segments
+        )
 
         task.execute()
 
-        expected_calls = [
-            call(VALID_PATH)
-        ]
+        expected_calls = [call(VALID_PATH)]
 
         self.get_segments.get_filter_path.assert_has_calls(expected_calls)
 
     def test_called_all_subtask(self):
-        task = GoOutOfDrawzoneTask(self.feedback,
-                                   self.vision_regulation,
-                                   self.destination_calculator,
-                                   self.global_information,
-                                   self.pathfinding_application_service,
-                                   self.get_segments)
+        task = GoOutOfDrawzoneTask(
+            self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
+            self.pathfinding_application_service, self.get_segments
+        )
         task.execute()
 
         self.feedback.send_comment.assert_called_once()
