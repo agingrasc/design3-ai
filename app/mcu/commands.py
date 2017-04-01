@@ -3,35 +3,34 @@ from abc import abstractmethod, ABCMeta
 from collections import namedtuple
 
 import math
-import time
 from typing import List, Tuple
 
 import numpy as np
 
 from domain.gameboard.position import Position
 from . import protocol
-from .protocol import PencilStatus, Leds
+from .protocol import Leds
 
 PIDConstants = namedtuple("PIDConstants",
-                          'kp ki kd theta_kp theta_ki max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
-DEADZONE = 20 #mm
-THETA_DEADZONE = 0.009 #rad
+                          'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
+DEADZONE = 4  # mm
+THETA_DEADZONE = 0.022  # rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
-POSITION_ACC_DECAY = 0.79
-THETA_ACC_DECAY = 0.79 #3 iteration pour diminuer de moitie
+POSITION_ACC_DECAY = 0.79  # 3 iteration pour diminuer de moitie
+THETA_ACC_DECAY = 1
 
-DEFAULT_KP = 1.0
-DEFAULT_KI = 0.1
+DEFAULT_KP = 0.015
+DEFAULT_KI = 0.600
 DEFAULT_KD = 0
-DEFAULT_THETA_KP = 0.1
-DEFAULT_THETA_KI = 0.5
-DEFAULT_MAX_CMD = 55
+DEFAULT_THETA_KP = 0.10
+DEFAULT_THETA_KI = 0.007
+DEFAULT_MAX_CMD = 100
 DEFAULT_DEADZONE_CMD = 20
-DEFAULT_MIN_CMD = 20
-DEFAULT_THETA_MAX_CMD = 0.2
-DEFAULT_THETA_MIN_CMD = 0.015
+DEFAULT_MIN_CMD = 0
+DEFAULT_THETA_MAX_CMD = 0.3
+DEFAULT_THETA_MIN_CMD = 0.005
 # 2Pi rad en 10,66 secondes (0.5) et 17,25 secondes (0.3)
 
 
@@ -39,12 +38,12 @@ class PIPositionRegulator(object):
     """ Implémente un régulateur PI qui agit avec une rétroaction en position et génère une commande de vitesse."""
 
     def __init__(self, kp=DEFAULT_KP, ki=DEFAULT_KI, kd=DEFAULT_KD, theta_kp=DEFAULT_THETA_KP,
-                 theta_ki=DEFAULT_THETA_KI, max_cmd=DEFAULT_MAX_CMD,
+                 theta_ki=DEFAULT_THETA_KI, position_deadzone=DEADZONE, max_cmd=DEFAULT_MAX_CMD,
                  deadzone_cmd=DEFAULT_DEADZONE_CMD, min_cmd=DEFAULT_MIN_CMD, theta_max=DEFAULT_THETA_MAX_CMD,
                  theta_min=DEFAULT_THETA_MIN_CMD):
         self._setpoint: Position = Position()
         self.accumulator = [0, 0, 0]
-        self.constants = PIDConstants(kp, ki, kd, theta_kp, theta_ki, max_cmd, deadzone_cmd, min_cmd, theta_max,
+        self.constants = PIDConstants(kp, ki, kd, theta_kp, theta_ki, position_deadzone, max_cmd, deadzone_cmd, min_cmd, theta_max,
                                       theta_min)
 
     @property
@@ -58,6 +57,28 @@ class PIPositionRegulator(object):
             self.accumulator = [0, 0, 0]
             self._setpoint = new_setpoint
 
+    def set_speed(self, move_speed, deadzone):
+        kp = self.constants.kp
+        ki = self.constants.ki
+        kd = self.constants.kd
+        theta_kp = self.constants.theta_kp
+        theta_ki = self.constants.theta_ki
+        deadzone_cmd = self.constants.deadzone_cmd
+        min_cmd = self.constants.min_cmd
+        theta_max = self.constants.theta_max_cmd
+        theta_min = self.constants.theta_min_cmd
+        self.constants = PIDConstants(kp,
+                                      ki,
+                                      kd,
+                                      theta_kp,
+                                      theta_ki,
+                                      deadzone,
+                                      move_speed,
+                                      deadzone_cmd,
+                                      min_cmd,
+                                      theta_max,
+                                      theta_min)
+
     def next_speed_command(self, actual_position: Position, delta_t: float = DEFAULT_DELTA_T) -> List[int]:
         """"
         Calcul une iteration du PID.
@@ -67,7 +88,6 @@ class PIPositionRegulator(object):
         Returns:
             La vitesse en x, y et en theta.
         """
-        print("Retroaction position: {}\n".format(actual_position))
         actual_x = actual_position.pos_x
         actual_y = actual_position.pos_y
         actual_theta = actual_position.theta
@@ -83,24 +103,34 @@ class PIPositionRegulator(object):
         up_x = err_x * self.constants.kp
         up_y = err_y * self.constants.kp
 
-        ui_x = self.accumulator[0] + self.constants.ki * err_x * delta_t
-        ui_y = self.accumulator[1] + self.constants.ki * err_y * delta_t
+        ui_x = self.accumulator[0] + (self.constants.ki * err_x * delta_t)
+        ui_y = self.accumulator[1] + (self.constants.ki * err_y * delta_t)
 
         cmd_x = up_x + ui_x
         cmd_y = up_y + ui_y
 
-        self.accumulator[0] += ui_x
-        self.accumulator[1] += ui_y
+        self.accumulator[0] = ui_x
+        self.accumulator[1] = ui_y
 
         self.accumulator[0] *= POSITION_ACC_DECAY
         self.accumulator[1] *= POSITION_ACC_DECAY
 
+        if self.accumulator[0] > self.constants.max_cmd:
+            self.accumulator[0] = self.constants.max_cmd
+        elif self.accumulator[0] < -self.constants.max_cmd:
+            self.accumulator[0] = -self.constants.max_cmd
+
+        if self.accumulator[1] > self.constants.max_cmd:
+            self.accumulator[1] = self.constants.max_cmd
+        elif self.accumulator[1] < -self.constants.max_cmd:
+            self.accumulator[1] = -self.constants.max_cmd
+
         cmd_x = self._relinearize(cmd_x)
         cmd_y = self._relinearize(cmd_y)
-        cmd_x, cmd_y = _correct_for_referential_frame(cmd_x, cmd_y, actual_theta)
+        cmd_x, cmd_y = correct_for_referential_frame(cmd_x, cmd_y, actual_theta)
 
         # correction referentiel
-        corrected_err_x, corrected_err_y = _correct_for_referential_frame(err_x, err_y, actual_theta)
+        corrected_err_x, corrected_err_y = correct_for_referential_frame(err_x, err_y, actual_theta)
 
         # saturation de la commande x/y
         saturated_cmd = []
@@ -108,9 +138,9 @@ class PIPositionRegulator(object):
             saturated_cmd.append(self._saturate_cmd(cmd))
 
         # deadzone pour arret du mouvement
-        if abs(corrected_err_x) < DEADZONE:
+        if abs(corrected_err_x) < self.constants.position_deadzone:
             saturated_cmd[0] = 0
-        if abs(corrected_err_y) < DEADZONE:
+        if abs(corrected_err_y) < self.constants.position_deadzone:
             saturated_cmd[1] = 0
 
         # calcul de la vitesse angulaire
@@ -126,21 +156,21 @@ class PIPositionRegulator(object):
         if abs(err_theta) < THETA_DEADZONE:
             saturated_theta = 0
 
+        print("Acc: {} -- {} -- {}".format(self.accumulator[0], self.accumulator[1], self.accumulator[2]))
+        print("Distance ({}): {} -- {}".format(math.sqrt(err_x**2 + err_y**2), err_x, err_y))
+
         command = []
         for cmd in saturated_cmd:
             command.append(int(cmd))
         command.append(saturated_theta)
-        print("Regulator cmd: {}, {}, {}\n".format(command[0], command[1], command[2]))
         return command
 
     def _relinearize(self, cmd):
         """" Force la valeur de cmd dans [deadzone_cmd, max_cmd] ou 0 si dans [-min_cmd, min_cmd]"""
-        if self.constants.min_cmd < cmd < self.constants.deadzone_cmd:
-            return self.constants.deadzone_cmd
-        elif -self.constants.deadzone_cmd < cmd < -self.constants.min_cmd:
-            return -self.constants.deadzone_cmd
-        elif -self.constants.min_cmd <= cmd <= self.constants.min_cmd:
-            return 0
+        if 0 < cmd < self.constants.min_cmd:
+            return cmd + self.constants.deadzone_cmd
+        elif -self.constants.min_cmd < cmd < 0:
+            return cmd - self.constants.deadzone_cmd
         else:
             return cmd
 
@@ -171,14 +201,16 @@ class PIPositionRegulator(object):
             return -self.constants.theta_max_cmd
         return cmd
 
-    def is_arrived(self, robot_position: Position, deadzone=DEADZONE*2):
+    def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
+        deadzone *= 1.1
+        theta_deadzone = THETA_DEADZONE * 1.03
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
         err_theta = robot_position.theta - self.setpoint.theta
-        return math.sqrt(err_x ** 2 + err_y ** 2) < deadzone and abs(err_theta) < THETA_DEADZONE
+        return abs(err_x) < deadzone and abs(err_y) < deadzone and abs(err_theta) < theta_deadzone
 
 
-def _correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float]:
+def correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:
     """"
     Rotation du vecteur (x, y) dans le plan monde pour l'orienter avec l'angle t du robot.
     Args:
@@ -247,17 +279,6 @@ class CameraOrientationCommand(ICommand):
         return protocol.generate_camera_command(self.x_theta, self.y_theta)
 
 
-class PencilRaiseLowerCommand(ICommand):
-    """" Une commande Pencil permet de controler le status du prehenseur."""
-
-    def __init__(self, status: PencilStatus):
-        super().__init__()
-        self.status = status
-
-    def pack_command(self) -> bytes:
-        return protocol.generate_pencil_command(self.status)
-
-
 class LedCommand(ICommand):
     def __init__(self, led: Leds):
         super().__init__()
@@ -272,7 +293,7 @@ class DecodeManchesterCommand(ICommand):
         super().__init__()
 
     def pack_command(self) -> bytes:
-        return protocol.generate_decode_manchester_command()
+        return protocol.generate_decode_manchester()
 
 
 class GetManchesterPowerCommand(ICommand):
@@ -280,4 +301,4 @@ class GetManchesterPowerCommand(ICommand):
         super().__init__()
 
     def pack_command(self) -> bytes:
-        return protocol.generate_get_manchester_power_command()
+        return protocol.generate_get_manchester_power()

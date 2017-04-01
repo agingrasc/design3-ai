@@ -3,27 +3,33 @@
 from enum import Enum
 from .protocol import PencilStatus
 
+
 class CommandType(Enum):
     SET_TARGET = 0x84
     GET_POSITION = 0x90
     SET_MULTIPLE_TARGET = 0x9F
+
 
 class Channels(Enum):
     CAMERA_X = 0x0
     CAMERA_Y = 0x1
     PENCIL = 0x2
 
+
 class PencilTarget(Enum):
-    RAISED = 1104
-    LOWERED = 1769 # TODO: Still to be increased in order to get visible pencil mark
+    RAISED = 1300
+    LOWERED = 1952
+
 
 class MinTargets(Enum):
     CAMERA_X = 1104
     CAMERA_Y = 1104
 
+
 class MaxTargets(Enum):
     CAMERA_X = 1904
     CAMERA_Y = 1600
+
 
 def rad_to_camera_target(x, y):
     # Converts radian to microseconds pulse length
@@ -43,6 +49,7 @@ def rad_to_camera_target(x, y):
 
     return (xt, yt)
 
+
 def generate_camera_command(x, y) -> bytes:
     xt, yt = rad_to_camera_target(x, y)
 
@@ -54,18 +61,21 @@ def generate_camera_command(x, y) -> bytes:
 
     return header + payload
 
+
 def generate_pencil_command(status: PencilStatus) -> bytes:
     target = PencilTarget.RAISED
     if status == PencilStatus.LOWERED:
         target = PencilTarget.LOWERED
 
-    header = bytes([CommandType.SET_TARGET, Channels.PENCIL])
+    header = bytes([CommandType.SET_TARGET.value, Channels.PENCIL.value])
     payload = bytes([_get_lower_bits(target), _get_higher_bits(target)])
 
     return header + payload
 
+
 def _get_higher_bits(cmd):
-    return cmd >> 7 & 0x7F
+    return (cmd.value * 4) >> 7 & 0x7F
+
 
 def _get_lower_bits(cmd):
-    return cmd & 0x7F
+    return (cmd.value * 4) & 0x7F

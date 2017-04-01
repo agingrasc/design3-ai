@@ -29,6 +29,9 @@ class PayloadLength(Enum):
     DECODE_MANCHESTER = 4
     GET_MANCHESTER_CODE_POWER = 2
     GET_MOTOR_ROTATION_DIRECTION = 2
+    RESET_TRAVELED_DISTANCE = 0
+    GET_TRAVELED_DISTANCE = 0
+    RESET_STATE = 0
 
 class CommandType(Enum):
     MOVE = 0x00
@@ -36,6 +39,7 @@ class CommandType(Enum):
     PENCIL = 0x02
     LED = 0x03
     SET_PID_CONSTANTS = 0x04
+    RESET_STATE = 0x05
     MANUAL_SPEED = 0xa0
     READ_ENCODER = 0xa1
     TOGGLE_PID = 0xa2
@@ -45,7 +49,8 @@ class CommandType(Enum):
     DECODE_MANCHESTER = 0xb1
     GET_MANCHESTER_CODE_POWER = 0xb2
     GET_MOTOR_ROTATION_DIRECTION = 0xb3
-
+    RESET_TRAVELED_DISTANCE = 0xb4
+    GET_TRAVELED_DISTANCE = 0xb5
 
 class Leds(Enum):
     UP_RED = 0
@@ -88,15 +93,29 @@ class MotorsRotation(Enum):
     CLOCKWISE = 0
     COUNTERCLOCKWISE = 1
 
+
 class ManchesterOrientation(Enum):
     NORTH = 0
     EAST = 1
     SOUTH = 2
     WEST = 3
 
+
 class ManchesterScale(Enum):
     X2 = 0
     X4 = 1
+
+
+class ManchesterResultCode(Enum):
+    NONE = -100
+    SUCCESS = 0
+    NO_VALID_LOGIC_LEVEL = -1
+    SPURIOUS_LEVEL = -2
+    PATTERN_NOT_FOUND = -3
+    CODE_TOO_LONG = -4
+    DUMB_ERROR = -5
+    INVALID_CODE = -6
+
 
 def generate_move_command(x, y, theta) -> bytes:
     speeds = compute_wheels_speed(x, y, theta)
@@ -158,7 +177,8 @@ def generate_read_last_adc(adc: Adc):
     payload = _generate_payload([adc.value])
     return header + payload
 
-def generate_get_manchester_power_cmd():
+
+def generate_get_manchester_power():
     """
     Genere une commande qui une demande le dernier voltage du code manchester mesuré par le MCU
     Return:
@@ -168,6 +188,7 @@ def generate_get_manchester_power_cmd():
     payload = _generate_payload([0])
     return header + payload
 
+
 def generate_decode_manchester():
     """
     Genere une commande qui une demande de décodage Manchester au MCU
@@ -175,6 +196,40 @@ def generate_decode_manchester():
         :cmd bytes: La commande serialise
     """
     header = _generate_header(CommandType.DECODE_MANCHESTER, PayloadLength.DECODE_MANCHESTER)
+    payload = _generate_payload([0])
+    return header + payload
+
+
+def generate_reset_traveled_distance_command():
+    """
+    Genere une commande qui demande de reinitialiser l'intégration de la vitesse au MCU
+    Return:
+        :cmd bytes: La commande serialise
+    """
+
+    header = _generate_header(CommandType.RESET_TRAVELED_DISTANCE, PayloadLength.RESET_TRAVELED_DISTANCE)
+    payload = _generate_payload([0])
+    return header + payload
+
+def generate_get_traveled_distance_command():
+    """
+    Genere une commande qui demande au MCU la distance parcourue pour en X et en Y depuis la dernière réinitialisation
+    Return:
+        :cmd bytes: La commande serialise
+    """
+
+    header = _generate_header(CommandType.GET_TRAVELED_DISTANCE, PayloadLength.GET_TRAVELED_DISTANCE)
+    payload = _generate_payload([0])
+    return header + payload
+
+def generate_reset_state_command():
+    """
+    Genere une commande qui demande au MCU de réinitialiser l'état des périphériques afin de débuter une nouvelle ronde de jeu
+    Return:
+        :cmd bytes: La commande serialise
+    """
+
+    header = _generate_header(CommandType.RESET_STATE, PayloadLength.RESET_STATE)
     payload = _generate_payload([0])
     return header + payload
 

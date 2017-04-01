@@ -22,9 +22,9 @@ class ObstacleAssembler:
                 obstacle["dimension"])
             tag = obstacle["tag"]
             if tag == "LEFT":
-                tag = Tag.CANT_PASS_LEFT
-            elif tag == "RIGHT":
                 tag = Tag.CANT_PASS_RIGHT
+            elif tag == "RIGHT":
+                tag = Tag.CANT_PASS_LEFT
             else:
                 tag = ""
             new_obstacle = ObstacleValueObject(

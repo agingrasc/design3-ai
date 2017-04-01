@@ -1,11 +1,17 @@
 import sys
 from flask import Flask, jsonify, make_response
-
-from api import ledok
-from api.gotoposition.gotoposition import go_to_position
-from mcu.robotcontroller import RobotController, robot_controller
-from domain.command.visionregulation import vision_regulator
 import requests
+
+from api.setimagesegments import set_image_segments
+from api.gotopathfinder import goto_pathfinder
+from api.sendfeedbacktask import send_feedback
+from api.lightgreenled import light_green_led
+from api.seturlbasestation import set_url
+from api.startai import start_ai
+
+from api.gotoposition.gotoposition import go_to_position
+
+from domain.robot.task.taskfactory import task_factory
 
 app = Flask(__name__)
 
@@ -16,10 +22,8 @@ AUTOMATIC = "automatic"
 def run_automatic():
     print("run robot AI")
 
-
 def run_manual():
     print("run manual")
-
 
 @app.after_request
 def after_request(data):
@@ -46,17 +50,28 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not Found'}), 404)
 
 
-if __name__ == '__main__':
+def main():
     status = sys.argv[1]
-    base_station_url = sys.argv[2]
-    vision_regulator.set_url(base_station_url)
+    # base_station_url = sys.argv[2]
+    # task_factory.set_url(base_station_url)
+
+    app.register_blueprint(start_ai)
+    app.register_blueprint(send_feedback)
+    app.register_blueprint(set_image_segments)
+    app.register_blueprint(light_green_led)
+    app.register_blueprint(set_url)
 
     if status == AUTOMATIC:
         print("AUTOMATIC MODE not implemented")
     elif status == MANUAL:
         print("MANUAL MODE")
         app.register_blueprint(go_to_position)
-        app.register_blueprint(ledok.led_ok)
+        app.register_blueprint(goto_pathfinder)
+
     else:
         print("Bad arguments : manual or automatic")
     app.run(host='0.0.0.0')
+
+
+if __name__ == '__main__':
+    main()

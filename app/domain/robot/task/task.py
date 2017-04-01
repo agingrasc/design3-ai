@@ -1,16 +1,11 @@
-from robot.task.robotaction import IRobotAction
+from mcu.robotcontroller import RobotController
+import math
 
+class Task():
 
-class Task:
     def __init__(self):
-        self.actions = []
+        pass
 
     def execute(self):
-        for action in self.actions:
-            action.execute()
+        pass
 
-    def register(self, action):
-        if not isinstance(action, IRobotAction):
-            raise TypeError("You need to pass a mockrobot action")
-
-        self.actions.append(action)

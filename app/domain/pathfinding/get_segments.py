@@ -1,4 +1,7 @@
-def get_filter_path(path):
+from domain.gameboard.position import Position
+
+
+def get_filter_path(path, scaling=1):
     filter_path = []
     if len(path) == 0:
         return filter_path
@@ -36,9 +39,11 @@ def get_filter_path(path):
             is_corner = False
             is_second = False
         if is_corner:
-            filter_path.append(path[index - 1])
+            point = path[index - 1]
+            filter_path.append(Position(point.pos_x * scaling, point.pos_y * scaling))
         last_y = position.pos_y
         last_x = position.pos_x
         index = index + 1
-    filter_path.append(path[len(path) - 1])
+    last_position = path[len(path) - 1]
+    filter_path.append(Position(last_position.pos_x * scaling, last_position.pos_y * scaling))
     return filter_path
