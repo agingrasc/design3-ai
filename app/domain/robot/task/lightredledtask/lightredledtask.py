@@ -1,7 +1,7 @@
 from domain.command.lighter import Lighter
 from domain.robot.task.task import Task
 
-from domain.robot.feedback import Feedback
+from service.feedback import Feedback
 
 
 

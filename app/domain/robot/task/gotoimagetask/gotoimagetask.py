@@ -2,11 +2,13 @@ from typing import Dict
 
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
+from domain.pathfinding import get_segments
 from domain.robot.blackboard import Blackboard
-from domain.robot.feedback import Feedback
 from domain.robot.task.task import Task
 from service.globalinformation import GlobalInformation
 from service import pathfinding_application_service
+from service.feedback import Feedback
+from service.globalinformation import GlobalInformation
 
 images_position: Dict[int, Position] = {
     0: Position(1959, 366, 1.57),

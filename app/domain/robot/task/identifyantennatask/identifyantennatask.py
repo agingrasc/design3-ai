@@ -1,15 +1,11 @@
-import math
-
-import time
-
+from domain.command.antenna import Antenna
+from domain.command.drawer import Drawer
+from domain.command.visionregulation import VisionRegulation
+from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
-from domain.robot.feedback import Feedback
+from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
-from domain.command.visionregulation import VisionRegulation
-from domain.command.drawer import Drawer
-from domain.gameboard.position import Position
-from domain.command.antenna import Antenna
 
 LINE_LENGHT = 1
 ANTENNA_DRAW_MARK_ANGLE = 0.79

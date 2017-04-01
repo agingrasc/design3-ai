@@ -1,9 +1,8 @@
-from domain.command.antenna import Antenna
 from domain.command.decoder import Decoder
 from domain.command.visionregulation import VisionRegulation
 from domain.robot.blackboard import Blackboard
-from domain.robot.feedback import Feedback
 from domain.robot.task.task import Task
+from service.feedback import Feedback
 
 
 class ReceiveInformationTask(Task):

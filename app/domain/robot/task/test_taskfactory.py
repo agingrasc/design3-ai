@@ -9,7 +9,7 @@ from domain.robot.task.initialorientationtask.initialorientationtask import Init
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
 from domain.robot.task.taskfactory import TaskFactory
-from domain.robot.task.takepicturetask import TakePictureTask
+from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 
 
 class TaskFactoryTest(TestCase):

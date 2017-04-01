@@ -1,8 +1,8 @@
 import numpy as np
 
 from domain.command.visionregulation import VisionRegulation
-from domain.robot.feedback import Feedback
 from domain.robot.task.task import Task
+from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
 
 INITIAL_ANGLE = 0.79
