@@ -1,10 +1,4 @@
-import math
-import requests as req
-
-# from mcu.commands import Camera, Led
-# from mcu.protocol import Leds
 from domain.robot.blackboard import Blackboard
-from domain.robot.geometricinterpreter import GeometricInterpreter
 from domain.robot.task.task import Task
 from service.globalinformation import GlobalInformation
 

@@ -1,9 +1,9 @@
 from domain.command.visionregulation import VisionRegulation
 from domain.pathfinding import get_segments
-from domain.robot.feedback import Feedback
 from domain.robot.task.task import Task
 from service import pathfinding_application_service
 from service.destinationcalculator import DestinationCalculator
+from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
 
 

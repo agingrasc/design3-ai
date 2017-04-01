@@ -1,8 +1,7 @@
+from domain.command.drawer import Drawer
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
-from domain.command.drawer import Drawer
-from domain.robot.geometricinterpreter import GeometricInterpreter
-from domain.robot.feedback import Feedback
+from service.feedback import Feedback
 
 MESSAGE = "End of drawing task!"
 

@@ -3,9 +3,7 @@ from domain.command.decoder import Decoder
 from domain.command.drawer import Drawer
 from domain.command.lighter import Lighter
 from domain.command.visionregulation import VisionRegulation
-from domain.pathfinding import get_segments
 from domain.robot.blackboard import Blackboard
-from domain.robot.feedback import Feedback
 from domain.robot.task.drawtask.drawtask import DrawTask
 from domain.robot.task.gooutofdrawzonetask.gooutofdrawzonetask import GoOutOfDrawzoneTask
 from domain.robot.task.gotodrawzonetask.gotodrawzonetask import GoToDrawzoneTask
@@ -13,15 +11,13 @@ from domain.robot.task.gotoimagetask.gotoimagetask import GoToImageTask
 from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAntennaTask
 from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
-from domain.robot.task.pololutask.pololu import Pololu
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
-from domain.robot.task.takepicturetask import TakePictureTask
+from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 from mcu.robotcontroller import set_move_destination, RobotController
 from service import pathfinding_application_service
 from service.destinationcalculator import DestinationCalculator
+from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
-from service.image_position_finder import ImagePositionFinder
-
 
 ROBOT_API_URL = "http://localhost:5000"
 
@@ -36,7 +32,6 @@ class TaskFactory():
         self.drawer = Drawer(self.global_information, self.robot_controller, self.vision_regulation)
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
-        self.image_position_finder = ImagePositionFinder()
         self.destination_calculator = DestinationCalculator(self.global_information)
         self.lighter = Lighter(self.robot_controller)
         self.task_list = []
@@ -88,10 +83,6 @@ class TaskFactory():
 
     def create_light_red_led_task(self):
         self.task_list.append(LightRedLedTask(self.feedback, self.lighter))
-        return self.task_list
-
-    def create_pololu_task(self):
-        self.task_list.append(Pololu(self.robot_controller))
         return self.task_list
 
     def create_competition_tasks(self):

@@ -1,10 +1,9 @@
 from domain.command.visionregulation import VisionRegulation
 from domain.robot.blackboard import Blackboard
-from domain.robot.feedback import Feedback
 from domain.robot.task.task import Task
-from service.globalinformation import GlobalInformation
 from service import pathfinding_application_service
-
+from service.feedback import Feedback
+from service.globalinformation import GlobalInformation
 
 DRAW_ANGLE = 45
 
