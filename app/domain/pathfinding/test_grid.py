@@ -11,35 +11,24 @@ LENGHT = 25
 
 class GridTest(unittest.TestCase):
     def setUp(self):
-        world_map = []
-        for i in range(0, WIDTH):
-            row = []
-            for j in range(0, LENGHT):
-                row.append(Mock(pos_x=i, pos_y=j))
-            world_map.append(row)
-
-        self.grid = Grid(
-            Mock(game_board=world_map, width=WIDTH, length=LENGHT))
+        self.game = GameBoard(WIDTH, LENGHT, [])
+        self.grid = Grid(self.game)
 
     def test_no_extremity(self):
         test_position_x = 4
         test_position_y = 4
-        position = Mock(pos_x=test_position_x, pos_y=test_position_y)
+        position = self.game.get_coordinate(test_position_x, test_position_y)
         neighbors = self.grid.neighbors(position)
 
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y + 1))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
         self.assertEqual(8, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
 
@@ -52,8 +41,7 @@ class GridTest(unittest.TestCase):
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y + 1))
         expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
         self.assertEqual(3, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
 
@@ -65,8 +53,7 @@ class GridTest(unittest.TestCase):
 
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y - 1))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y))
         self.assertEqual(3, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
@@ -80,11 +67,9 @@ class GridTest(unittest.TestCase):
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y + 1))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
         self.assertEqual(5, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
 
@@ -97,8 +82,7 @@ class GridTest(unittest.TestCase):
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y + 1))
         expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
         self.assertEqual(3, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
 
@@ -111,11 +95,9 @@ class GridTest(unittest.TestCase):
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y + 1))
         expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
         expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y + 1))
         self.assertEqual(5, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
 
@@ -127,8 +109,7 @@ class GridTest(unittest.TestCase):
 
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y - 1))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y))
         self.assertEqual(3, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
@@ -142,11 +123,9 @@ class GridTest(unittest.TestCase):
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y + 1))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y + 1))
         self.assertEqual(5, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
 
@@ -158,11 +137,9 @@ class GridTest(unittest.TestCase):
 
         expected = []
         expected.append(Mock(pos_x=test_position_x, pos_y=test_position_y - 1))
-        expected.append(
-            Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x - 1, pos_y=test_position_y))
-        expected.append(
-            Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
+        expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y - 1))
         expected.append(Mock(pos_x=test_position_x + 1, pos_y=test_position_y))
         self.assertEqual(5, len(neighbors))
         self.assertTrue(containt_coord(expected, neighbors))
