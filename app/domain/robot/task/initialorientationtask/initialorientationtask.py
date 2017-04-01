@@ -5,14 +5,11 @@ from domain.robot.feedback import Feedback
 from domain.robot.task.task import Task
 from service.globalinformation import GlobalInformation
 
-
 INITIAL_ANGLE = 0.79
 
 
 class InitialOrientationTask(Task):
-    def __init__(self, feedback: Feedback,
-                        vision_regulation: VisionRegulation,
-                        global_information: GlobalInformation):
+    def __init__(self, feedback: Feedback, vision_regulation: VisionRegulation, global_information: GlobalInformation):
         super().__init__()
         self.feedback = feedback
         self.vision_regulation = vision_regulation

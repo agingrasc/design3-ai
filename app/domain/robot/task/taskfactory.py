@@ -34,7 +34,6 @@ class TaskFactory():
         self.drawer = Drawer(self.global_information, self.robot_controller, self.vision_regulation)
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
-        self.image_position_finder = ImagePositionFinder()
         self.destination_calculator = DestinationCalculator(self.global_information)
         self.lighter = Lighter(self.robot_controller)
         self.task_list = []
@@ -46,8 +45,7 @@ class TaskFactory():
     def create_indentify_antenna_task(self):
         self.task_list.append(
             IdentifyAntennaTask(
-                self.drawer, self.antenna, self.feedback, self.vision_regulation, self.global_information,
-                self.blackboard
+                self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard
             )
         )
         return self.task_list
@@ -87,8 +85,7 @@ class TaskFactory():
     def create_go_out_of_drawzone_task(self):
         self.task_list.append(
             GoOutOfDrawzoneTask(
-                self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
-                pathfinding_application_service
+                self.feedback, self.vision_regulation, self.destination_calculator, self.global_information
             )
         )
         return self.task_list
@@ -109,7 +106,7 @@ class TaskFactory():
         self.create_take_picture_task()
         self.create_go_to_drawzone_task()
         self.create_draw_task()
-        self.create_go_to_drawzone_task()
+        self.create_go_out_of_drawzone_task()
         self.create_light_red_led_task()
         return self.task_list
 

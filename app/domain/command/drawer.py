@@ -13,7 +13,12 @@ WAIT_TIME = 2
 
 
 class Drawer:
-    def __init__(self, global_information: GlobalInformation, robot_controller: RobotController, vision_regulation: VisionRegulation):
+    def __init__(
+        self,
+        global_information: GlobalInformation,
+        robot_controller: RobotController,
+        vision_regulation: VisionRegulation
+    ):
         self.global_information = global_information
         self.robot_controller = robot_controller
         self.vision_regulation = vision_regulation
@@ -25,14 +30,6 @@ class Drawer:
         segments.append(segments.pop(0))
         self.robot_controller.lower_pencil()
         for point in segments:
-            # robot_pos = self.global_information.get_robot_position()
-
-            # vector = Position(point.pos_x - robot_pos.pos_x, point.pos_y - robot_pos.pos_y)
-            # angle = vector.get_angle() + draw_angle
-            # angle = wrap_theta(angle)
-            # self.vision_regulation.oriente_robot(angle)
-
-            # self.robot_controller.precise_move(vector, Position(20, 20))
             point.theta = np.deg2rad(45)
             self.vision_regulation.go_to_position(point)
 

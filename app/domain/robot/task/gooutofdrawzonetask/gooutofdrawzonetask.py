@@ -19,7 +19,7 @@ class GoOutOfDrawzoneTask(Task):
         self.vision_regulation = vision_regulation
         self.destination_calculator = destination_calculator
         self.global_information = global_information
-        self.pathfinder_service = pathfinder_service
+        self.pathfinder_service = pathfinding_application_service
         self.get_segments = pathfinding.get_segments
 
     def execute(self):

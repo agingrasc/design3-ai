@@ -1,24 +1,21 @@
 from unittest import TestCase
-from unittest.mock import Mock, MagicMock, patch, call
-
-from mcu.robotcontroller import RobotController
-from robot.task.drawtask import DrawTask
-from robot.task.gooutofdrawzonetask import GoOutOfDrawzoneTask
-from robot.task.gotodrawzonetask import GoToDrawzoneTask
-from robot.task.gotoimagetask import GoToImageTask
-from robot.task.identifyantennatask import IdentifyAntennaTask
-from robot.task.initialorientationtask import InitialOrientationTask
-from robot.task.lightredledtask import LightRedLedTask
-from robot.task.receiveinformationtask import ReceiveInformationTask
-from robot.task.takepicturetask import TakePictureTask
-from robot.task.taskfactory import TaskFactory
+from unittest.mock import Mock, call
+from domain.robot.task.drawtask.drawtask import DrawTask
+from domain.robot.task.gooutofdrawzonetask.gooutofdrawzonetask import GoOutOfDrawzoneTask
+from domain.robot.task.gotodrawzonetask.gotodrawzonetask import GoToDrawzoneTask
+from domain.robot.task.gotoimagetask.gotoimagetask import GoToImageTask
+from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAntennaTask
+from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
+from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
+from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
+from domain.robot.task.taskfactory import TaskFactory
+from domain.robot.task.takepicturetask import TakePictureTask
 
 
 class TaskFactoryTest(TestCase):
-
     def setUp(self):
-        self.robot_controler = Mock(RobotController)
-        self.task_factory = TaskFactory(self.robot_controler)
+        self.robot_controler = Mock()
+        self.task_factory = TaskFactory()
 
     def test_can_create_an_initial_orientation_task(self):
 
@@ -88,5 +85,3 @@ class TaskFactoryTest(TestCase):
         self.assertTrue(type(task_list[6]) is DrawTask)
         self.assertTrue(type(task_list[7]) is GoOutOfDrawzoneTask)
         self.assertTrue(type(task_list[8]) is LightRedLedTask)
-
-
