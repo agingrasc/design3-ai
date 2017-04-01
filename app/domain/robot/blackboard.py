@@ -11,3 +11,6 @@ class Blackboard:
 
     def get_segments_image():
         return self.segments_image
+
+    def get_id_image():
+        return self.id_image
