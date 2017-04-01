@@ -20,8 +20,6 @@ from mcu.robotcontroller import set_move_destination, RobotController
 from service import pathfinding_application_service
 from service.destinationcalculator import DestinationCalculator
 from service.globalinformation import GlobalInformation
-from service.image_position_finder import ImagePositionFinder
-
 
 ROBOT_API_URL = "http://localhost:5000"
 
@@ -46,20 +44,27 @@ class TaskFactory():
         return self.task_list
 
     def create_indentify_antenna_task(self):
-        self.task_list.append(IdentifyAntennaTask(self.drawer, self.antenna, self.feedback, self.vision_regulation,
-                                                  self.global_information, self.blackboard))
+        self.task_list.append(
+            IdentifyAntennaTask(
+                self.drawer, self.antenna, self.feedback, self.vision_regulation, self.global_information,
+                self.blackboard
+            )
+        )
         return self.task_list
 
     def create_receive_informations_task(self):
-        self.task_list.append(ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard))
+        self.task_list.append(
+            ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard)
+        )
         return self.task_list
 
     def create_go_to_image_task(self):
-        self.task_list.append(GoToImageTask(self.feedback,
-                                            self.vision_regulation,
-                                            self.global_information,
-                                            pathfinding_application_service,
-                                            self.blackboard))
+        self.task_list.append(
+            GoToImageTask(
+                self.feedback, self.vision_regulation, self.global_information, pathfinding_application_service,
+                self.blackboard
+            )
+        )
         return self.task_list
 
     def create_take_picture_task(self):
@@ -67,11 +72,12 @@ class TaskFactory():
         return self.task_list
 
     def create_go_to_drawzone_task(self):
-        self.task_list.append(GoToDrawzoneTask(self.feedback,
-                                               self.vision_regulation,
-                                               self.global_information,
-                                               pathfinding_application_service,
-                                               self.blackboard))
+        self.task_list.append(
+            GoToDrawzoneTask(
+                self.feedback, self.vision_regulation, self.global_information, pathfinding_application_service,
+                self.blackboard
+            )
+        )
         return self.task_list
 
     def create_draw_task(self):
@@ -79,11 +85,12 @@ class TaskFactory():
         return self.task_list
 
     def create_go_out_of_drawzone_task(self):
-        self.task_list.append(GoOutOfDrawzoneTask(self.feedback,
-                                                  self.vision_regulation,
-                                                  self.destination_calculator,
-                                                  self.global_information,
-                                                  pathfinding_application_service))
+        self.task_list.append(
+            GoOutOfDrawzoneTask(
+                self.feedback, self.vision_regulation, self.destination_calculator, self.global_information,
+                pathfinding_application_service
+            )
+        )
         return self.task_list
 
     def create_light_red_led_task(self):
