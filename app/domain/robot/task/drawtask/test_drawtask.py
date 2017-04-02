@@ -17,7 +17,7 @@ class DrawTaskTest(unittest.TestCase):
         task.execute()
 
         self.feedback.send_comment.assert_called_once()
-        self.blackboard.get_segments_image.assert_called_once()
+        self.blackboard.get_image_segments.assert_called_once()
         self.drawer.draw.assert_called_once()
 
     def test_called_drawer_with_good_input(self):
