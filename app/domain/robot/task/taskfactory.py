@@ -15,7 +15,6 @@ from domain.robot.task.receiveinformationtask.receiveinformationtask import Rece
 from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 from mcu.robotcontroller import set_move_destination, RobotController
 from service import pathfinding_application_service
-from service.destinationcalculator import DestinationCalculator
 from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
 
@@ -32,7 +31,6 @@ class TaskFactory():
         self.drawer = Drawer(self.global_information, self.robot_controller, self.vision_regulation)
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
-        self.destination_calculator = DestinationCalculator(self.global_information)
         self.lighter = Lighter(self.robot_controller)
         self.task_list = []
 
