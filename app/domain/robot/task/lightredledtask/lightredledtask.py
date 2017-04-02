@@ -4,8 +4,6 @@ from domain.robot.task.task import Task
 from service.feedback import Feedback
 
 
-
-
 class LightRedLedTask(Task):
     def __init__(self, feedback: Feedback, lighter: Lighter):
         self.feedback = feedback
