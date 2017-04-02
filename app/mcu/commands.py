@@ -6,8 +6,6 @@ from . import protocol
 from .protocol import Leds
 
 
-
-
 class ICommand(metaclass=ABCMeta):
     def __init__(self):
         pass
@@ -33,21 +31,6 @@ class MoveCommand(ICommand):
     def pack_command(self) -> bytes:
         regulated_command = regulator.next_speed_command(self.robot_position)
         return protocol.generate_move_command(*regulated_command)
-
-
-class CameraOrientationCommand(ICommand):
-    def __init__(self, x_theta, y_theta):
-        """"
-        Args:
-            :x_theta: Orientation horizontale en radians.
-            :y_theta: Orientation verticale en radians.
-        """
-        super().__init__()
-        self.x_theta = x_theta
-        self.y_theta = y_theta
-
-    def pack_command(self) -> bytes:
-        return protocol.generate_camera_command(self.x_theta, self.y_theta)
 
 
 class LedCommand(ICommand):
