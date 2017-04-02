@@ -23,7 +23,7 @@ class GoToImageTaskTest(TestCase):
         self.global_information.get_robot_position.return_value = self.robot_position
         self.global_information.get_gameboard_width.return_value = WIDTH_TABLE
         self.global_information.get_gameboard_length.return_value = LENGTH_TABLE
-        self.blackboard.get_id_image.return_value = VALID_IMAGE_ID
+        self.blackboard.get_image_id.return_value = VALID_IMAGE_ID
         self.pathfinding_application_service.find.return_value = VALID_PATH
 
     def test_get_information_of_the_gameboard_correctly(self):
