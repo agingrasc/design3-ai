@@ -80,7 +80,11 @@ class TaskFactory(metaclass=Singleton):
         return self.task_list
 
     def create_go_out_of_drawzone_task(self):
-        self.task_list.append(GoOutOfDrawzoneTask(self.feedback, self.vision_regulation, self.global_information))
+        self.task_list.append(
+            GoOutOfDrawzoneTask(
+                self.feedback, self.vision_regulation, self.global_information, pathfinding_application_service
+            )
+        )
         return self.task_list
 
     def create_light_red_led_task(self):
