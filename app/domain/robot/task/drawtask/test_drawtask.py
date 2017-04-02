@@ -23,7 +23,7 @@ class DrawTaskTest(unittest.TestCase):
     def test_called_drawer_with_good_input(self):
         task = drawtask.DrawTask(self.feedback, self.drawer, self.blackboard)
         return_value_interpreter = ["position1", "position2"]
-        self.blackboard.get_segments_image.return_value = return_value_interpreter
+        self.blackboard.get_image_segments.return_value = return_value_interpreter
         task.execute()
 
         self.drawer.draw.assert_called_with(return_value_interpreter)

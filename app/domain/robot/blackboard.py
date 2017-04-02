@@ -9,7 +9,7 @@ class Blackboard:
         self.orientation = None
         self.segments_image = None
 
-    def get_segments_image():
+    def get_image_segments():
         return self.segments_image
 
     def get_id_image():
