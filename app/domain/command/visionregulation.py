@@ -3,7 +3,7 @@ import json
 from websocket import create_connection
 
 from domain.gameboard.position import Position
-from mcu.commands import regulator
+from mcu.regulator import regulator
 from mcu import robotcontroller
 from mcu.robotcontroller import RobotController
 

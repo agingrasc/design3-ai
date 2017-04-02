@@ -1,6 +1,6 @@
 import unittest
 
-from .commands import regulator
+from mcu.regulator import regulator
 from domain.gameboard.position import Position
 
 

@@ -4,7 +4,7 @@ import time
 
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
-from mcu.commands import wrap_theta
+from mcu.regulator import wrap_theta
 from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
 
