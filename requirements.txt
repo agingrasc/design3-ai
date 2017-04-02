@@ -3,3 +3,4 @@ flask
 nose
 numpy
 pyserial
+requests
