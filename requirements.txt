@@ -1,5 +1,4 @@
 websocket-client
 flask
 nose
-unittest
 numpy
