@@ -39,7 +39,7 @@ class GoToImageTask(Task):
         self.blackboard = blackboard
 
     def execute(self):
-        image_position = images_position[self.blackboard.get_id_image()]
+        image_position = images_position[self.blackboard.get_image_id()]
         path = self.pathfinding_application_service.find(self.global_information, image_position)
         for destination in path:
             self.vision_regulation.go_to_position(destination)
