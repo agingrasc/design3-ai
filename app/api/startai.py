@@ -2,7 +2,7 @@ from flask import Blueprint, request, make_response, jsonify
 from threading import Thread
 
 from domain.robot.robotai import RobotAi
-from domain.robot.task.taskfactory import task_factory
+from domain.robot.task.taskfactory import TaskFactory
 
 start_ai = Blueprint('start-ai', __name__)
 
@@ -26,6 +26,7 @@ def start_ai_():
 
 def _decide_task_list(task_id):
     task_id = int(task_id)
+    task_factory = TaskFactory()
     task_factory.task_list.clear()
     tasks = {0: task_factory.create_competition_tasks,
              1: task_factory.create_initial_orientation_task,

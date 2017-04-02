@@ -132,14 +132,6 @@ def generate_led_command(led: Leds) -> bytes:
     return header + payload
 
 
-def generate_pencil_command(status: PencilStatus) -> bytes:
-    assert isinstance(status, PencilStatus), "Le status doit etre dans PencilStatus."
-
-    header = _generate_header(CommandType.PENCIL, PayloadLength.PENCIL)
-    payload = _generate_payload([status.value])
-    return header + payload
-
-
 def generate_camera_command(x_theta: int, y_theta: int) -> bytes:
     header = _generate_header(CommandType.CAMERA, PayloadLength.CAMERA)
     payload = _generate_payload([x_theta, y_theta])

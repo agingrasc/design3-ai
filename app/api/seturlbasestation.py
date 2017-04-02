@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response, jsonify
 
-from domain.robot.task.taskfactory import task_factory
+from domain.robot.task.taskfactory import TaskFactory
+
 
 set_url = Blueprint('set-url', __name__)
 
@@ -11,6 +12,7 @@ def set_url_():
     url = data['data']['base_station_url']
     print("Setting url: {}".format(url))
 
+    task_factory = TaskFactory()
     task_factory.global_information.set_url(url)
     send_response = make_response(jsonify(), 200)
     return send_response

@@ -17,11 +17,12 @@ from mcu.robotcontroller import set_move_destination, RobotController
 from service import pathfinding_application_service
 from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
+from util.singleton import Singleton
 
 ROBOT_API_URL = "http://localhost:5000"
 
 
-class TaskFactory():
+class TaskFactory(metaclass=Singleton):
     def __init__(self):
         self.global_information = GlobalInformation()
         self.blackboard: Blackboard = Blackboard()

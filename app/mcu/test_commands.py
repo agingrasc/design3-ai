@@ -25,12 +25,12 @@ class TestCommands(unittest.TestCase):
 
     def test_saturation_regulator(self):
         regulator.setpoint = Position(200, 200, 0)
-        exp_cmd = [80, 80, 0]
+        exp_cmd = [15, 15, 0]
         reg_cmd = regulator.next_speed_command(self.null_position)
         self.assertEqual(exp_cmd, reg_cmd)
 
     def test_negative_saturation_regulator(self):
         regulator.setpoint = Position(-200, 0, 0)
-        exp_cmd = [-80, 0, 0]
+        exp_cmd = [-15, 0, 0]
         reg_cmd = regulator.next_speed_command(self.null_position)
         self.assertEqual(exp_cmd, reg_cmd)

@@ -1,7 +1,8 @@
 import requests as req
 from flask import Blueprint, request, make_response, jsonify
 
-from domain.robot.task.taskfactory import task_factory
+from domain.robot.task.taskfactory import TaskFactory
+
 
 BASE_STATION_API_URL = "http://{}:12345/feedback-task"
 
@@ -14,6 +15,7 @@ def send_feedback_():
 
     print(data["feedback"])
 
+    task_factory = TaskFactory()
     url = task_factory.global_information.base_station_url
     req.post(url=BASE_STATION_API_URL.format(url), json=data)
     send_response = make_response(jsonify(), 200)
