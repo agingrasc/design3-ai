@@ -18,7 +18,7 @@ class GoToDrawzoneTaskTest(TestCase):
 
     def test_execute_correct_data(self):
         points = [Mock()]
-        self.blackboard.get_segments_image.return_value = points
+        self.blackboard.get_image_segments.return_value = points
         positions = [Mock(), Mock(), Mock()]
         self.pathfinder_service.find.return_value = positions
         expected_goto_position_calls = []
@@ -27,12 +27,12 @@ class GoToDrawzoneTaskTest(TestCase):
 
         self.go_to_draw_zone_task.execute()
 
-        self.blackboard.get_segments_image.assert_called_once()
+        self.blackboard.get_image_segments.assert_called_once()
         self.pathfinder_service.find.assert_called_once_with(self.global_information, points[0])
         self.vision_regulation.go_to_position.assert_has_calls(expected_goto_position_calls)
 
     def test_send_comment(self):
-        self.blackboard.get_segments_image.return_value = [Mock()]
+        self.blackboard.get_image_segments.return_value = [Mock()]
         self.pathfinder_service.find.return_value = []
 
         self.go_to_draw_zone_task.execute()
