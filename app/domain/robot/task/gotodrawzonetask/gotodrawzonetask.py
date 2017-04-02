@@ -25,7 +25,8 @@ class GoToDrawzoneTask(Task):
         self.blackboard = blackboard
 
     def execute(self):
-        first_point = self.blackboard.get_segments_image()[0]
+        segments = self.blackboard.get_image_segments()
+        first_point = segments[0]
         path = self.pathfinding_application_service.find(self.global_information, first_point)
         for destination in path:
             self.vision_regulation.go_to_position(destination)
