@@ -24,13 +24,13 @@ class Drawer:
         self.vision_regulation = vision_regulation
 
     def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
-        self.vision_regulation.oriente_robot(np.deg2rad(45))
+        self.vision_regulation.oriente_robot(DRAW_ANGLE)
         self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
 
         segments.append(segments.pop(0))
         self.robot_controller.lower_pencil()
         for point in segments:
-            point.theta = np.deg2rad(45)
+            point.theta = DRAW_ANGLE
             self.vision_regulation.go_to_position(point)
 
         self.stop()
