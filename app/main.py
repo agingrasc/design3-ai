@@ -52,9 +52,7 @@ def not_found(error):
 
 def main():
     status = sys.argv[1]
-    base_station_url = sys.argv[2]
     task_factory = TaskFactory()
-    task_factory.set_url(base_station_url)
 
     app.register_blueprint(start_ai)
     app.register_blueprint(send_feedback)

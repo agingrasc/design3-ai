@@ -22,7 +22,7 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
-REGULATOR_FREQUENCY = 0.1 # secondes
+REGULATOR_FREQUENCY = 0.15 # secondes
 
 
 class RobotSpeed(enum.Enum):
