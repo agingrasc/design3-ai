@@ -26,14 +26,14 @@ REGULATOR_FREQUENCY = 0.15 # secondes
 
 
 class RobotSpeed(enum.Enum):
-    NORMAL_SPEED = (80, 25)
-    DRAW_SPEED = (20, 4)
+    NORMAL_SPEED = (150, 4)
+    DRAW_SPEED = (40, 4)
 
 
 constants = [(0.027069, 0.040708, 0, 16),  # REAR X
-             (0.0095292, 0.029466, 0, 13),  # FRONT Y
-             (0.015431, 0.042286, 0, 15),  # FRONT X
-             (0.030357, 0.02766, 0, 13)]  # REAR Y
+             (0.0095292, 0.029466, 0, 16),  # FRONT Y
+             (0.015431, 0.042286, 0, 16),  # FRONT X
+             (0.030357, 0.02766, 0, 16)]  # REAR Y
 
 
 class SerialMock:
@@ -170,8 +170,9 @@ class RobotController(object):
         power = int.from_bytes(power_bytes, byteorder='big')
         return power
 
-    def move(self):
+    def move(self, destination: Position):
         """" S'occupe d'amener le robot a la bonne position. BLOQUANT! """
+        regulator.setpoint = destination
         retroaction = self.global_information.get_robot_position()
         now = time.time()
         last_time = now
@@ -275,7 +276,3 @@ class RobotController(object):
 
     def _get_return_code(self):
         return int.from_bytes(self.ser_mcu.read(1), byteorder='little')
-
-
-def set_move_destination(move_destination: Position):
-    regulator.setpoint = move_destination
