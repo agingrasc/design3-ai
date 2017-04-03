@@ -16,4 +16,4 @@ class DrawTask(Task):
 
     def execute(self):
         self.drawer.draw(self.blackboard.get_image_segments())
-        self.feedback.send_comment(MESSAGE)
+        self.feedback.send_comment(self.feedback.TASK_DRAW_IMAGE)

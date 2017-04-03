@@ -11,4 +11,4 @@ class LightRedLedTask(Task):
 
     def execute(self):
         self.lighter.light_red_led()
-        self.feedback.send_comment("Fin du cycle!")
+        self.feedback.send_comment(self.feedback.TASK_LIGHT_RED_LED)

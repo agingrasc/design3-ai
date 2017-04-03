@@ -24,4 +24,4 @@ class GoOutOfDrawzoneTask(Task):
         safezone_position = STOP_POSITION
         path = self.pathfinder_service.find(self.global_information, safezone_position)
         self.vision_regulation.go_to_positions(path)
-        self.feedback.send_comment("End going to safezone.")
+        self.feedback.send_comment(self.feedback.TASK_GO_OUT_OF_DRAWING_ZONE)

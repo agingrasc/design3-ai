@@ -35,7 +35,7 @@ class IdentifyAntennaTask(Task):
         self.vision_regulation.go_to_position(end_position)
         self.antenna.end_recording()
         self.draw_line()
-        self.feedback.send_comment("End identifying antenna")
+        self.feedback.send_comment(self.feedback.TASK_IDENTEFIE_ANTENNA)
 
     def draw_line(self):
         max_signal_position = self.antenna.get_max_signal_position()

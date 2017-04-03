@@ -45,4 +45,4 @@ class GoToImageTask(Task):
             self.vision_regulation.go_to_position(destination)
 
         self.vision_regulation.oriente_robot(image_position.theta)
-        self.feedback.send_comment("end of task going to image")
+        self.feedback.send_comment(self.feedback.TASK_GO_TO_IMAGE)

@@ -31,4 +31,4 @@ class GoToDrawzoneTask(Task):
         for destination in path:
             self.vision_regulation.go_to_position(destination)
 
-        self.feedback.send_comment("end of task going to drawzone")
+        self.feedback.send_comment(self.feedback.TASK_GO_TO_DRAWING_ZONE)

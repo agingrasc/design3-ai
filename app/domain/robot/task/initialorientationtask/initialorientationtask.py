@@ -19,4 +19,4 @@ class InitialOrientationTask(Task):
         if self.global_information.get_robot_orientation() != 0:
             self.vision_regulation.oriente_robot(np.deg2rad(INITIAL_ANGLE))
 
-        self.feedback.send_comment("End task initial orientation")
+        self.feedback.send_comment(self.feedback.TASK_INITIAL_ORIENTATION)
