@@ -27,7 +27,11 @@ class GlobalInformation:
     def get_robot_position(self):
         data = {'headers': 'pull_robot_position', 'data': {}}
         self.connection.send(json.dumps(data))
-        robot_position_json = self.connection.recv()
+        try:
+            robot_position_json = self.connection.recv()
+        except:
+            return self.get_robot_position()
+
         robot_position_info = json.loads(robot_position_json)
         pos_x = int(float(robot_position_info['x']))
         pos_y = int(float(robot_position_info['y']))
@@ -91,4 +95,4 @@ class GlobalInformation:
 
     def send_take_picture_request(self, scale_factor, orientation):
         payload = {'data': {'scaling': scale_factor, 'orientation': orientation}}
-        requests.post(BASE_URL_PATTERN.format(self.base_station_url(), TAKE_PICTURE_ENDPOINT), payload)
+        requests.post(BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT), payload)

@@ -38,7 +38,7 @@ class TestRegulator(unittest.TestCase):
         self.assertEqual(first_iteration_expected_speeds, first_iteration_speeds)
 
         second_iteration_speeds = self.regulator.next_speed_command(close_actual_position, delta_t=TEST_DELTA_T)
-        second_iteration_expected_speeds = [58, 58, 0]
+        second_iteration_expected_speeds = [60, 60, 0]
         self.assertEqual(second_iteration_expected_speeds, second_iteration_speeds)
 
     def test_positive_saturate_accumulator(self):
