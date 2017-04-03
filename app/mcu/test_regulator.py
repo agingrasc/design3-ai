@@ -22,13 +22,13 @@ class TestRegulator(unittest.TestCase):
         self.regulator.setpoint = Position(0, 0, 0)
         far_actual_position = Position(1000, 1000, 0)
         speeds = self.regulator.next_speed_command(far_actual_position, delta_t=TEST_DELTA_T)
-        expected_speeds = [-70, -70, 0]
+        expected_speeds = [-100, -100, 0]
         self.assertEqual(expected_speeds, speeds)
 
     def test_far_positive_move(self):
         origin_actual_position = Position(0, 0, 0)
         speeds = self.regulator.next_speed_command(origin_actual_position, delta_t=TEST_DELTA_T)
-        expected_speeds = [70, 70, 0]
+        expected_speeds = [100, 100, 0]
         self.assertEqual(expected_speeds, speeds)
 
     def test_integral_action(self):
@@ -38,7 +38,7 @@ class TestRegulator(unittest.TestCase):
         self.assertEqual(first_iteration_expected_speeds, first_iteration_speeds)
 
         second_iteration_speeds = self.regulator.next_speed_command(close_actual_position, delta_t=TEST_DELTA_T)
-        second_iteration_expected_speeds = [58, 58, 0]
+        second_iteration_expected_speeds = [60, 60, 0]
         self.assertEqual(second_iteration_expected_speeds, second_iteration_speeds)
 
     def test_positive_saturate_accumulator(self):
