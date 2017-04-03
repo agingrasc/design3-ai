@@ -11,16 +11,16 @@ PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
 
 DEADZONE = 4  # mm
-THETA_DEADZONE = 0.022  # rad
+THETA_DEADZONE = 0.022 # rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 MAX_X = 200
 MAX_Y = 100
 POSITION_ACC_DECAY = 0.79  # 3 iteration pour diminuer de moitie
-THETA_ACC_DECAY = 1
+THETA_ACC_DECAY = 0.79
 DEFAULT_KP = 0.015
 DEFAULT_KI = 0.600
 DEFAULT_KD = 0
-DEFAULT_THETA_KP = 0.10
+DEFAULT_THETA_KP = 0.50
 DEFAULT_THETA_KI = 0.007
 DEFAULT_MAX_CMD = 150
 DEFAULT_DEADZONE_CMD = 25
@@ -93,8 +93,8 @@ class PIPositionRegulator(object):
         err_theta = wrap_theta(err_theta)
 
         err_vec = Position(err_x, err_y)
-        dynamic_speed_x = abs(math.cos(err_vec.get_angle()) * self.constants.max_cmd)
-        dynamic_speed_y = abs(math.sin(err_vec.get_angle()) * self.constants.max_cmd)
+        # dynamic_speed_x = abs(math.cos(err_vec.get_angle()) * self.constants.max_cmd)
+        # dynamic_speed_y = abs(math.sin(err_vec.get_angle()) * self.constants.max_cmd)
 
         # calcul PID pour x/y
         up_x = err_x * self.constants.kp
@@ -130,7 +130,9 @@ class PIPositionRegulator(object):
         corrected_err_x, corrected_err_y = correct_for_referential_frame(err_x, err_y, actual_theta)
 
         # saturation de la commande x/y
-        dynamic_speeds = [dynamic_speed_x, dynamic_speed_y, self.constants.theta_max_cmd]
+        # dynamic_speeds = [dynamic_speed_x, dynamic_speed_y, self.constants.theta_max_cmd]
+        # dynamic_speeds = [dynamic_speed_x, dynamic_speed_y, self.constants.theta_max_cmd]
+        dynamic_speeds = [self.constants.max_cmd, self.constants.max_cmd, self.constants.theta_max_cmd]
         saturated_cmd = []
         for idx, cmd in enumerate([cmd_x, cmd_y]):
             saturated_cmd.append(self._saturate_cmd(cmd, dynamic_speeds[idx]))
@@ -161,6 +163,7 @@ class PIPositionRegulator(object):
         for cmd in saturated_cmd:
             command.append(int(cmd))
         command.append(saturated_theta)
+        print("Commandes: {} -- {} -- {}".format(*command))
         return command
 
     def _relinearize(self, cmd):
