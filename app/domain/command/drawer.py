@@ -33,7 +33,7 @@ class Drawer:
             point.theta = np.deg2rad(45)
             self.vision_regulation.go_to_position(point)
 
-        self.robot_controller.raise_pencil()
+        self.stop()
 
     def stop(self):
         self.robot_controller.raise_pencil()

@@ -271,6 +271,7 @@ class RobotController(object):
         cmd = LedCommand(Leds.DOWN_RED)
         self.send_command(cmd)
         self.raise_pencil()
+        self.reset_state()
 
     def _get_return_code(self):
         return int.from_bytes(self.ser_mcu.read(1), byteorder='little')
