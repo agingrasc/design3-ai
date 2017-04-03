@@ -22,13 +22,13 @@ class TestRegulator(unittest.TestCase):
         self.regulator.setpoint = Position(0, 0, 0)
         far_actual_position = Position(1000, 1000, 0)
         speeds = self.regulator.next_speed_command(far_actual_position, delta_t=TEST_DELTA_T)
-        expected_speeds = [-100, -100, 0]
+        expected_speeds = [-70, -70, 0]
         self.assertEqual(expected_speeds, speeds)
 
     def test_far_positive_move(self):
         origin_actual_position = Position(0, 0, 0)
         speeds = self.regulator.next_speed_command(origin_actual_position, delta_t=TEST_DELTA_T)
-        expected_speeds = [100, 100, 0]
+        expected_speeds = [70, 70, 0]
         self.assertEqual(expected_speeds, speeds)
 
     def test_integral_action(self):

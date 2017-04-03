@@ -92,7 +92,9 @@ class PIPositionRegulator(object):
         err_x, err_y, err_theta = dest_x - actual_x, dest_y - actual_y, dest_theta - actual_theta
         err_theta = wrap_theta(err_theta)
 
-        # wrap theta [-PI, PI]
+        err_vec = Position(err_x, err_y)
+        dynamic_speed_x = abs(math.cos(err_vec.get_angle()) * self.constants.max_cmd)
+        dynamic_speed_y = abs(math.sin(err_vec.get_angle()) * self.constants.max_cmd)
 
         # calcul PID pour x/y
         up_x = err_x * self.constants.kp
@@ -128,9 +130,10 @@ class PIPositionRegulator(object):
         corrected_err_x, corrected_err_y = correct_for_referential_frame(err_x, err_y, actual_theta)
 
         # saturation de la commande x/y
+        dynamic_speeds = [dynamic_speed_x, dynamic_speed_y, self.constants.theta_max_cmd]
         saturated_cmd = []
-        for cmd in [cmd_x, cmd_y]:
-            saturated_cmd.append(self._saturate_cmd(cmd))
+        for idx, cmd in enumerate([cmd_x, cmd_y]):
+            saturated_cmd.append(self._saturate_cmd(cmd, dynamic_speeds[idx]))
 
         # deadzone pour arret du mouvement
         if abs(corrected_err_x) < self.constants.position_deadzone:
@@ -169,11 +172,11 @@ class PIPositionRegulator(object):
         else:
             return cmd
 
-    def _saturate_cmd(self, cmd):
-        if cmd > self.constants.max_cmd:
-            return self.constants.max_cmd
-        elif cmd < -self.constants.max_cmd:
-            return -self.constants.max_cmd
+    def _saturate_cmd(self, cmd, max_cmd):
+        if cmd > max_cmd:
+            return max_cmd
+        elif cmd < -max_cmd:
+            return -max_cmd
         else:
             return cmd
 
