@@ -170,8 +170,9 @@ class RobotController(object):
         power = int.from_bytes(power_bytes, byteorder='big')
         return power
 
-    def move(self):
+    def move(self, destination: Position):
         """" S'occupe d'amener le robot a la bonne position. BLOQUANT! """
+        regulator.setpoint = destination
         retroaction = self.global_information.get_robot_position()
         now = time.time()
         last_time = now
@@ -274,7 +275,3 @@ class RobotController(object):
 
     def _get_return_code(self):
         return int.from_bytes(self.ser_mcu.read(1), byteorder='little')
-
-
-def set_move_destination(move_destination: Position):
-    regulator.setpoint = move_destination
