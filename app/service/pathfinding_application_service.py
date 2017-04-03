@@ -43,4 +43,5 @@ def find(global_information: GlobalInformation, destination):
     for pos in path:
         print(pos)
     global_information.send_path([robot_position] + path)
+
     return path

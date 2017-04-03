@@ -16,3 +16,4 @@ class TakePictureTask(Task):
             "Taking image: {} -- {} -- {}".
             format(self.blackboard.id_image, self.blackboard.orientation, self.blackboard.magnification)
         )
+

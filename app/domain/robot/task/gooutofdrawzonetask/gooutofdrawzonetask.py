@@ -4,7 +4,7 @@ from domain.robot.task.task import Task
 from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
 
-STOP_POSITION = Position(1250, 880, 0)  # 1280, 865
+STOP_POSITION = Position(1074, 886, 0)  # 1280, 865
 
 
 class GoOutOfDrawzoneTask(Task):
