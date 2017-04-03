@@ -12,18 +12,16 @@ class PositionTest(unittest.TestCase):
     def test_samexy_init(self):
         pos = position.Position(self.a_valid_x, self.a_valid_x)
 
-        angle = math.atan(1.0)
-        distance = math.sqrt(
-            float(self.a_valid_x**2) + float(self.a_valid_x**2))
+        angle = -1 * math.atan(1.0)
+        distance = math.sqrt(float(self.a_valid_x**2) + float(self.a_valid_x**2))
         self.assertEqual(distance, pos.get_norm())
         self.assertEqual(angle, pos.get_angle())
 
     def test_differentxy_init(self):
         pos = position.Position(self.a_valid_x, self.a_valid_y)
 
-        angle = math.atan(self.a_valid_y / self.a_valid_x)
-        distance = math.sqrt(
-            float(self.a_valid_x**2) + float(self.a_valid_y**2))
+        angle = -1 * math.atan(self.a_valid_y / self.a_valid_x)
+        distance = math.sqrt(float(self.a_valid_x**2) + float(self.a_valid_y**2))
         self.assertEqual(distance, pos.get_norm())
         self.assertEqual(angle, pos.get_angle())
 
@@ -32,9 +30,8 @@ class PositionTest(unittest.TestCase):
 
         pos.pos_y = self.a_valid_y
 
-        angle = math.atan(self.a_valid_y / self.a_valid_x)
-        distance = math.sqrt(
-            float(self.a_valid_x**2) + float(self.a_valid_y**2))
+        angle = -1 * math.atan(self.a_valid_y / self.a_valid_x)
+        distance = math.sqrt(float(self.a_valid_x**2) + float(self.a_valid_y**2))
         self.assertEqual(distance, pos.get_norm())
         self.assertEqual(angle, pos.get_angle())
 
@@ -43,8 +40,7 @@ class PositionTest(unittest.TestCase):
 
         pos.pos_y = self.a_valid_x
 
-        angle = math.atan(1.0)
-        distance = math.sqrt(
-            float(self.a_valid_x**2) + float(self.a_valid_x**2))
+        angle = -1 * math.atan(1.0)
+        distance = math.sqrt(float(self.a_valid_x**2) + float(self.a_valid_x**2))
         self.assertEqual(distance, pos.get_norm())
         self.assertEqual(angle, pos.get_angle())

@@ -1,56 +1,29 @@
+import numpy as np
 from unittest import TestCase
-from unittest.mock import Mock, MagicMock, patch, call
+from unittest.mock import Mock, call
 
 from mcu.robotcontroller import RobotController
-from robot.task.initialorientationtask import InitialOrientationTask
+from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
+
+INITIAL_ANGLE = 0.79
 
 
 class InitialOrientationTaskTest(TestCase):
+    def setUp(self):
+        self.feedback = Mock()
+        self.vision_regulation = Mock()
+        self.global_information = Mock()
 
-    def test_execute_all_the_subtasks(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        initial_orientation_task = InitialOrientationTask(robot_controler)
+    def test_set_orientation(self):
+        task = InitialOrientationTask(self.feedback, self.vision_regulation, self.global_information)
 
-        mock = Mock()
-        mock.initial_orientation_task._set_initial_orientation()
-        mock.initial_orientation_task._stop()
+        task.execute()
 
-        initial_orientation_task.execute(x_robot_position, y_robot_position)
+        rebot_orientation = 1
+        self.global_information.get_robot_orientation.return_value = rebot_orientation
+        self.vision_regulation.oriente_robot.assert_called_once_with(np.deg2rad(INITIAL_ANGLE))
 
-        mock.initial_orientation_task._set_initial_orientation.assert_called_once()
-        mock.initial_orientation_task._stop.assert_called_once()
-
-    def test_task_status_change_to_done_at_the_end_of_execution(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        initial_orientation_task = InitialOrientationTask(robot_controler)
-
-        mock = Mock()
-        mock.initial_orientation_task._stop()
-
-        initial_orientation_task.execute(x_robot_position, y_robot_position)
-
-        mock.initial_orientation_task._stop.assert_called_once()
-        self.assertEquals(initial_orientation_task.status_flag, 1)
-
-    def test_subtasks_are_executed_in_order(self):
-        x_robot_position = 10
-        y_robot_position = 10
-        robot_controler = Mock(RobotController)
-        initial_orientation_task = InitialOrientationTask(robot_controler)
-
-        initial_orientation_mock = MagicMock()
-        with patch('robot.task.initialorientationtask.InitialOrientationTask._set_initial_orientation', initial_orientation_mock.function1), \
-                patch('robot.task.initialorientationtask.InitialOrientationTask._stop', initial_orientation_mock.function2):
-
-            expected = [
-                call.function1(),
-                call.function2()
-            ]
-
-            initial_orientation_task.execute(x_robot_position, y_robot_position)
-
-            self.assertEqual(initial_orientation_mock.mock_calls, expected)
+    def test_send_feedback(self):
+        task = InitialOrientationTask(self.feedback, self.vision_regulation, self.global_information)
+        task.execute()
+        self.feedback.send_comment.assert_called_once()

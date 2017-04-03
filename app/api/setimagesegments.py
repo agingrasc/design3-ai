@@ -3,7 +3,7 @@ from threading import Thread
 from flask import Blueprint, request, make_response, jsonify
 
 from domain.gameboard.position import Position
-from domain.robot.task.taskfactory import task_factory
+from domain.robot.task.taskfactory import TaskFactory
 
 set_image_segments = Blueprint('set-image-segments', __name__)
 
@@ -22,6 +22,7 @@ def set_image_segments_():
     for point in segments:
         image_corners.append(Position(point[0], point[1]))
 
+    task_factory = TaskFactory()
     task_factory.blackboard.segments_image = image_corners
 
     return make_response(

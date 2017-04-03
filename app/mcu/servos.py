@@ -37,17 +37,17 @@ def rad_to_camera_target(x, y):
     yt = 509.3*y + 1500
 
     # Cap target pulse length if converted target is outside of bounds
-    if xt > MaxTargets.CAMERA_X:
+    if xt > MaxTargets.CAMERA_X.value:
         xt = MaxTargets.CAMERA_X
-    elif xt < MinTargets.CAMERA_X:
+    elif xt < MinTargets.CAMERA_X.value:
         xt = MinTargets.CAMERA_X
 
-    if yt > MaxTargets.CAMERA_Y:
+    if yt > MaxTargets.CAMERA_Y.value:
         yt = MaxTargets.CAMERA_Y
-    elif yt < MinTargets.CAMERA_Y:
+    elif yt < MinTargets.CAMERA_Y.value:
         yt = MinTargets.CAMERA_Y
 
-    return (xt, yt)
+    return xt, yt
 
 
 def generate_camera_command(x, y) -> bytes:

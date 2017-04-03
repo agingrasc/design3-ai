@@ -26,6 +26,7 @@ def read_camera():
     while True:
         if time.time() - last_time > DELTA_T:
             last_time = time.time()
+            frames.clear()
             if cap.isOpened():
                 ret, image = cap.read()
                 if ret:

@@ -1,10 +1,10 @@
 from flask import Blueprint, request, make_response, jsonify
 
 from domain.gameboard.position import Position
-from domain.robot.task.taskfactory import task_factory
 from api.gotoposition.dimensionassembler import DimensionAssembler
 from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
+from domain.robot.task.taskfactory import TaskFactory
 
 go_to_position = Blueprint('go-to-position', __name__)
 
@@ -32,6 +32,7 @@ def go_to_position_():
 
     destination = Position(destination_x, destination_y, destination_t)
     print("Destination: {}\n".format(destination))
+    task_factory = TaskFactory()
     task_factory.vision_regulation.go_to_position(destination)
 
     return make_response(

@@ -1,0 +1,6 @@
+websocket-client
+flask
+nose
+numpy
+pyserial
+requests

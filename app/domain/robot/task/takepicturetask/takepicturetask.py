@@ -12,4 +12,7 @@ class TakePictureTask(Task):
         scale_factor = self.blackboard.magnification
         orientation = self.blackboard.orientation
         self.global_information.send_take_picture_request(scale_factor, orientation)
-        print("Taking image: {} -- {} -- {}".format(self.blackboard.id_image, self.blackboard.orientation, self.blackboard.magnification))
+        print(
+            "Taking image: {} -- {} -- {}".
+            format(self.blackboard.id_image, self.blackboard.orientation, self.blackboard.magnification)
+        )
