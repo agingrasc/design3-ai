@@ -95,4 +95,4 @@ class GlobalInformation:
 
     def send_take_picture_request(self, scale_factor, orientation):
         payload = {'data': {'scaling': scale_factor, 'orientation': orientation}}
-        requests.post(BASE_URL_PATTERN.format(self.base_station_url(), TAKE_PICTURE_ENDPOINT), payload)
+        requests.post(BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT), payload)
