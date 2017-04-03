@@ -42,5 +42,5 @@ def find(global_information: GlobalInformation, destination):
     path = get_segments.get_filter_path(pathfinder.find_path(), DEFAULT_CELL_SCALE)
     for pos in path:
         print(pos)
-    global_information.send_path(robot_position + path)
+    global_information.send_path([robot_position] + path)
     return path
