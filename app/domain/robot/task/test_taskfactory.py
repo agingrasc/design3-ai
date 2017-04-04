@@ -8,6 +8,7 @@ from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAn
 from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
+from domain.robot.task.shutdownredledtask.shutdownredledtask import ShutDownRedLedTask
 from domain.robot.task.taskfactory import TaskFactory
 from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 
@@ -67,11 +68,17 @@ class TaskFactoryTest(TestCase):
         self.assertEquals(len(task_list), 1)
         self.assertTrue(type(task_list[0]) is GoOutOfDrawzoneTask)
 
-    def test_can_create_a_light_red_led_task(self):
+    def test_can_create_a_shut_down_red_led_task(self):
         task_list = self.task_factory.create_light_red_led_task()
 
         self.assertEquals(len(task_list), 1)
         self.assertTrue(type(task_list[0]) is LightRedLedTask)
+
+    def test_can_create_a_light_red_led_task(self):
+        task_list = self.task_factory.create_shut_down_red_led_task()
+
+        self.assertEquals(len(task_list), 1)
+        self.assertTrue(type(task_list[0]) is ShutDownRedLedTask)
 
     def test_can_create_all_competition_tasks(self):
         task_list = self.task_factory.create_competition_tasks()
@@ -86,3 +93,16 @@ class TaskFactoryTest(TestCase):
         self.assertTrue(type(task_list[6]) is DrawTask)
         self.assertTrue(type(task_list[7]) is GoOutOfDrawzoneTask)
         self.assertTrue(type(task_list[8]) is LightRedLedTask)
+
+    def test_can_create_all_new_round_tasks(self):
+        task_list = self.task_factory.create_new_round_tasks()
+
+        self.assertEquals(len(task_list), 8)
+        self.assertTrue(type(task_list[0]) is ShutDownRedLedTask)
+        self.assertTrue(type(task_list[1]) is ReceiveInformationTask)
+        self.assertTrue(type(task_list[2]) is GoToImageTask)
+        self.assertTrue(type(task_list[3]) is TakePictureTask)
+        self.assertTrue(type(task_list[4]) is GoToDrawzoneTask)
+        self.assertTrue(type(task_list[5]) is DrawTask)
+        self.assertTrue(type(task_list[6]) is GoOutOfDrawzoneTask)
+        self.assertTrue(type(task_list[7]) is LightRedLedTask)

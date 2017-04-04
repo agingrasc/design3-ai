@@ -12,6 +12,7 @@ from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAn
 from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
+from domain.robot.task.shutdownredledtask.shutdownredledtask import ShutDownRedLedTask
 from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 from mcu.robotcontroller import RobotController
 from service import pathfinding_application_service
@@ -91,9 +92,24 @@ class TaskFactory(metaclass=Singleton):
         self.task_list.append(LightRedLedTask(self.feedback, self.lighter))
         return self.task_list
 
+    def create_shut_down_red_led_task(self):
+        self.task_list.append(ShutDownRedLedTask(self.feedback, self.lighter))
+        return self.task_list
+
     def create_competition_tasks(self):
         self.create_initial_orientation_task()
         self.create_indentify_antenna_task()
+        self.create_receive_informations_task()
+        self.create_go_to_image_task()
+        self.create_take_picture_task()
+        self.create_go_to_drawzone_task()
+        self.create_draw_task()
+        self.create_go_out_of_drawzone_task()
+        self.create_light_red_led_task()
+        return self.task_list
+
+    def create_new_round_tasks(self):
+        self.create_shut_down_red_led_task()
         self.create_receive_informations_task()
         self.create_go_to_image_task()
         self.create_take_picture_task()
