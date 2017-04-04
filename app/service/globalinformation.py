@@ -8,7 +8,7 @@ from websocket import create_connection
 
 from domain.pathfinding.dijkstra import ObstacleType
 
-ROBOT_RADIUS = 150
+ROBOT_RADIUS = 100
 BASE_URL_PATTERN = "http://{}:12345/{}"
 
 DRAWZONE_CORNER_POSITION_ENDPOINT = "drawzone-corners"

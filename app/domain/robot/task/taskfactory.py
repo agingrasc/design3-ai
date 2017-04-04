@@ -64,7 +64,7 @@ class TaskFactory(metaclass=Singleton):
         return self.task_list
 
     def create_take_picture_task(self):
-        self.task_list.append(TakePictureTask(self.global_information, self.blackboard))
+        self.task_list.append(TakePictureTask(self.global_information, self.blackboard, self.feedback))
         return self.task_list
 
     def create_go_to_drawzone_task(self):

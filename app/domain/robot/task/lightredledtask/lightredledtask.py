@@ -2,6 +2,7 @@ from domain.command.lighter import Lighter
 from domain.robot.task.task import Task
 
 from service.feedback import Feedback
+from service.feedback import TASK_LIGHT_RED_LED
 
 
 class LightRedLedTask(Task):
@@ -11,4 +12,4 @@ class LightRedLedTask(Task):
 
     def execute(self):
         self.lighter.light_red_led()
-        self.feedback.send_comment("Fin du cycle!")
+        self.feedback.send_comment(TASK_LIGHT_RED_LED)

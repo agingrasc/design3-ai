@@ -2,6 +2,7 @@ from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
 from domain.robot.task.task import Task
 from service.feedback import Feedback
+from service.feedback import TASK_GO_OUT_OF_DRAWING_ZONE
 from service.globalinformation import GlobalInformation
 
 STOP_POSITION = Position(1250, 880, 0)  # 1280, 865
@@ -24,4 +25,4 @@ class GoOutOfDrawzoneTask(Task):
         safezone_position = STOP_POSITION
         path = self.pathfinder_service.find(self.global_information, safezone_position)
         self.vision_regulation.go_to_positions(path)
-        self.feedback.send_comment("End going to safezone.")
+        self.feedback.send_comment(TASK_GO_OUT_OF_DRAWING_ZONE)
