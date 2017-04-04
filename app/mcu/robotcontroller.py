@@ -22,18 +22,18 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
-REGULATOR_FREQUENCY = 0.1 # secondes
+REGULATOR_FREQUENCY = 0.15 # secondes
 
 
 class RobotSpeed(enum.Enum):
-    NORMAL_SPEED = (80, 25)
-    DRAW_SPEED = (20, 4)
+    NORMAL_SPEED = (150, 2)
+    DRAW_SPEED = (80, 2)
 
 
-constants = [(0.027069, 0.040708, 0, 16),  # REAR X
-             (0.0095292, 0.029466, 0, 13),  # FRONT Y
-             (0.015431, 0.042286, 0, 15),  # FRONT X
-             (0.030357, 0.02766, 0, 13)]  # REAR Y
+constants = [(0.027069, 0.040708, 0, 18),  # REAR X
+             (0.0095292, 0.029466, 0, 18),  # FRONT Y
+             (0.015431, 0.042286, 0, 18),  # FRONT X
+             (0.030357, 0.02766, 0, 18)]  # REAR Y
 
 
 class SerialMock:
@@ -170,8 +170,9 @@ class RobotController(object):
         power = int.from_bytes(power_bytes, byteorder='big')
         return power
 
-    def move(self):
+    def move(self, destination: Position):
         """" S'occupe d'amener le robot a la bonne position. BLOQUANT! """
+        regulator.setpoint = destination
         retroaction = self.global_information.get_robot_position()
         now = time.time()
         last_time = now
@@ -271,10 +272,7 @@ class RobotController(object):
         cmd = LedCommand(Leds.DOWN_RED)
         self.send_command(cmd)
         self.raise_pencil()
+        self.reset_state()
 
     def _get_return_code(self):
         return int.from_bytes(self.ser_mcu.read(1), byteorder='little')
-
-
-def set_move_destination(move_destination: Position):
-    regulator.setpoint = move_destination
