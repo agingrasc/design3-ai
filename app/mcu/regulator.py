@@ -17,8 +17,8 @@ MAX_X = 200
 MAX_Y = 100
 POSITION_ACC_DECAY = 1.00  # 3 iteration pour diminuer de moitie
 THETA_ACC_DECAY = 0.79
-DEFAULT_KP = 0.6
-DEFAULT_KI = 0.0005
+DEFAULT_KP = 0.4
+DEFAULT_KI = 0.010
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.50
 DEFAULT_THETA_KI = 0.007
@@ -140,8 +140,10 @@ class PIPositionRegulator(object):
         # deadzone pour arret du mouvement
         if abs(corrected_err_x) < self.constants.position_deadzone:
             saturated_cmd[0] = 0
+            self.accumulator[0] = 0
         if abs(corrected_err_y) < self.constants.position_deadzone:
             saturated_cmd[1] = 0
+            self.accumulator[1] = 0
 
         # calcul de la vitesse angulaire
         theta_up = err_theta * self.constants.theta_kp
@@ -203,7 +205,7 @@ class PIPositionRegulator(object):
         return cmd
 
     def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
-        deadzone *= 1.1
+        deadzone *= 1.2
         theta_deadzone = THETA_DEADZONE * 1.03
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
