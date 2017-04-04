@@ -40,6 +40,7 @@ class VisionRegulation:
     def go_to_positions(self, positions):
         for position in positions:
             print("Path position: {}".format(position))
+            self.oriente_robot(position.theta)
             self.go_to_position(position)
         print("Path finisehd!")
 
