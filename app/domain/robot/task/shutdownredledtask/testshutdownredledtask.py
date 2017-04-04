@@ -14,7 +14,7 @@ class ShutDownRedLedTaskTest(TestCase):
 
         task.execute()
 
-        self.feedback.send_comment.assert_called_once()
+        self.feedback.send_new_cycle.assert_called_once()
 
     def test_shut_down_red_led(self):
         task = ShutDownRedLedTask(self.feedback, self.lighter)
