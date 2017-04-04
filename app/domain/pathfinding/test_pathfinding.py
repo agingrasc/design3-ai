@@ -25,14 +25,14 @@ class PathFindingTest(TestCase):
         self.assertEqual(array3[1], coord4)
 
     def test_find_minimum(self):
-        coord1 = Mock(weight=1)
-        coord2 = Mock(weight=8)
-        coord3 = Mock(weight=3)
-        coord4 = Mock(weight=5)
+        coord1 = Mock(weight=1, pos_x=2, pos_y=3)
+        coord2 = Mock(weight=8, pos_x=4, pos_y=6)
+        coord3 = Mock(weight=3, pos_x=2, pos_y=4)
+        coord4 = Mock(weight=5, pos_x=3, pos_y=2)
         array1 = []
         array1.append(coord1)
         array1.append(coord2)
         array1.append(coord3)
         array1.append(coord4)
-        minimum = pathfinding.find_minimum(array1)
+        minimum = pathfinding.find_minimum(array1, Mock(pos_x=1, pos_y=2))
         self.assertEqual(coord1, minimum)

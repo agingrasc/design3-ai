@@ -3,7 +3,7 @@ import json
 from websocket import create_connection
 
 from domain.gameboard.position import Position
-from mcu.commands import regulator
+from mcu.regulator import regulator
 from mcu import robotcontroller
 from mcu.robotcontroller import RobotController
 
@@ -14,13 +14,12 @@ DELTA_T = 0.1
 
 class VisionRegulation:
     def __init__(
-        self, robot_controller: RobotController, set_move_destination, global_information: GlobalInformation=None
+        self, robot_controller: RobotController, global_information: GlobalInformation=None
     ):
         if global_information:
             self.global_information = global_information
         self.connection = None
         self.robot_controller = robot_controller
-        self.set_move_destination = set_move_destination
 
     def set_url(self, url):
         self.connection = create_connection("ws://" + url + ":3000")
@@ -45,11 +44,9 @@ class VisionRegulation:
         print("Path finisehd!")
 
     def go_to_position(self, position):
-        self.set_move_destination(position)
-        self.robot_controller.move()
+        self.robot_controller.move(position)
 
     def oriente_robot(self, theta):
         pos = self.global_information.get_robot_position()
         pos.theta = theta
-        self.set_move_destination(pos)
-        self.robot_controller.move()
+        self.go_to_position(pos)

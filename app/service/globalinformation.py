@@ -27,7 +27,11 @@ class GlobalInformation:
     def get_robot_position(self):
         data = {'headers': 'pull_robot_position', 'data': {}}
         self.connection.send(json.dumps(data))
-        robot_position_json = self.connection.recv()
+        try:
+            robot_position_json = self.connection.recv()
+        except:
+            return self.get_robot_position()
+
         robot_position_info = json.loads(robot_position_json)
         pos_x = int(float(robot_position_info['x']))
         pos_y = int(float(robot_position_info['y']))
@@ -72,12 +76,6 @@ class GlobalInformation:
 
         return formated_obstacles
 
-    def get_drawzone_corner_position(self):
-        data_json = requests.get("http://{}:5000/{}".format(self.base_station_url, DRAWZONE_CORNER_POSITION_ENDPOINT)).json()
-        x = int(float(data_json['data']['top_right']['x']))
-        y = int(float(data_json['data']['top_right']['y']))
-        return Position(x, y)
-
     def get_robot_radius(self):
         return ROBOT_RADIUS
 
@@ -96,6 +94,5 @@ class GlobalInformation:
         requests.post(BASE_URL_PATTERN.format(self.base_station_url, "path"), json=payload_json)
 
     def send_take_picture_request(self, scale_factor, orientation):
-        payload = {'data': {'scaling': scale_factor,
-                            'orientation': orientation}}
-        requests.post(BASE_URL_PATTERN.format(self.base_station_url(), TAKE_PICTURE_ENDPOINT), payload)
+        payload = {'data': {'scaling': scale_factor, 'orientation': orientation}}
+        requests.post(BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT), payload)

@@ -39,14 +39,6 @@ class ProtocolTest(unittest.TestCase):
         actual = protocol.generate_camera_command(15, 15)
         self.assertEqual(expected, actual)
 
-    def test_basic_pencil(self):
-        expected_pencil_cmd = b'\x84\x02\x50\x08'
-        actual_pencil_cmd = protocol.generate_pencil_command(PencilStatus.RAISED)
-        self.assertEqual(expected_pencil_cmd, actual_pencil_cmd)
-
-    def test_invalid_pencil_status(self):
-        self.assertRaises(AssertionError, protocol.generate_pencil_command, 0)
-
     def test_red_led(self):
         expected_red = b'\x03\x02\xfb\x00\x00'
         actual_red = protocol.generate_led_command(Leds.UP_RED)

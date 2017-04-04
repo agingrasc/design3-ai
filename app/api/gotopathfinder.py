@@ -3,10 +3,10 @@ from threading import Thread
 from flask import Blueprint, request, make_response, jsonify
 
 from domain.gameboard.position import Position
-from domain.robot.task.taskfactory import task_factory
 from api.gotoposition.dimensionassembler import DimensionAssembler
 from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
+from domain.robot.task.taskfactory import TaskFactory
 from service import pathfinding_application_service
 
 goto_pathfinder = Blueprint('goto-pathfinder', __name__)
@@ -39,5 +39,6 @@ def go_to_position_():
 
 
 def __goto_pathfinder_run(destination):
+    task_factory = TaskFactory()
     path = pathfinding_application_service.find(task_factory.global_information, destination)
     task_factory.vision_regulation.go_to_positions(path)

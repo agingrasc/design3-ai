@@ -11,7 +11,7 @@ from api.startai import start_ai
 
 from api.gotoposition.gotoposition import go_to_position
 
-from domain.robot.task.taskfactory import task_factory
+from domain.robot.task.taskfactory import TaskFactory
 
 app = Flask(__name__)
 
@@ -52,8 +52,7 @@ def not_found(error):
 
 def main():
     status = sys.argv[1]
-    # base_station_url = sys.argv[2]
-    # task_factory.set_url(base_station_url)
+    task_factory = TaskFactory()
 
     app.register_blueprint(start_ai)
     app.register_blueprint(send_feedback)

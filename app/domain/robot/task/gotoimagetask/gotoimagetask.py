@@ -5,6 +5,7 @@ from domain.gameboard.position import Position
 from domain.pathfinding import get_segments
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
+from service.globalinformation import GlobalInformation
 from service import pathfinding_application_service
 from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
@@ -16,7 +17,7 @@ images_position: Dict[int, Position] = {
     3: Position(1933, 267, 0),
     4: Position(1929, 615, 0),
     5: Position(1895, 842, 0),
-    6: Position(2096, 551, -1.57),
+    6: Position(2096, 551, -1.37),
     7: Position(1925, 657, -1.57)
 }
 
@@ -36,10 +37,9 @@ class GoToImageTask(Task):
         self.global_information = global_information
         self.pathfinding_application_service = pathfinder_service
         self.blackboard = blackboard
-        self.get_segments = get_segments
 
     def execute(self):
-        image_position: Position = images_position[self.blackboard.id_image]
+        image_position = images_position[self.blackboard.get_image_id()]
         path = self.pathfinding_application_service.find(self.global_information, image_position)
         for destination in path:
             self.vision_regulation.go_to_position(destination)
