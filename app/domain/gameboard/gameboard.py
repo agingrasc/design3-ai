@@ -5,8 +5,6 @@ from . import position
 
 ObstacleValueObject = collections.namedtuple('ObstacleValueObject', 'pos_x pos_y radius tag')
 
-CAMERA_LENGTH = 0
-
 
 class Tag(Enum):
     OBSTACLE = 'X'
@@ -19,7 +17,6 @@ class Tag(Enum):
 
 class GameBoard:
     def __init__(self, width, length, obstacles, robot_radius=1, camera_length=0):
-        CAMERA_LENGTH = camera_length
         self.camera_length = camera_length
         self.width = width
         self.length = length
