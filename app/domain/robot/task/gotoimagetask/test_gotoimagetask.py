@@ -7,7 +7,7 @@ from domain.robot.task.gotoimagetask.gotoimagetask import images_position
 VALID_OBSTACLES_LIST = [Mock(pos_x=50, pos_y=50, radius=2, Tag=""), Mock(pos_x=40, pos_y=40, radius=2, Tag="")]
 WIDTH_TABLE = 1120
 LENGTH_TABLE = 2300
-VALID_PATH = [(35, 35), (40, 40), (45, 45)]
+VALID_PATH = [Mock(pos_x=35, pos_y=35, theta=0), Mock(pos_x=40, pos_y=40, theta=0), Mock(pos_x=45, pos_y=45, theta=0)]
 VALID_IMAGE_ID = 2
 
 
