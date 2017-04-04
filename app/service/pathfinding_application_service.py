@@ -11,6 +11,7 @@ from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
 
 DEFAULT_CELL_SCALE = 10
+CAMERA_LENGTH = 6
 
 dimension_assembler = DimensionAssembler(DEFAULT_CELL_SCALE)
 position_assembler = PositionAssembler(DEFAULT_CELL_SCALE)
@@ -30,7 +31,7 @@ def find(global_information: GlobalInformation, destination):
     for obstacle in obstacles:
         print(obstacle)
 
-    game_board = GameBoard(x_dimension, y_dimension, obstacles, robot_radius)
+    game_board = GameBoard(x_dimension, y_dimension, obstacles, robot_radius, CAMERA_LENGTH)
     robot_position_scale = game_board.get_coordinate(
         int(robot_position.pos_x / DEFAULT_CELL_SCALE), int(robot_position.pos_y / DEFAULT_CELL_SCALE)
     )

@@ -58,7 +58,7 @@ def find_minimum(neighbors, destination):
 def removed_already_visited_neighbors(neighbors, path):
     new_neighbors = []
     for neighbor in neighbors:
-        if neighbor not in path:
+        if neighbor not in path and not (neighbor.weight == sys.maxsize):
             new_neighbors.append(neighbor)
     return new_neighbors
 
