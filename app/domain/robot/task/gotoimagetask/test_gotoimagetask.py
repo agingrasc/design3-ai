@@ -26,17 +26,13 @@ class GoToImageTaskTest(TestCase):
         self.blackboard.get_image_id.return_value = VALID_IMAGE_ID
         self.pathfinding_application_service.find.return_value = VALID_PATH
 
-    def test_get_information_of_the_gameboard_correctly(self):
+    def test_call_pathfinder_correctly(self):
         task = GoToImageTask(
             self.feedback, self.vision_regulation, self.global_information, self.pathfinding_application_service,
             self.blackboard
         )
 
         task.execute()
-
-        expected_calls = [
-            call.get_obstacles(), call.get_robot_position(), call.get_gameboard_width(), call.get_gameboard_length()
-        ]
 
         self.pathfinding_application_service.find.assert_called_once_with(
             self.global_information, images_position[VALID_IMAGE_ID]

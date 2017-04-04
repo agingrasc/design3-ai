@@ -16,12 +16,13 @@ class ReceiveInformationsTaskTest(unittest.TestCase):
         self.feedback = Mock()
         self.vision_regulation = Mock()
         self.blackboard = Mock()
+        self.global_information = Mock()
         self.decoder.get_image_number.return_value = VALID_IMAGE_NUMBER
         self.decoder.get_image_orientation.return_value = VALID_IMAGE_ORIENTATION
         self.decoder.get_image_magnification.return_value = VALID_IMAGE_MAGNIFICATION
 
     def test_call_get_informations_correctly(self):
-        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard)
+        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard, self.global_information)
 
         task.execute()
 
@@ -33,9 +34,10 @@ class ReceiveInformationsTaskTest(unittest.TestCase):
         self.decoder.assert_has_calls(expected_calls)
 
     def test_called_all_subtask(self):
-        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard)
+        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard, self.global_information)
         task.execute()
 
+        self.global_information.send_path.assert_called_once()
         self.feedback.send_comment.assert_called_once()
         self.decoder.decode_information.assert_called_once()
         self.decoder.get_image_number.assert_called_once()
