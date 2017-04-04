@@ -11,4 +11,4 @@ class ShutDownRedLedTask(Task):
 
     def execute(self):
         self.lighter.shut_down_red_led()
-        self.feedback.send_comment("début du deuxième cycle")
+        self.feedback.send_new_cycle()

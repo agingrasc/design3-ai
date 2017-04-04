@@ -26,9 +26,10 @@ class Feedback:
         value = {}
         value["headers"] = "push_tasks_information"
         value["data"] = data
-        print(value)
-        print("send feedback to " + str(comment))
-
         self.global_information.connection.send(json.dumps(value))
-        #data = {'feedback': comment}
-        #requests.post(url=BASE_URL_PATTERN.format(self.global_information.base_station_url, END_POINT_PATH), json=data)
+
+    def send_new_cycle(self):
+        value = {}
+        value["headers"] = "new_round"
+        value["data"] = {}
+        self.global_information.connection.send(json.dumps(value))
