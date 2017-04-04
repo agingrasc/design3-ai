@@ -207,7 +207,7 @@ class PIPositionRegulator(object):
         theta_deadzone = THETA_DEADZONE * 1.03
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
-        err_theta = robot_position.theta - self.setpoint.theta
+        err_theta = wrap_theta(robot_position.theta - self.setpoint.theta)
         return abs(err_x) < deadzone and abs(err_y) < deadzone and abs(err_theta) < theta_deadzone
 
 
