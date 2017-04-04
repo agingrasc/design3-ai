@@ -26,6 +26,8 @@ class Feedback:
         value = {}
         value["headers"] = "push_tasks_information"
         value["data"] = data
+        print(value)
+        print("send feedback to " + str(comment))
 
         self.global_information.connection.send(json.dumps(value))
         #data = {'feedback': comment}

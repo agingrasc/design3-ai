@@ -8,6 +8,7 @@ from domain.robot.task.task import Task
 from service.globalinformation import GlobalInformation
 from service import pathfinding_application_service
 from service.feedback import Feedback
+from service.feedback import TASK_GO_TO_IMAGE
 from service.globalinformation import GlobalInformation
 
 images_position: Dict[int, Position] = {
@@ -45,4 +46,4 @@ class GoToImageTask(Task):
             self.vision_regulation.go_to_position(destination)
 
         self.vision_regulation.oriente_robot(image_position.theta)
-        self.feedback.send_comment(self.feedback.TASK_GO_TO_IMAGE)
+        self.feedback.send_comment(TASK_GO_TO_IMAGE)

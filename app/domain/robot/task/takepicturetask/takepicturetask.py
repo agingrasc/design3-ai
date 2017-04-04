@@ -2,6 +2,7 @@ from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service.globalinformation import GlobalInformation
 from service.feedback import Feedback
+from service.feedback import TASK_TAKE_PICTURE
 
 
 class TakePictureTask(Task):
@@ -17,4 +18,4 @@ class TakePictureTask(Task):
             "Taking image: {} -- {} -- {}".
             format(self.blackboard.id_image, self.blackboard.orientation, self.blackboard.magnification)
         )
-        self.feedback.send_comment(self.feedback.TASK_TAKE_PICTURE)
+        self.feedback.send_comment(TASK_TAKE_PICTURE)

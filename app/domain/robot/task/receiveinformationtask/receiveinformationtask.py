@@ -3,6 +3,7 @@ from domain.command.visionregulation import VisionRegulation
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service.feedback import Feedback
+from service.feedback import TASK_RECEIVE_INFORMATION
 
 
 class ReceiveInformationTask(Task):
@@ -21,4 +22,4 @@ class ReceiveInformationTask(Task):
         self.blackboard.id_image = self.decoder.get_image_number()
         self.blackboard.orientation = self.decoder.get_image_orientation()
         self.blackboard.magnification = self.decoder.get_image_magnification()
-        self.feedback.send_comment(self.feedback.TASK_RECEIVE_INFORMATION)
+        self.feedback.send_comment(TASK_RECEIVE_INFORMATION)

@@ -5,6 +5,7 @@ from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service.feedback import Feedback
+from service.feedback import TASK_IDENTEFIE_ANTENNA
 from service.globalinformation import GlobalInformation
 
 LINE_LENGHT = 1
@@ -35,7 +36,7 @@ class IdentifyAntennaTask(Task):
         self.vision_regulation.go_to_position(end_position)
         self.antenna.end_recording()
         self.draw_line()
-        self.feedback.send_comment(self.feedback.TASK_IDENTEFIE_ANTENNA)
+        self.feedback.send_comment(TASK_IDENTEFIE_ANTENNA)
 
     def draw_line(self):
         max_signal_position = self.antenna.get_max_signal_position()

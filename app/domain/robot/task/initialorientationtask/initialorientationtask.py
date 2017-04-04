@@ -3,6 +3,7 @@ import numpy as np
 from domain.command.visionregulation import VisionRegulation
 from domain.robot.task.task import Task
 from service.feedback import Feedback
+from service.feedback import TASK_INITIAL_ORIENTATION
 from service.globalinformation import GlobalInformation
 
 INITIAL_ANGLE = 0.79
@@ -19,4 +20,4 @@ class InitialOrientationTask(Task):
         if self.global_information.get_robot_orientation() != 0:
             self.vision_regulation.oriente_robot(np.deg2rad(INITIAL_ANGLE))
 
-        self.feedback.send_comment(self.feedback.TASK_INITIAL_ORIENTATION)
+        self.feedback.send_comment(TASK_INITIAL_ORIENTATION)
