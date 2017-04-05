@@ -5,8 +5,7 @@ from service.globalinformation import GlobalInformation
 
 START_POSITION = Position(260, 890, 0.785398) # 310, 865
 STOP_POSITION = Position(1250, 890, 0.785398) # 1280, 865
-MAX_Y = 895
-LINE_SEGMENT_SIZE = 18
+MAX_Y = 890
 
 
 class Antenna:
@@ -36,4 +35,4 @@ class Antenna:
         return STOP_POSITION
 
     def get_segment_max_signal_antenna(self, position) -> Position:
-        return Position(position.pos_x, position.pos_y - LINE_SEGMENT_SIZE, position.theta)
+        return Position(position.pos_x, position.pos_y, position.theta)

@@ -26,9 +26,9 @@ REGULATOR_FREQUENCY = 0.20 # secondes
 
 
 class RobotSpeed(enum.Enum):
-    NORMAL_SPEED = (150, 3)
+    NORMAL_SPEED = (150, 4)
     SCAN_SPEED = (60, 5)
-    DRAW_SPEED = (80, 3)
+    DRAW_SPEED = (80, 4)
 
 
 constants = [(0.027069, 0.040708, 0, 25),  # REAR X

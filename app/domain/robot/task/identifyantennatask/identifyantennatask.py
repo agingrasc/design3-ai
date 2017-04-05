@@ -1,3 +1,5 @@
+import numpy as np
+
 from domain.command.antenna import Antenna
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
@@ -9,7 +11,7 @@ from service.feedback import TASK_IDENTEFIE_ANTENNA
 from service.globalinformation import GlobalInformation
 
 LINE_LENGHT = 1
-ANTENNA_DRAW_MARK_ANGLE = 0.79
+ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(45)
 ANTENNA_MARK_LENGTH = 10
 
 
@@ -48,7 +50,7 @@ class IdentifyAntennaTask(Task):
         self.vision_regulation.go_to_position(max_signal_position)
         robot_pos = self.global_information.get_robot_position()
         end_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
-        move_vec = Position(0, -ANTENNA_MARK_LENGTH)
+        end_position.pos_y = end_position.pos_y - ANTENNA_MARK_LENGTH
 
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
 
