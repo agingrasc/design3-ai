@@ -16,7 +16,8 @@ class Tag(Enum):
 
 
 class GameBoard:
-    def __init__(self, width, length, obstacles, robot_radius=1):
+    def __init__(self, width, length, obstacles, robot_radius=1, camera_length=0):
+        self.camera_length = camera_length
         self.width = width
         self.length = length
         self.robot_coordinate = Coordinate(0, 0)
@@ -70,7 +71,9 @@ class GameBoard:
         self.__add_padding_borders()
 
     def __add_obstacle(self, obstacle_value_object):
-        obstacles = build_obstacle(obstacle_value_object, self.width, self.length, self.robot_radius)
+        obstacles = build_obstacle(
+            obstacle_value_object, self.width, self.length, self.robot_radius, self.camera_length
+        )
         for obstacle in obstacles:
             self.game_board[self.width - 1 - obstacle.pos_x][obstacle.pos_y] = obstacle
 
@@ -81,11 +84,11 @@ class GameBoard:
         return self.game_board[x][y]
 
 
-def build_obstacle(obstacle, width, length, robot_radius):
+def build_obstacle(obstacle, width, length, robot_radius, camera_length):
     obstacle_coord = []
-    startx_pos = __verify_start_x(obstacle, robot_radius)
+    startx_pos = __verify_start_x(obstacle, robot_radius, camera_length)
     starty_pos = __verify_start_y(obstacle, robot_radius)
-    endx_pos = __verify_end_x(obstacle, robot_radius, width)
+    endx_pos = __verify_end_x(obstacle, robot_radius, width, camera_length)
     endy_pos = __verify_end_y(obstacle, robot_radius, length)
     for i in range(startx_pos, endx_pos):
         for j in range(starty_pos, endy_pos):
@@ -110,18 +113,18 @@ def __verify_end_y(obstacle, robot_radius, width):
     return endy_pos
 
 
-def __verify_end_x(obstacle, robot_radius, length):
+def __verify_end_x(obstacle, robot_radius, length, camera_length):
     endx_pos = obstacle.pos_x + obstacle.radius + robot_radius
     if endx_pos > length - 1:
         endx_pos = length - 1
-    return endx_pos
+    return endx_pos + camera_length
 
 
-def __verify_start_x(obstacle, robot_radius):
+def __verify_start_x(obstacle, robot_radius, camera_length):
     startx_pos = obstacle.pos_x - obstacle.radius - robot_radius
     if startx_pos < 0:
         startx_pos = 0
-    return startx_pos
+    return startx_pos - camera_length
 
 
 class Coordinate(position.Position):

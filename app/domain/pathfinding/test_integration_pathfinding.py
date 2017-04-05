@@ -95,7 +95,7 @@ class PathFindingITest(TestCase):
     def test_real_value_two_obstacles(self):
         obstacle1 = ObstacleValueObject(pos_x=148, pos_y=23, radius=3, tag=Tag.CANT_PASS_LEFT)
         obstacle2 = ObstacleValueObject(pos_x=149, pos_y=80, radius=3, tag=Tag.CANT_PASS_RIGHT)
-        game_board = GameBoard(230, 111, [obstacle1, obstacle2], 5)
+        game_board = GameBoard(230, 111, [obstacle1, obstacle2], 5, 2)
 
         end_position = game_board.get_coordinate(211, 104)
         begin_position = game_board.get_coordinate(56, 63)

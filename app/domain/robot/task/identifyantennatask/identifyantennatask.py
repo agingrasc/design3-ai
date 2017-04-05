@@ -1,11 +1,12 @@
 from domain.command.antenna import Antenna
-from domain.command.drawer import Drawer
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service import pathfinding_application_service
+from mcu.robotcontroller import RobotSpeed
 from service.feedback import Feedback
+from service.feedback import TASK_IDENTEFIE_ANTENNA
 from service.globalinformation import GlobalInformation
 
 LINE_LENGHT = 1
@@ -32,6 +33,7 @@ class IdentifyAntennaTask(Task):
         self.pathfinder_service = pathfinder_service
 
     def execute(self):
+        self.antenna.robot_controller.set_robot_speed(RobotSpeed.SCAN_SPEED)
         start_position = self.antenna.get_start_antenna_position()
         self.global_information.send_path([self.global_information.get_robot_position(), start_position])
         self.vision_regulation.go_to_position(start_position)
@@ -41,7 +43,8 @@ class IdentifyAntennaTask(Task):
         self.vision_regulation.go_to_positions(path)
         self.antenna.end_recording()
         self.draw_line()
-        self.feedback.send_comment("End identifying antenna")
+        self.antenna.robot_controller.set_robot_speed(RobotSpeed.NORMAL_SPEED)
+        self.feedback.send_comment(TASK_IDENTEFIE_ANTENNA)
 
     def draw_line(self):
         max_signal_position = self.antenna.get_max_signal_position()
