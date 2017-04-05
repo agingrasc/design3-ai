@@ -1,3 +1,5 @@
+import time
+
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service.globalinformation import GlobalInformation
@@ -12,6 +14,7 @@ class TakePictureTask(Task):
         self.feedback = feedback
 
     def execute(self):
+        time.sleep(3)
         scale_factor = self.blackboard.magnification
         orientation = self.blackboard.orientation
         self.global_information.send_take_picture_request(scale_factor, orientation)
