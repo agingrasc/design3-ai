@@ -1,7 +1,7 @@
 import math
-from collections import namedtuple
-
 import numpy as np
+
+from collections import namedtuple
 from typing import List, Tuple
 
 from domain.gameboard.position import Position

@@ -24,7 +24,6 @@ class Decoder:
 
     def decode_information(self):
         while self.result != ManchesterResultCode.SUCCESS.value:
-
             decoded_information = self.robot_controller.decode_manchester()
             self.result, self.image_number, self.image_orientation, self.image_magnification = decoded_information
 
