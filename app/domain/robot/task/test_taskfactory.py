@@ -17,7 +17,6 @@ class TaskFactoryTest(TestCase):
         self.robot_controler = Mock()
         self.global_information = Mock()
         self.task_factory = TaskFactory(self.global_information, self.robot_controler)
-        self.task_factory.task_list.clear()
 
     def test_can_create_an_initial_orientation_task(self):
 

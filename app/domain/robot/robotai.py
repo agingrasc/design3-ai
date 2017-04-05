@@ -1,7 +1,4 @@
 class RobotAi:
-    def __init__(self, task_execute_list):
-        self.task_execute_list = task_execute_list
-
-    def execute(self):
-        for task in self.task_execute_list:
+    def execute(self, tasks_list):
+        for task in tasks_list:
             task.execute()
