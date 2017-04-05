@@ -11,29 +11,25 @@ PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
 
 DEFAULT_KP = 0.4
-DEFAULT_KI = 0.010
+DEFAULT_KI = 0
 DEFAULT_KD = 0
 
 DEFAULT_THETA_KP = 0.50
 DEFAULT_THETA_KI = 0.007
 
-MAX_X = 200
-MAX_Y = 100
-
 POSITION_ACC_DECAY = 1.00  # 3 iteration pour diminuer de moitie
 THETA_ACC_DECAY = 0.79
 
-DEFAULT_MIN_CMD = 0
-DEFAULT_MAX_CMD = 150
-
-DEFAULT_THETA_MIN_CMD = 0.050
+POSITION_MAX_CMD = 150
+POSITION_MIN_CMD = 3.1
 DEFAULT_THETA_MAX_CMD = 0.8
+DEFAULT_THETA_MIN_CMD = 0.050
 
 DEADZONE = 2  # mm
-DEFAULT_DEADZONE_CMD = 25
-
 THETA_DEADZONE = 0.044  # rad
 DEFAULT_DELTA_T = 0.100  # en secondes
+
+DEFAULT_DEADZONE_CMD = 0
 
 
 class PIPositionRegulator(object):
@@ -175,10 +171,10 @@ class PIPositionRegulator(object):
 
     def _relinearize(self, cmd):
         """" Force la valeur de cmd dans [deadzone_cmd, max_cmd] ou 0 si dans [-min_cmd, min_cmd]"""
-        if 0 < cmd < self.constants.min_cmd:
-            return cmd + self.constants.deadzone_cmd
-        elif -self.constants.min_cmd < cmd < 0:
-            return cmd - self.constants.deadzone_cmd
+        if cmd > 0:
+            return cmd + self.constants.min_cmd
+        elif cmd < 0:
+            return cmd - self.constants.min_cmd
         else:
             return cmd
 
@@ -210,7 +206,7 @@ class PIPositionRegulator(object):
         return cmd
 
     def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
-        deadzone *= 1.2
+        deadzone *= 1.7
         theta_deadzone = THETA_DEADZONE * 1.03
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
@@ -251,7 +247,7 @@ def wrap_theta(t):
 
 constants = PIDConstants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD,
                          DEFAULT_THETA_KP, DEFAULT_KI, DEADZONE,
-                         DEFAULT_MAX_CMD, DEFAULT_DEADZONE_CMD, DEFAULT_MIN_CMD,
+                         POSITION_MAX_CMD, DEFAULT_DEADZONE_CMD, POSITION_MIN_CMD,
                          DEFAULT_THETA_MAX_CMD, DEFAULT_THETA_MIN_CMD)
 
 regulator = PIPositionRegulator(constants)
