@@ -105,6 +105,3 @@ class TaskFactory(metaclass=Singleton):
 
     def set_url(self, url: str):
         self.global_information.set_url(url)
-
-
-task_factory = TaskFactory()

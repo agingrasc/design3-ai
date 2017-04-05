@@ -37,7 +37,11 @@ class IdentifyAntennaTask(Task):
         end_position = self.antenna.get_stop_antenna_position()
         self.vision_regulation.go_to_position(end_position)
         self.antenna.end_recording()
+
         self.draw_line()
+
+        self.vision_regulation.go_to_position(self.blackboard.antenna_position)
+
         self.antenna.robot_controller.set_robot_speed(RobotSpeed.NORMAL_SPEED)
         self.feedback.send_comment(TASK_IDENTEFIE_ANTENNA)
 

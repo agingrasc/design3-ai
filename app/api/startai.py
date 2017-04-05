@@ -10,15 +10,19 @@ def create_start_ai_blueprint(task_factory):
     @start_ai_blueprint.route('/start-ai', methods=['POST'])
     def start_ai_():
         print("starting the ai")
+
         try:
             req_info = request.json
         except Exception as e:
             print(e.with_traceback())
             return make_response(jsonify(), 400)
+
         task_id = req_info["task_id"]
 
         ai = RobotAi(_decide_task_list(task_id))
-        Thread(target=ai.execute).start()
+
+        ai_thread = Thread(target=ai.execute)
+        ai_thread.start()
 
         send_response = make_response(jsonify(), 200)
         return send_response
