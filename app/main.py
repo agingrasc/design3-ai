@@ -8,7 +8,7 @@ from api.gotopathfinder import goto_pathfinder
 from api.sendfeedbacktask import send_feedback
 from api.lightgreenled import light_green_led
 from api.seturlbasestation import set_url
-from api.startai import start_ai
+from api.startai import create_start_ai_blueprint
 from api.gotoposition.gotoposition import go_to_position
 
 from domain.robot.task.taskfactory import TaskFactory
@@ -60,6 +60,8 @@ def main():
 
     # FIXME: create instance and inject it
     task_factory = TaskFactory()
+
+    start_ai = create_start_ai_blueprint(task_factory)
 
     app = create_rest_api(start_ai, send_feedback, set_image_segments,
                           light_green_led, set_url, go_to_position, goto_pathfinder)
