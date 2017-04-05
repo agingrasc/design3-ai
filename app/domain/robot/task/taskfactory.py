@@ -13,21 +13,17 @@ from domain.robot.task.initialorientationtask.initialorientationtask import Init
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
 from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
-from mcu.robotcontroller import RobotController
 from service import pathfinding_application_service
 from service.feedback import Feedback
-from service.globalinformation import GlobalInformation
 from util.singleton import Singleton
-
-ROBOT_API_URL = "http://localhost:5000"
 
 
 class TaskFactory(metaclass=Singleton):
-    def __init__(self):
-        self.global_information = GlobalInformation()
+    def __init__(self, global_information, robot_controller):
+        self.global_information = global_information
+        self.robot_controller = robot_controller
         self.blackboard: Blackboard = Blackboard()
         self.feedback = Feedback(self.global_information)
-        self.robot_controller = RobotController(self.global_information)
         self.vision_regulation = VisionRegulation(self.robot_controller, self.global_information)
         self.drawer = Drawer(self.global_information, self.robot_controller, self.vision_regulation)
         self.antenna = Antenna(self.global_information, self.robot_controller)

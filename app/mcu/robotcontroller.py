@@ -9,7 +9,7 @@ from domain.gameboard.position import Position
 from mcu import protocol
 from mcu import servos
 from mcu.commands import MoveCommand, DecodeManchesterCommand, GetManchesterPowerCommand
-from mcu.regulator import correct_for_referential_frame, regulator
+from mcu.regulator import correct_for_referential_frame, regulator, PIPositionRegulator
 from mcu.protocol import PencilStatus
 from service.globalinformation import GlobalInformation
 
@@ -52,7 +52,7 @@ class SerialMock:
 
 class RobotController(object):
     """" Controleur du robot, permet d'envoyer les commandes et de recevoir certaines informations du MCU."""
-    def __init__(self, global_information: GlobalInformation):
+    def __init__(self, global_information: GlobalInformation, regulator: PIPositionRegulator):
         """" Si aucun lien serie n'est disponible, un SerialMock est instancie."""
         try:
             self.ser_mcu = serial.Serial("/dev/{}".format(SERIAL_MCU_DEV_NAME))

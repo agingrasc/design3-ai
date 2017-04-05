@@ -35,11 +35,6 @@ DEFAULT_DEADZONE_CMD = 25
 THETA_DEADZONE = 0.044  # rad
 DEFAULT_DELTA_T = 0.100  # en secondes
 
-constants = PIDConstants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD,
-                         DEFAULT_THETA_KP, DEFAULT_KI, DEADZONE,
-                         DEFAULT_MAX_CMD, DEFAULT_DEADZONE_CMD, DEFAULT_MIN_CMD,
-                         DEFAULT_THETA_MAX_CMD, DEFAULT_THETA_MIN_CMD)
-
 
 class PIPositionRegulator(object):
     """ Implémente un régulateur PI qui agit avec une rétroaction en position et génère une commande de vitesse."""
@@ -222,6 +217,14 @@ class PIPositionRegulator(object):
         err_theta = wrap_theta(robot_position.theta - self.setpoint.theta)
         return abs(err_x) < deadzone and abs(err_y) < deadzone and abs(err_theta) < theta_deadzone
 
+    def get_constants(self):
+        return dict(self.constants._asdict())
+
+    def set_constants(self, new_constants):
+        print("new constant")
+        self.constants = new_constants
+        print(self.constants)
+
 
 def correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:
     """"
@@ -246,5 +249,9 @@ def wrap_theta(t):
     return (t + np.pi) % (2 * np.pi) - np.pi
 
 
-# FIXME: instance statique, mettre dans RobotController
+constants = PIDConstants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD,
+                         DEFAULT_THETA_KP, DEFAULT_KI, DEADZONE,
+                         DEFAULT_MAX_CMD, DEFAULT_DEADZONE_CMD, DEFAULT_MIN_CMD,
+                         DEFAULT_THETA_MAX_CMD, DEFAULT_THETA_MIN_CMD)
+
 regulator = PIPositionRegulator(constants)

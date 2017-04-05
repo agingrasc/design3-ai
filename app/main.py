@@ -1,7 +1,7 @@
 import sys
 import requests
 
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, request
 
 from api.setimagesegments import set_image_segments
 from api.gotopathfinder import goto_pathfinder
@@ -12,6 +12,9 @@ from api.startai import create_start_ai_blueprint
 from api.gotoposition.gotoposition import create_go_to_position_blueprint
 
 from domain.robot.task.taskfactory import TaskFactory
+from mcu.robotcontroller import RobotController
+from mcu.regulator import regulator, constants, PIDConstants
+from service.globalinformation import GlobalInformation
 
 
 def create_rest_api(start_ai, send_feedback, set_image_segments, light_green_led, set_url, go_to_position,
@@ -58,14 +61,42 @@ def main():
     MANUAL = "manual"
     AUTOMATIC = "automatic"
 
-    # FIXME: create instance and inject it
-    task_factory = TaskFactory()
+    global_information = GlobalInformation()
+
+    robot_controller = RobotController(global_information, regulator)
+    task_factory = TaskFactory(global_information, robot_controller)
 
     start_ai = create_start_ai_blueprint(task_factory)
     go_to_position = create_go_to_position_blueprint(task_factory)
 
     app = create_rest_api(start_ai, send_feedback, set_image_segments,
                           light_green_led, set_url, go_to_position, goto_pathfinder)
+
+    @app.route("/regulator/constants", methods=["GET"])
+    def get_regulator_constants():
+        return make_response(jsonify(regulator.get_constants()))
+
+    @app.route("/regulator/constants", methods=["POST"])
+    def set_regulator_constants():
+        data = request.json
+
+        new_constants = PIDConstants(
+            data['kp'],
+            data['ki'],
+            data['kd'],
+            data['theta_kp'],
+            data['theta_ki'],
+            data['position_deadzone'],
+            data['max_cmd'],
+            data['deadzone_cmd'],
+            data['min_cmd'],
+            data['theta_max_cmd'],
+            data['theta_min_cmd']
+        )
+
+        regulator.set_constants(new_constants)
+
+        return make_response(jsonify({"message": "constant change", "data": regulator.get_constants()}))
 
     if status == AUTOMATIC:
         print("AUTOMATIC MODE not implemented")
