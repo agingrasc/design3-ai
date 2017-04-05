@@ -8,7 +8,7 @@ from mcu.regulator import wrap_theta
 from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
 
-DRAW_ANGLE = np.deg2rad(45)
+DRAW_ANGLE = np.deg2rad(135)
 WAIT_TIME = 2
 
 
@@ -30,10 +30,19 @@ class Drawer:
         segments.append(segments.pop(0))
         self.robot_controller.lower_pencil()
         for point in segments:
-            point.theta = DRAW_ANGLE
+            angle = self.compute_draw_angle(point)
+            self.vision_regulation.oriente_robot(angle)
+            point.theta = angle
             self.vision_regulation.go_to_position(point)
 
         self.stop()
+
+    def compute_draw_angle(self, destination: Position) -> float:
+        robot_position = self.global_information.get_robot_position()
+        delta_vec = Position(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y)
+        angle = delta_vec.get_angle() + DRAW_ANGLE
+        return wrap_theta(angle)
+
 
     def stop(self):
         self.robot_controller.raise_pencil()

@@ -3,6 +3,7 @@ from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service import pathfinding_application_service
 from service.feedback import Feedback
+from service.feedback import TASK_GO_TO_DRAWING_ZONE
 from service.globalinformation import GlobalInformation
 
 DRAW_ANGLE = 45
@@ -31,4 +32,4 @@ class GoToDrawzoneTask(Task):
         for destination in path:
             self.vision_regulation.go_to_position(destination)
 
-        self.feedback.send_comment("end of task going to drawzone")
+        self.feedback.send_comment(TASK_GO_TO_DRAWING_ZONE)

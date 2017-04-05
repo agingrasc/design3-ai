@@ -22,18 +22,19 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
-REGULATOR_FREQUENCY = 0.15 # secondes
+REGULATOR_FREQUENCY = 0.20 # secondes
 
 
 class RobotSpeed(enum.Enum):
-    NORMAL_SPEED = (150, 2)
-    DRAW_SPEED = (80, 2)
+    NORMAL_SPEED = (150, 3)
+    SCAN_SPEED = (60, 5)
+    DRAW_SPEED = (80, 3)
 
 
-constants = [(0.027069, 0.040708, 0, 18),  # REAR X
-             (0.0095292, 0.029466, 0, 18),  # FRONT Y
-             (0.015431, 0.042286, 0, 18),  # FRONT X
-             (0.030357, 0.02766, 0, 18)]  # REAR Y
+constants = [(0.027069, 0.040708, 0, 25),  # REAR X
+             (0.0095292, 0.029466, 0, 25),  # FRONT Y
+             (0.015431, 0.042286, 0, 25),  # FRONT X
+             (0.030357, 0.02766, 0, 25)]  # REAR Y
 
 
 class SerialMock:
