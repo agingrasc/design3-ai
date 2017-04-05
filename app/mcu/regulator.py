@@ -20,8 +20,8 @@ DEFAULT_THETA_KI = 0.007
 POSITION_ACC_DECAY = 1.00  # 3 iteration pour diminuer de moitie
 THETA_ACC_DECAY = 0.79
 
-DEFAULT_MAX_CMD = 150
-DEFAULT_MIN_CMD = 3
+POSITION_MAX_CMD = 150
+POSITION_MIN_CMD = 3.1
 DEFAULT_THETA_MAX_CMD = 0.8
 DEFAULT_THETA_MIN_CMD = 0.050
 
@@ -206,7 +206,7 @@ class PIPositionRegulator(object):
         return cmd
 
     def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
-        deadzone *= 1.2
+        deadzone *= 1.7
         theta_deadzone = THETA_DEADZONE * 1.03
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
@@ -247,7 +247,7 @@ def wrap_theta(t):
 
 constants = PIDConstants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD,
                          DEFAULT_THETA_KP, DEFAULT_KI, DEADZONE,
-                         DEFAULT_MAX_CMD, DEFAULT_DEADZONE_CMD, DEFAULT_MIN_CMD,
+                         POSITION_MAX_CMD, DEFAULT_DEADZONE_CMD, POSITION_MIN_CMD,
                          DEFAULT_THETA_MAX_CMD, DEFAULT_THETA_MIN_CMD)
 
 regulator = PIPositionRegulator(constants)
