@@ -18,15 +18,16 @@ MAX_Y = 100
 POSITION_ACC_DECAY = 1.00  # 3 iteration pour diminuer de moitie
 THETA_ACC_DECAY = 0.79
 DEFAULT_KP = 0.4
-DEFAULT_KI = 0.010
+DEFAULT_KI = 0
 DEFAULT_KD = 0
 DEFAULT_THETA_KP = 0.50
 DEFAULT_THETA_KI = 0.007
 DEFAULT_MAX_CMD = 150
-DEFAULT_DEADZONE_CMD = 25
-DEFAULT_MIN_CMD = 0
+DEFAULT_MIN_CMD = 3
 DEFAULT_THETA_MAX_CMD = 0.8
 DEFAULT_THETA_MIN_CMD = 0.050
+
+DEFAULT_DEADZONE_CMD = 0
 
 
 class PIPositionRegulator(object):
@@ -170,10 +171,10 @@ class PIPositionRegulator(object):
 
     def _relinearize(self, cmd):
         """" Force la valeur de cmd dans [deadzone_cmd, max_cmd] ou 0 si dans [-min_cmd, min_cmd]"""
-        if 0 < cmd < self.constants.min_cmd:
-            return cmd + self.constants.deadzone_cmd
-        elif -self.constants.min_cmd < cmd < 0:
-            return cmd - self.constants.deadzone_cmd
+        if cmd > 0:
+            return cmd + self.constants.min_cmd
+        elif cmd < 0:
+            return cmd - self.constants.min_cmd
         else:
             return cmd
 
