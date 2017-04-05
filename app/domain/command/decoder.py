@@ -2,10 +2,10 @@ from mcu.protocol import ManchesterResultCode
 
 from mcu.robotcontroller import RobotController
 
-NORTH = "Nord"
-SOUTH = "Sud"
-EAST = "Est"
-WEST = "West"
+NORTH = "NORTH"
+SOUTH = "SOUTH"
+EAST = "EAST"
+WEST = "WEST"
 
 SCALING_FACTOR_FOUR = 4
 SCALING_FACTOR_TWO = 2
