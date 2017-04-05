@@ -15,7 +15,7 @@ images_position: Dict[int, Position] = {
     0: Position(1959, 366, 1.57),
     1: Position(2024, 305, 1.22),
     2: Position(1933, 267, 0.35),
-    3: Position(1933, 267, 0),
+    3: Position(1927, 195, 0.25),
     4: Position(1929, 615, 0),
     5: Position(1895, 842, 0),
     6: Position(2096, 551, -1.37),

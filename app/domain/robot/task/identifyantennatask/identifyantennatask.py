@@ -1,5 +1,4 @@
 from domain.command.antenna import Antenna
-from domain.command.drawer import Drawer
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
@@ -37,19 +36,16 @@ class IdentifyAntennaTask(Task):
         end_position = self.antenna.get_stop_antenna_position()
         self.vision_regulation.go_to_position(end_position)
         self.antenna.end_recording()
-
         self.draw_line()
-
         self.vision_regulation.go_to_position(self.blackboard.antenna_position)
-
         self.antenna.robot_controller.set_robot_speed(RobotSpeed.NORMAL_SPEED)
         self.feedback.send_comment(TASK_IDENTEFIE_ANTENNA)
 
     def draw_line(self):
         max_signal_position = self.antenna.get_max_signal_position()
         self.blackboard.antenna_position = max_signal_position
-        self.vision_regulation.go_to_position(max_signal_position)
 
+        self.vision_regulation.go_to_position(max_signal_position)
         robot_pos = self.global_information.get_robot_position()
         end_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
         move_vec = Position(0, -ANTENNA_MARK_LENGTH)

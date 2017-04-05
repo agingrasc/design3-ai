@@ -9,6 +9,7 @@ class TakePictureTask(Task):
     def __init__(self, global_information: GlobalInformation, blackboard: Blackboard, feedback: Feedback):
         self.global_information = global_information
         self.blackboard = blackboard
+        self.feedback = feedback
 
     def execute(self):
         scale_factor = self.blackboard.magnification

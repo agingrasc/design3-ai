@@ -29,12 +29,13 @@ class TaskFactory(metaclass=Singleton):
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
         self.lighter = Lighter(self.robot_controller)
-        self.task_list = []
 
     def create_initial_orientation_task(self):
+        print(self.global_information)
         return InitialOrientationTask(self.feedback, self.vision_regulation, self.global_information)
 
     def create_indentify_antenna_task(self):
+        print(self.global_information)
         return IdentifyAntennaTask(
             self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard
         )

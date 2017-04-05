@@ -7,8 +7,6 @@ def create_start_ai_blueprint(task_factory, robot_ai):
 
     @start_ai_blueprint.route('/start-ai', methods=['POST'])
     def start_ai_():
-        print("starting the ai")
-
         try:
             req_info = request.json
         except Exception as e:
@@ -19,7 +17,7 @@ def create_start_ai_blueprint(task_factory, robot_ai):
 
         tasks = _decide_task_list(task_id)
 
-        ai_execution_thread = Thread(target=robot_ai.execute(tasks))
+        ai_execution_thread = Thread(target=robot_ai.execute, args=[tasks])
         ai_execution_thread.start()
 
         send_response = make_response(jsonify(), 200)
