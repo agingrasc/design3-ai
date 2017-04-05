@@ -1,4 +1,4 @@
-class RobotAi():
+class RobotAi:
     def __init__(self, task_execute_list):
         self.task_execute_list = task_execute_list
 

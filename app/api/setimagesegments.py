@@ -1,5 +1,3 @@
-from threading import Thread
-
 from flask import Blueprint, request, make_response, jsonify
 
 from domain.gameboard.position import Position
@@ -25,6 +23,5 @@ def set_image_segments_():
     task_factory = TaskFactory()
     task_factory.blackboard.segments_image = image_corners
 
-    return make_response(
-        jsonify({}), 200)
+    return make_response(jsonify({}), 200)
 

@@ -15,7 +15,8 @@ from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 class TaskFactoryTest(TestCase):
     def setUp(self):
         self.robot_controler = Mock()
-        self.task_factory = TaskFactory()
+        self.global_information = Mock()
+        self.task_factory = TaskFactory(self.global_information, self.robot_controler)
         self.task_factory.task_list.clear()
 
     def test_can_create_an_initial_orientation_task(self):

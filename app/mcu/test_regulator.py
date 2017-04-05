@@ -1,15 +1,15 @@
 import unittest
 
 from domain.gameboard.position import Position
-from mcu.regulator import PIPositionRegulator
+from mcu.regulator import PIPositionRegulator, PIDConstants
 
 TEST_DELTA_T = 0.1
 
 
 class TestRegulator(unittest.TestCase):
-
     def setUp(self):
-        self.regulator = PIPositionRegulator(1, 1, 0, 0, 0, 5, 100, 20, 20, 0, 0)
+        self.constants = PIDConstants(1, 1, 0, 0, 0, 5, 100, 20, 20, 0, 0)
+        self.regulator = PIPositionRegulator(self.constants)
         self.regulator.setpoint = Position(1000, 1000, 0)
 
     def test_no_move(self):
@@ -32,7 +32,7 @@ class TestRegulator(unittest.TestCase):
         self.assertEqual(expected_speeds, speeds)
 
     def test_integral_action(self):
-        close_actual_position = Position(1000-50, 1000-50, 0)
+        close_actual_position = Position(1000 - 50, 1000 - 50, 0)
         first_iteration_speeds = self.regulator.next_speed_command(close_actual_position, delta_t=TEST_DELTA_T)
         first_iteration_expected_speeds = [55, 55, 0]
         self.assertEqual(first_iteration_expected_speeds, first_iteration_speeds)
@@ -58,7 +58,7 @@ class TestRegulator(unittest.TestCase):
         self.assertEqual(maxed_accumulator, self.regulator.accumulator)
 
     def test_relinearize(self):
-        very_close_actual_position = Position(1000-10, 1000-10, 0)
+        very_close_actual_position = Position(1000 - 10, 1000 - 10, 0)
         speeds = self.regulator.next_speed_command(very_close_actual_position, delta_t=TEST_DELTA_T)
         expected_speeds = [31, 31, 0]
         self.assertEqual(expected_speeds, speeds)
@@ -70,7 +70,7 @@ class TestRegulator(unittest.TestCase):
         self.assertEqual(expected_is_arrived, is_arrived)
 
     def test_is_arrived_close(self):
-        close_actual_position = Position(1000-10, 1000-10, 0)
+        close_actual_position = Position(1000 - 10, 1000 - 10, 0)
         is_arrived = self.regulator.is_arrived(close_actual_position, 10)
         expected_is_arrived = True
         self.assertEqual(expected_is_arrived, is_arrived)
