@@ -1,4 +1,3 @@
-from domain.command.drawer import Drawer
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from domain.command.drawer import Drawer

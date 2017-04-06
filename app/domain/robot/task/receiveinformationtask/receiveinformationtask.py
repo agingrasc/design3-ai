@@ -16,8 +16,6 @@ class ReceiveInformationTask(Task):
         self.blackboard = blackboard
 
     def execute(self):
-        antenna_pos = self.blackboard.antenna_position
-        self.vision_regulation.go_to_position(antenna_pos)
         self.decoder.decode_information()
         self.blackboard.id_image = self.decoder.get_image_number()
         self.blackboard.orientation = self.decoder.get_image_orientation()
