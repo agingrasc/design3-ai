@@ -196,6 +196,7 @@ class RobotController(object):
         retroaction = self.global_information.get_robot_position()
         angle = retroaction.theta
 
+        # FIXME: dynamic speed computing
         distance_to_move_x, distance_to_move_y = correct_for_referential_frame(vec.pos_x, vec.pos_y, angle)
         target_speed_x, target_speed_y = speed.pos_x, speed.pos_y
 

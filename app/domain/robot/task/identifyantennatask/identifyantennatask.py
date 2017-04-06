@@ -48,12 +48,9 @@ class IdentifyAntennaTask(Task):
         self.blackboard.antenna_position = max_signal_position
 
         self.vision_regulation.go_to_position(max_signal_position)
-        robot_pos = self.global_information.get_robot_position()
-        end_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
-        end_position.pos_y = end_position.pos_y - ANTENNA_MARK_LENGTH
+        mark_move = Position(0, -ANTENNA_MARK_LENGTH)
 
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
-
         self.antenna.robot_controller.lower_pencil()
-        self.antenna.robot_controller.move(end_position)
+        self.antenna.robot_controller.precise_move(mark_move, Position(20, -20))
         self.antenna.robot_controller.raise_pencil()

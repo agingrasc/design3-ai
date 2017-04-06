@@ -3,9 +3,9 @@ from mcu.robotcontroller import RobotController
 from service.globalinformation import GlobalInformation
 
 
-START_POSITION = Position(260, 890, 0.785398) # 310, 865
-STOP_POSITION = Position(1250, 890, 0.785398) # 1280, 865
-MAX_Y = 890
+START_POSITION = Position(260, 900, 0.785398) # 310, 865
+STOP_POSITION = Position(1250, 900, 0.785398) # 1280, 865
+MAX_Y = 905
 
 
 class Antenna:
@@ -23,9 +23,13 @@ class Antenna:
         self.robot_controller.precise_move(STOP_POSITION, Position(20, 0))
 
     def get_max_signal_position(self) -> Position:
-        pos = self.robot_controller.get_max_power_position()
-        pos.pos_x += 35
-        pos.pos_y = MAX_Y
+        try:
+            pos = self.robot_controller.get_max_power_position()
+            pos.pos_x += 35
+            pos.pos_y = MAX_Y
+        except:
+            print("CRITICAL: Antenna not found!\n")
+            return START_POSITION
         return pos
 
     def get_start_antenna_position(self) -> Position:
