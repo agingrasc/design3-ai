@@ -21,16 +21,16 @@ class Feedback:
         self.global_information = global_information
 
     def send_comment(self, comment: str):
-        data = {
-            "task_name": comment
-        }
+        data = {}
+        data["task_name"] = comment
+        value = {}
+        value["headers"] = "push_tasks_information"
+        value["data"] = data
+        self.global_information.connection.send(json.dumps(value))
 
-        value = {
-            "headers": "push_tasks_information",
-            "data": data
-        }
-
-        print("send feedback to " + str(comment))
-
+    def send_new_cycle(self):
+        value = {}
+        value["headers"] = "new_round"
+        value["data"] = {}
         self.global_information.connection.send(json.dumps(value))
         print(self.global_information.connection.recv())
