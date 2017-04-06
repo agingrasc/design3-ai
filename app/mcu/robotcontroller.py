@@ -28,13 +28,13 @@ REGULATOR_FREQUENCY = 0.20 # secondes
 class RobotSpeed(enum.Enum):
     NORMAL_SPEED = (150, 4)
     SCAN_SPEED = (30, 5)
-    DRAW_SPEED = (80, 4)
+    DRAW_SPEED = (80, 2)
 
 
-constants = [(0.027069, 0.040708, 0, 25),  # REAR X
-             (0.0095292, 0.029466, 0, 25),  # FRONT Y
-             (0.015431, 0.042286, 0, 25),  # FRONT X
-             (0.030357, 0.02766, 0, 25)]  # REAR Y
+constants = [(0.027069, 0.040708, 0, 20),  # REAR X
+             (0.0095292, 0.029466, 0, 20),  # FRONT Y
+             (0.015431, 0.042286, 0, 20),  # FRONT X
+             (0.030357, 0.02766, 0, 20)]  # REAR Y
 
 
 class SerialMock:

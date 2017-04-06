@@ -3,8 +3,8 @@ from mcu.robotcontroller import RobotController
 from service.globalinformation import GlobalInformation
 
 
-START_POSITION = Position(260, 900, 0.785398) # 310, 865
-STOP_POSITION = Position(1250, 900, 0.785398) # 1280, 865
+START_POSITION = Position(260, 895, 0.785398) # 310, 865
+STOP_POSITION = Position(1250, 895, 0.785398) # 1280, 865
 MAX_Y = 900
 
 
