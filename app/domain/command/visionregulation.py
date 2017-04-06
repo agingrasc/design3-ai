@@ -1,24 +1,16 @@
-import time
 import json
 from websocket import create_connection
 
-from domain.gameboard.position import Position
-from mcu.regulator import regulator
-from mcu import robotcontroller
 from mcu.robotcontroller import RobotController
-
 from service.globalinformation import GlobalInformation
 
 DELTA_T = 0.1
 
 
 class VisionRegulation:
-    def __init__(
-        self, robot_controller: RobotController, global_information: GlobalInformation=None
-    ):
-        if global_information:
-            self.global_information = global_information
+    def __init__(self, robot_controller: RobotController, global_information: GlobalInformation):
         self.connection = None
+        self.global_information = global_information
         self.robot_controller = robot_controller
 
     def set_url(self, url):

@@ -21,14 +21,16 @@ class Feedback:
         self.global_information = global_information
 
     def send_comment(self, comment: str):
-        data = {}
-        data["task_name"] = comment
-        value = {}
-        value["headers"] = "push_tasks_information"
-        value["data"] = data
-        print(value)
+        data = {
+            "task_name": comment
+        }
+
+        value = {
+            "headers": "push_tasks_information",
+            "data": data
+        }
+
         print("send feedback to " + str(comment))
 
         self.global_information.connection.send(json.dumps(value))
-        #data = {'feedback': comment}
-        #requests.post(url=BASE_URL_PATTERN.format(self.global_information.base_station_url, END_POINT_PATH), json=data)
+        print(self.global_information.connection.recv())

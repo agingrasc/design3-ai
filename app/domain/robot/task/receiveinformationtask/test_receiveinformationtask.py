@@ -22,7 +22,7 @@ class ReceiveInformationsTaskTest(unittest.TestCase):
         self.decoder.get_image_magnification.return_value = VALID_IMAGE_MAGNIFICATION
 
     def test_call_get_informations_correctly(self):
-        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard, self.global_information)
+        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard)
 
         task.execute()
 
@@ -34,10 +34,9 @@ class ReceiveInformationsTaskTest(unittest.TestCase):
         self.decoder.assert_has_calls(expected_calls)
 
     def test_called_all_subtask(self):
-        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard, self.global_information)
+        task = ReceiveInformationTask(self.feedback, self.decoder, self.vision_regulation, self.blackboard)
         task.execute()
 
-        self.global_information.send_path.assert_called_once()
         self.feedback.send_comment.assert_called_once()
         self.decoder.decode_information.assert_called_once()
         self.decoder.get_image_number.assert_called_once()

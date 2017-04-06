@@ -3,10 +3,9 @@ from mcu.robotcontroller import RobotController
 from service.globalinformation import GlobalInformation
 
 
-START_POSITION = Position(260, 880, 0.785398) # 310, 865
-STOP_POSITION = Position(1250, 880, 0.785398) # 1280, 865
-MAX_Y = 885
-LINE_SEGMENT_SIZE = 12
+START_POSITION = Position(260, 897, 0.785398) # 310, 865
+STOP_POSITION = Position(1250, 897, 0.785398) # 1280, 865
+MAX_Y = 900
 
 
 class Antenna:
@@ -24,9 +23,13 @@ class Antenna:
         self.robot_controller.precise_move(STOP_POSITION, Position(20, 0))
 
     def get_max_signal_position(self) -> Position:
-        pos = self.robot_controller.get_max_power_position()
-        pos.pos_x += 35
-        pos.pos_y = MAX_Y
+        try:
+            pos = self.robot_controller.get_max_power_position()
+            pos.pos_x += 35
+            pos.pos_y = MAX_Y
+        except:
+            print("CRITICAL: Antenna not found!\n")
+            return START_POSITION
         return pos
 
     def get_start_antenna_position(self) -> Position:
@@ -36,4 +39,4 @@ class Antenna:
         return STOP_POSITION
 
     def get_segment_max_signal_antenna(self, position) -> Position:
-        return Position(position.pos_x, position.pos_y - LINE_SEGMENT_SIZE, position.theta)
+        return Position(position.pos_x, position.pos_y, position.theta)

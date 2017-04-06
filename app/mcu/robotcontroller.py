@@ -9,7 +9,7 @@ from domain.gameboard.position import Position
 from mcu import protocol
 from mcu import servos
 from mcu.commands import MoveCommand, DecodeManchesterCommand, GetManchesterPowerCommand
-from mcu.regulator import correct_for_referential_frame, regulator
+from mcu.regulator import correct_for_referential_frame, regulator, PIPositionRegulator
 from mcu.protocol import PencilStatus
 from service.globalinformation import GlobalInformation
 
@@ -22,19 +22,19 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
-REGULATOR_FREQUENCY = 0.20 # secondes
+REGULATOR_FREQUENCY = 0.10 # secondes
 
 
 class RobotSpeed(enum.Enum):
-    NORMAL_SPEED = (150, 3)
-    SCAN_SPEED = (60, 5)
-    DRAW_SPEED = (80, 3)
+    NORMAL_SPEED = (150, 4)
+    SCAN_SPEED = (30, 5)
+    DRAW_SPEED = (120, 1)
 
 
-constants = [(0.027069, 0.040708, 0, 25),  # REAR X
-             (0.0095292, 0.029466, 0, 25),  # FRONT Y
-             (0.015431, 0.042286, 0, 25),  # FRONT X
-             (0.030357, 0.02766, 0, 25)]  # REAR Y
+constants = [(0.027069, 0.040708, 0, 20),  # REAR X
+             (0.0095292, 0.029466, 0, 20),  # FRONT Y
+             (0.015431, 0.042286, 0, 20),  # FRONT X
+             (0.030357, 0.02766, 0, 20)]  # REAR Y
 
 
 class SerialMock:
@@ -52,7 +52,7 @@ class SerialMock:
 
 class RobotController(object):
     """" Controleur du robot, permet d'envoyer les commandes et de recevoir certaines informations du MCU."""
-    def __init__(self, global_information: GlobalInformation):
+    def __init__(self, global_information: GlobalInformation, regulator: PIPositionRegulator):
         """" Si aucun lien serie n'est disponible, un SerialMock est instancie."""
         try:
             self.ser_mcu = serial.Serial("/dev/{}".format(SERIAL_MCU_DEV_NAME))
@@ -197,7 +197,12 @@ class RobotController(object):
         angle = retroaction.theta
 
         distance_to_move_x, distance_to_move_y = correct_for_referential_frame(vec.pos_x, vec.pos_y, angle)
+        # FIXME: dynamic speed computing
         target_speed_x, target_speed_y = speed.pos_x, speed.pos_y
+        if distance_to_move_x < 0:
+            target_speed_x = -speed.pos_x
+        if distance_to_move_y < 0:
+            target_speed_y = -speed.pos_y
 
         last_timestamp = time.time()
 

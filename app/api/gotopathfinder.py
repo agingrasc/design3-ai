@@ -3,9 +3,6 @@ from threading import Thread
 from flask import Blueprint, request, make_response, jsonify
 
 from domain.gameboard.position import Position
-from api.gotoposition.dimensionassembler import DimensionAssembler
-from api.gotoposition.positionassembler import PositionAssembler
-from api.gotoposition.obstaclesassembler import ObstacleAssembler
 from domain.robot.task.taskfactory import TaskFactory
 from service import pathfinding_application_service
 
