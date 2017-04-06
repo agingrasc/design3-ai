@@ -12,7 +12,7 @@ from service.globalinformation import GlobalInformation
 
 LINE_LENGHT = 1
 ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(45)
-ANTENNA_MARK_LENGTH = 10
+ANTENNA_MARK_LENGTH = 7.5
 
 
 class IdentifyAntennaTask(Task):
@@ -52,5 +52,5 @@ class IdentifyAntennaTask(Task):
 
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
         self.antenna.robot_controller.lower_pencil()
-        self.antenna.robot_controller.precise_move(mark_move, Position(20, -20))
+        self.antenna.robot_controller.precise_move(mark_move)
         self.antenna.robot_controller.raise_pencil()

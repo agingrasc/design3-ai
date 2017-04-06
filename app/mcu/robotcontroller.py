@@ -27,7 +27,7 @@ REGULATOR_FREQUENCY = 0.20 # secondes
 
 class RobotSpeed(enum.Enum):
     NORMAL_SPEED = (150, 4)
-    SCAN_SPEED = (60, 5)
+    SCAN_SPEED = (30, 5)
     DRAW_SPEED = (80, 4)
 
 
@@ -196,9 +196,13 @@ class RobotController(object):
         retroaction = self.global_information.get_robot_position()
         angle = retroaction.theta
 
-        # FIXME: dynamic speed computing
         distance_to_move_x, distance_to_move_y = correct_for_referential_frame(vec.pos_x, vec.pos_y, angle)
+        # FIXME: dynamic speed computing
         target_speed_x, target_speed_y = speed.pos_x, speed.pos_y
+        if distance_to_move_x < 0:
+            target_speed_x = -speed.pos_x
+        if distance_to_move_y < 0:
+            target_speed_y = -speed.pos_y
 
         last_timestamp = time.time()
 
