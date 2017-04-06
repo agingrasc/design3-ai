@@ -22,13 +22,13 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
-REGULATOR_FREQUENCY = 0.20 # secondes
+REGULATOR_FREQUENCY = 0.10 # secondes
 
 
 class RobotSpeed(enum.Enum):
     NORMAL_SPEED = (150, 4)
     SCAN_SPEED = (30, 5)
-    DRAW_SPEED = (80, 1)
+    DRAW_SPEED = (120, 1)
 
 
 constants = [(0.027069, 0.040708, 0, 20),  # REAR X
