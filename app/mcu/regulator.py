@@ -1,7 +1,7 @@
 import math
-from collections import namedtuple
-
 import numpy as np
+
+from collections import namedtuple
 from typing import List, Tuple
 
 from domain.gameboard.position import Position
@@ -10,36 +10,37 @@ from domain.gameboard.position import Position
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
 
-DEADZONE = 2  # mm
-THETA_DEADZONE = 0.044 # rad
-DEFAULT_DELTA_T = 0.100  # en secondes
-MAX_X = 200
-MAX_Y = 100
-POSITION_ACC_DECAY = 1.00  # 3 iteration pour diminuer de moitie
-THETA_ACC_DECAY = 0.79
 DEFAULT_KP = 0.4
-DEFAULT_KI = 0.010
+DEFAULT_KI = 0
 DEFAULT_KD = 0
+
 DEFAULT_THETA_KP = 0.50
 DEFAULT_THETA_KI = 0.007
-DEFAULT_MAX_CMD = 150
-DEFAULT_DEADZONE_CMD = 25
-DEFAULT_MIN_CMD = 0
-DEFAULT_THETA_MAX_CMD = 0.8
+
+POSITION_ACC_DECAY = 1.00  # 3 iteration pour diminuer de moitie
+THETA_ACC_DECAY = 0.79
+
+POSITION_MAX_CMD = 150
+POSITION_MIN_CMD = 1
+DEFAULT_THETA_MAX_CMD = 0.3
 DEFAULT_THETA_MIN_CMD = 0.050
+
+DEADZONE = 4  # mm
+THETA_DEADZONE = 0.030  # rad
+DEFAULT_DELTA_T = 0.100  # en secondes
+
+DEFAULT_DEADZONE_CMD = 0
 
 
 class PIPositionRegulator(object):
     """ Implémente un régulateur PI qui agit avec une rétroaction en position et génère une commande de vitesse."""
 
-    def __init__(self, kp=DEFAULT_KP, ki=DEFAULT_KI, kd=DEFAULT_KD, theta_kp=DEFAULT_THETA_KP,
-                 theta_ki=DEFAULT_THETA_KI, position_deadzone=DEADZONE, max_cmd=DEFAULT_MAX_CMD,
-                 deadzone_cmd=DEFAULT_DEADZONE_CMD, min_cmd=DEFAULT_MIN_CMD, theta_max=DEFAULT_THETA_MAX_CMD,
-                 theta_min=DEFAULT_THETA_MIN_CMD):
+    def __init__(self, pid_constants):
         self._setpoint: Position = Position()
+
         self.accumulator = [0, 0, 0]
-        self.constants = PIDConstants(kp, ki, kd, theta_kp, theta_ki, position_deadzone, max_cmd, deadzone_cmd, min_cmd, theta_max,
-                                      theta_min)
+
+        self.constants = pid_constants
 
     @property
     def setpoint(self):
@@ -159,7 +160,7 @@ class PIPositionRegulator(object):
             saturated_theta = 0
 
         print("Acc: {} -- {} -- {}".format(self.accumulator[0], self.accumulator[1], self.accumulator[2]))
-        print("Distance ({}): {} -- {}".format(math.sqrt(err_x**2 + err_y**2), err_x, err_y))
+        print("Distance ({}): {} -- {}".format(math.sqrt(err_x ** 2 + err_y ** 2), err_x, err_y))
 
         command = []
         for cmd in saturated_cmd:
@@ -170,10 +171,10 @@ class PIPositionRegulator(object):
 
     def _relinearize(self, cmd):
         """" Force la valeur de cmd dans [deadzone_cmd, max_cmd] ou 0 si dans [-min_cmd, min_cmd]"""
-        if 0 < cmd < self.constants.min_cmd:
-            return cmd + self.constants.deadzone_cmd
-        elif -self.constants.min_cmd < cmd < 0:
-            return cmd - self.constants.deadzone_cmd
+        if cmd > 0:
+            return cmd + self.constants.min_cmd
+        elif cmd < 0:
+            return cmd - self.constants.min_cmd
         else:
             return cmd
 
@@ -205,12 +206,21 @@ class PIPositionRegulator(object):
         return cmd
 
     def is_arrived(self, robot_position: Position, deadzone=DEADZONE):
-        deadzone *= 1.2
+        deadzone *= 2
         theta_deadzone = THETA_DEADZONE * 1.03
         err_x = robot_position.pos_x - self.setpoint.pos_x
         err_y = robot_position.pos_y - self.setpoint.pos_y
+        err_x, err_y = correct_for_referential_frame(err_x, err_y, robot_position.theta)
         err_theta = wrap_theta(robot_position.theta - self.setpoint.theta)
         return abs(err_x) < deadzone and abs(err_y) < deadzone and abs(err_theta) < theta_deadzone
+
+    def get_constants(self):
+        return dict(self.constants._asdict())
+
+    def set_constants(self, new_constants):
+        print("new constant")
+        self.constants = new_constants
+        print(self.constants)
 
 
 def correct_for_referential_frame(x: float, y: float, t: float) -> Tuple[float, float]:
@@ -236,5 +246,9 @@ def wrap_theta(t):
     return (t + np.pi) % (2 * np.pi) - np.pi
 
 
-# FIXME: instance statique, mettre dans RobotController
-regulator = PIPositionRegulator()
+constants = PIDConstants(DEFAULT_KP, DEFAULT_KI, DEFAULT_KD,
+                         DEFAULT_THETA_KP, DEFAULT_KI, DEADZONE,
+                         POSITION_MAX_CMD, DEFAULT_DEADZONE_CMD, POSITION_MIN_CMD,
+                         DEFAULT_THETA_MAX_CMD, DEFAULT_THETA_MIN_CMD)
+
+regulator = PIPositionRegulator(constants)

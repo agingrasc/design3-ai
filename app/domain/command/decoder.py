@@ -2,13 +2,13 @@ from mcu.protocol import ManchesterResultCode
 
 from mcu.robotcontroller import RobotController
 
-NORTH = "Nord"
-SOUTH = "Sud"
-EAST = "Est"
-WEST = "West"
+NORTH = "NORTH"
+SOUTH = "SOUTH"
+EAST = "EAST"
+WEST = "WEST"
 
-SCALING_FACTOR_FOUR = 4
-SCALING_FACTOR_TWO = 2
+SCALING_FACTOR_FOUR = 1
+SCALING_FACTOR_TWO = 0.5
 
 ORIENTATION = {0: NORTH, 1: EAST, 2: SOUTH, 3: WEST}
 MAGNIFICATION = {0: SCALING_FACTOR_TWO, 1: SCALING_FACTOR_FOUR}
@@ -16,7 +16,7 @@ MAGNIFICATION = {0: SCALING_FACTOR_TWO, 1: SCALING_FACTOR_FOUR}
 
 class Decoder:
     def __init__(self, robot_controller: RobotController):
-        self.robot_controler = robot_controller
+        self.robot_controller = robot_controller
         self.result = -1
         self.image_number = 0
         self.image_orientation = NORTH
@@ -24,8 +24,9 @@ class Decoder:
 
     def decode_information(self):
         while self.result != ManchesterResultCode.SUCCESS.value:
-            self.result, self.image_number, self.image_orientation, self.image_magnification\
-                = self.robot_controler.decode_manchester()
+            decoded_information = self.robot_controller.decode_manchester()
+            self.result, self.image_number, self.image_orientation, self.image_magnification = decoded_information
+
             self.image_orientation = ORIENTATION[self.image_orientation]
             self.image_magnification = MAGNIFICATION[self.image_magnification]
 

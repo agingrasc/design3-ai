@@ -27,6 +27,7 @@ class GlobalInformation:
     def get_robot_position(self):
         data = {'headers': 'pull_robot_position', 'data': {}}
         self.connection.send(json.dumps(data))
+
         try:
             robot_position_json = self.connection.recv()
         except:
@@ -95,4 +96,7 @@ class GlobalInformation:
 
     def send_take_picture_request(self, scale_factor, orientation):
         payload = {'data': {'scaling': scale_factor, 'orientation': orientation}}
-        requests.post(BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT), payload)
+        print(self.base_station_url)
+        base_station_response = requests.post(BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT),
+                                              json=payload).json()
+        print(base_station_response)
