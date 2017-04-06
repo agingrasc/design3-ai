@@ -31,12 +31,12 @@ class VisionRegulation:
 
     def go_to_positions(self, positions):
         for position in positions:
-            print("Path position: {}".format(position))
-            self.go_to_position(position)
+            self.robot_controller.move(position)
         print("Path finisehd!")
 
     def go_to_position(self, position):
-        self.robot_controller.move(position)
+        #self.robot_controller.move(position)
+        self.robot_controller.stupid_move(position)
 
     def oriente_robot(self, theta):
         pos = self.global_information.get_robot_position()

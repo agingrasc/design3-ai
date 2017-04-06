@@ -17,3 +17,15 @@ class Position:
     def get_angle(self):
         return np.arctan2(float(-self.pos_y), float(self.pos_x))
 
+    def multiply(self, operand):
+        return Position(self.pos_x * operand, self.pos_y * operand, self.theta)
+
+    def renormalize(self, norm):
+        scale_factor = norm / self.get_norm()
+        return self.multiply(scale_factor)
+
+    def __add__(self, other):
+        return Position(self.pos_x + other.pos_x, self.pos_y + other.pos_y, self.theta)
+
+    def __sub__(self, other):
+        return Position(self.pos_x - other.pos_x, self.pos_y - other.pos_y, self.theta)

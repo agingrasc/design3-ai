@@ -1,5 +1,6 @@
 """" Interface entre le système de prise de décision et le MCU. Se charge d'envoyer les commandes. """
 import enum
+from typing import List
 
 import serial
 import time
@@ -229,6 +230,36 @@ class RobotController(object):
 
         cmd = protocol.generate_move_command(0, 0, 0)
         self.ser_mcu.write(cmd)
+
+    def stupid_move(self, destination: Position, speed=120, draw_mode = False):
+        robot_position = self.global_information.get_robot_position()
+        move_vec = destination - robot_position
+        speed_vec = move_vec.renormalize(speed)
+
+        time_to_move = (move_vec.get_norm() / speed_vec.get_norm()) * 1.3
+        print("Time to move: {}".format(time_to_move))
+        start_time = time.time()
+
+        last_cmd_time = time.time()
+        step_down = False
+        while time.time() - start_time < time_to_move:
+            if time.time() - last_cmd_time > REGULATOR_FREQUENCY:
+                last_cmd_time = time.time()
+                robot_position = self.global_information.get_robot_position()
+                move_vec = destination - robot_position
+                if move_vec.get_norm() < 40 and not step_down:
+                    step_down = True
+                    speed_vec = move_vec.renormalize(20)
+                    start_time = time.time()
+                    time_to_move = move_vec.get_norm() / speed_vec.get_norm()
+                    print("Step down")
+                speed_x, speed_y = correct_for_referential_frame(speed_vec.pos_x, speed_vec.pos_y, robot_position.theta)
+                self.ser_mcu.write(protocol.generate_move_command(speed_x, speed_y, 0))
+
+        robot_position = self.global_information.get_robot_position()
+        print("Erreur: {}".format((robot_position - destination).get_norm()))
+        self.ser_mcu.write(protocol.generate_move_command(0, 0, 0))
+
 
     def get_remaining_distances(self, target_distance_x, target_distance_y):
         distances = self.get_traveled_distance()
