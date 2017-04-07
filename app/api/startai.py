@@ -36,7 +36,8 @@ def create_start_ai_blueprint(task_factory, robot_ai):
             6: task_factory.create_go_to_drawzone_task,
             7: task_factory.create_draw_task,
             8: task_factory.create_go_out_of_drawzone_task,
-            9: task_factory.create_light_red_led_task
+            9: task_factory.create_light_red_led_task,
+            12: task_factory.create_image_routine_task
         }
 
         if task_id == 0:
