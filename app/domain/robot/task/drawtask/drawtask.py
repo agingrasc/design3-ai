@@ -18,6 +18,6 @@ class DrawTask(Task):
 
     def execute(self):
         draw_path = self.blackboard.get_image_segments()
-        self.global_information.send_path(draw_path + [draw_path[0]])
+        self.global_information.send_path(draw_path )
         self.drawer.draw(draw_path)
         self.feedback.send_comment(TASK_DRAW_IMAGE)
