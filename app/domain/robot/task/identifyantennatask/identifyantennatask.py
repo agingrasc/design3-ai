@@ -11,7 +11,7 @@ from service.feedback import TASK_IDENTEFIE_ANTENNA
 from service.globalinformation import GlobalInformation
 
 LINE_LENGHT = 1
-ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(45)
+ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(0)
 ANTENNA_MARK_LENGTH = 7.5
 
 
