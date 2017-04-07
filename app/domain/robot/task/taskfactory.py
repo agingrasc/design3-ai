@@ -71,7 +71,9 @@ class TaskFactory(metaclass=Singleton):
         return LightRedLedTask(self.feedback, self.lighter)
 
     def create_image_routine_task(self):
-        return ImagesRoutineTask(self.global_information, self.blackboard, self.vision_regulation)
+        return ImagesRoutineTask(self.global_information, self.blackboard, self.vision_regulation,
+                                 self.create_draw_task(), self.create_go_to_drawzone_task()
+                                 , self.create_go_out_of_drawzone_task())
 
     def create_competition_tasks(self):
         return [
