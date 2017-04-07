@@ -18,7 +18,7 @@ class IdentifyAntennaTaskTestProxy(unittest.TestCase):
             self.identify_antenna_task, self.blackboard, self.vision_regulation, self.global_information
         )
 
-        self.blackboard.antenna_position.return_value = Mock(pos_x=10, pos_y=10)
+        self.blackboard.has_antenna_position.return_value = True
 
         task.execute()
 
@@ -26,3 +26,15 @@ class IdentifyAntennaTaskTestProxy(unittest.TestCase):
         self.global_information.get_robot_position.assert_called_once()
         self.vision_regulation.oriente_robot.assert_called_once()
         self.vision_regulation.go_to_position.assert_called_once()
+
+    def test_call_identification_first_cycles_correctly(self):
+
+        task = IdentifyAntennaTaskProxy(
+            self.identify_antenna_task, self.blackboard, self.vision_regulation, self.global_information
+        )
+
+        self.blackboard.has_antenna_position.return_value = False
+
+        task.execute()
+
+        self.identify_antenna_task.execute.assert_called_once()
