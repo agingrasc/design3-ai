@@ -9,6 +9,7 @@ from domain.robot.task.gooutofdrawzonetask.gooutofdrawzonetask import GoOutOfDra
 from domain.robot.task.gotodrawzonetask.gotodrawzonetask import GoToDrawzoneTask
 from domain.robot.task.gotoimagetask.gotoimagetask import GoToImageTask
 from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAntennaTask
+from domain.robot.task.identifyantennataskproxy.identifyantennataskproxy import IdentifyAntennaTaskProxy
 from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
 from domain.robot.task.receiveinformationtask.receiveinformationtask import ReceiveInformationTask
@@ -73,10 +74,14 @@ class TaskFactory(metaclass=Singleton):
     def create_shut_down_red_led_task(self):
         return ShutDownRedLedTask(self.feedback, self.lighter)
 
+    def create_proxy_identify_antenna_task(self):
+        return IdentifyAntennaTaskProxy(self.create_indentify_antenna_task(), self.blackboard, self.vision_regulation, self.global_information)
+
     def create_competition_tasks(self):
         return [
+            self.create_shut_down_red_led_task(),
             self.create_initial_orientation_task(),
-            self.create_indentify_antenna_task(),
+            self.create_proxy_identify_antenna_task(),
             self.create_receive_informations_task(),
             self.create_go_to_image_task(),
             self.create_take_picture_task(),
@@ -85,16 +90,6 @@ class TaskFactory(metaclass=Singleton):
             self.create_go_out_of_drawzone_task(),
             self.create_light_red_led_task()
         ]
-
-    def create_new_round_tasks(self):
-        return[self.create_shut_down_red_led_task(),
-        self.create_receive_informations_task(),
-        self.create_go_to_image_task(),
-        self.create_take_picture_task(),
-        self.create_go_to_drawzone_task(),
-        self.create_draw_task(),
-        self.create_go_out_of_drawzone_task(),
-        self.create_light_red_led_task()]
 
     def set_url(self, url: str):
         self.global_information.set_url(url)
