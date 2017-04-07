@@ -24,4 +24,5 @@ class IdentifyAntennaTaskTestProxy(unittest.TestCase):
 
         self.global_information.send_path.assert_called_once()
         self.global_information.get_robot_position.assert_called_once()
+        self.vision_regulation.oriente_robot.assert_called_once()
         self.vision_regulation.go_to_position.assert_called_once()

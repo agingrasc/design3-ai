@@ -16,6 +16,7 @@ class IdentifyAntennaTaskProxy():
     def execute(self):
         if self.blackboard.antenna_position:
             self.global_information.send_path([self.global_information.get_robot_position(), self.blackboard.antenna_position])
+            self.vision_regulation.oriente_robot(self.blackboard.antenna_position.theta)
             self.vision_regulation.go_to_position(self.blackboard.antenna_position)
         else:
             self.identify_antenna_task.execute()
