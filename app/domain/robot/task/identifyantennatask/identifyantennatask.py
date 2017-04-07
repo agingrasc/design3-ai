@@ -37,8 +37,8 @@ class IdentifyAntennaTask(Task):
     def execute(self):
         self.antenna.robot_controller.set_robot_speed(RobotSpeed.SCAN_SPEED)
         start_position = self.antenna.get_start_antenna_position()
-        self.global_information.send_path([self.global_information.get_robot_position(), start_position])
-        self.vision_regulation.go_to_position(start_position)
+        path_to_start_point = self.pathfinder_service.find(self.global_information, start_position)
+        self.vision_regulation.go_to_positions(path_to_start_point)
         self.antenna.start_recording()
         end_position = self.antenna.get_stop_antenna_position()
         path = self.pathfinder_service.find(self.global_information, end_position)
@@ -57,6 +57,7 @@ class IdentifyAntennaTask(Task):
         max_position = self.antenna.get_segment_max_signal_antenna(robot_pos)
         self.global_information.send_path([robot_pos, max_position])
         move_vec = Position(0, -ANTENNA_MARK_LENGTH)
+        self.vision_regulation.oriente_robot(max_signal_position.theta)
         self.vision_regulation.go_to_position(max_signal_position)
         mark_move = Position(0, -ANTENNA_MARK_LENGTH)
 
