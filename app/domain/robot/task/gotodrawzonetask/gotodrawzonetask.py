@@ -30,6 +30,7 @@ class GoToDrawzoneTask(Task):
         first_point = segments[0]
         path = self.pathfinding_application_service.find(self.global_information, first_point)
         for destination in path:
+            self.vision_regulation.oriente_robot(destination.theta)
             self.vision_regulation.go_to_position(destination)
 
         self.feedback.send_comment(TASK_GO_TO_DRAWING_ZONE)
