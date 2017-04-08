@@ -27,3 +27,6 @@ class Blackboard:
 
     def get_image_id(self):
         return self.id_image
+
+    def get_image_position(self, image_id):
+        return self.images_position[image_id]

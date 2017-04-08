@@ -2,13 +2,13 @@ from unittest import TestCase
 from unittest.mock import Mock, call
 
 from domain.robot.task.gotoimagetask.gotoimagetask import GoToImageTask
-from domain.robot.task.gotoimagetask.gotoimagetask import images_position
 
 VALID_OBSTACLES_LIST = [Mock(pos_x=50, pos_y=50, radius=2, Tag=""), Mock(pos_x=40, pos_y=40, radius=2, Tag="")]
 WIDTH_TABLE = 1120
 LENGTH_TABLE = 2300
 VALID_PATH = [Mock(pos_x=35, pos_y=35, theta=0), Mock(pos_x=40, pos_y=40, theta=0), Mock(pos_x=45, pos_y=45, theta=0)]
 VALID_IMAGE_ID = 2
+VALID_IMAGE_POSITION = Mock(pos_x=40, pos_y=45)
 
 
 class GoToImageTaskTest(TestCase):
@@ -25,6 +25,7 @@ class GoToImageTaskTest(TestCase):
         self.global_information.get_gameboard_length.return_value = LENGTH_TABLE
         self.blackboard.get_image_id.return_value = VALID_IMAGE_ID
         self.pathfinding_application_service.find.return_value = VALID_PATH
+        self.blackboard.get_image_position.return_value = VALID_IMAGE_POSITION
 
     def test_call_pathfinder_correctly(self):
         task = GoToImageTask(
@@ -35,7 +36,7 @@ class GoToImageTaskTest(TestCase):
         task.execute()
 
         self.pathfinding_application_service.find.assert_called_once_with(
-            self.global_information, images_position[VALID_IMAGE_ID]
+            self.global_information, VALID_IMAGE_POSITION
         )
 
     def test_set_destination_to_robot(self):
