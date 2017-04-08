@@ -32,5 +32,5 @@ class Feedback:
         value = {}
         value["headers"] = "new_round"
         value["data"] = {}
+        self.global_information.reset_obstacles_detection()
         self.global_information.connection.send(json.dumps(value))
-        print(self.global_information.connection.recv())
