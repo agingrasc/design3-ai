@@ -11,7 +11,7 @@ from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
 
 DEFAULT_CELL_SCALE = 10
-CAMERA_LENGTH = 6
+CAMERA_LENGTH = 5
 
 dimension_assembler = DimensionAssembler(DEFAULT_CELL_SCALE)
 position_assembler = PositionAssembler(DEFAULT_CELL_SCALE)
