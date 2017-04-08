@@ -30,6 +30,8 @@ class Decoder:
             self.image_orientation = ORIENTATION[self.image_orientation]
             self.image_magnification = MAGNIFICATION[self.image_magnification]
 
+        self.result = -1
+
     def get_image_number(self) -> int:
         return self.image_number
 
