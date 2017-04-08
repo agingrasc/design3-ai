@@ -64,7 +64,7 @@ def main():
     robot_controller = RobotController(global_information, regulator)
     task_factory = TaskFactory(global_information, robot_controller)
 
-    robot_ai = RobotAi()
+    robot_ai = RobotAi(global_information)
 
     start_ai = create_start_ai_blueprint(task_factory, robot_ai)
     go_to_position = create_go_to_position_blueprint(task_factory)
