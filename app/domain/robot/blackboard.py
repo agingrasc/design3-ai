@@ -10,6 +10,7 @@ class Blackboard:
         self.segments_image = None
 
     def get_image_segments(self):
+        self.segments_image += [self.segments_image[0]]
         return self.segments_image
 
     def get_image_id(self):

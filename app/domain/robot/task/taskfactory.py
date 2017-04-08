@@ -37,9 +37,8 @@ class TaskFactory(metaclass=Singleton):
         return InitialOrientationTask(self.feedback, self.vision_regulation, self.global_information)
 
     def create_indentify_antenna_task(self):
-        print(self.global_information)
         return IdentifyAntennaTask(
-            self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard
+            self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard, pathfinding_application_service
         )
 
     def create_receive_informations_task(self):
@@ -61,7 +60,8 @@ class TaskFactory(metaclass=Singleton):
         )
 
     def create_draw_task(self):
-        return DrawTask(self.feedback, self.drawer, self.blackboard)
+        return DrawTask(self.feedback, self.drawer, self.blackboard, self.global_information)
+
 
     def create_go_out_of_drawzone_task(self):
         return GoOutOfDrawzoneTask(

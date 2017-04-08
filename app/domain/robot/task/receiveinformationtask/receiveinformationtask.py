@@ -5,11 +5,8 @@ from domain.robot.task.task import Task
 from service.feedback import Feedback
 from service.feedback import TASK_RECEIVE_INFORMATION
 
-
 class ReceiveInformationTask(Task):
-    def __init__(
-        self, feedback: Feedback, decoder: Decoder, vision_regulation: VisionRegulation, blackboard: Blackboard
-    ):
+    def __init__(self, feedback: Feedback, decoder: Decoder, vision_regulation: VisionRegulation, blackboard: Blackboard):
         self.feedback = feedback
         self.decoder = decoder
         self.vision_regulation = vision_regulation
