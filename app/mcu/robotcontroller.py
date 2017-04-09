@@ -28,7 +28,7 @@ REGULATOR_FREQUENCY = 0.10 # secondes
 
 class RobotSpeed(enum.Enum):
     NORMAL_SPEED = (150, 4)
-    SCAN_SPEED = (30, 5)
+    SCAN_SPEED = (70, 5)
     DRAW_SPEED = (120, 1)
 
 
@@ -123,6 +123,8 @@ class RobotController(object):
         self.send_command(cmd)
 
     def shutdown_red_led(self):
+        self.reset_state()
+
         cmd = LedCommand(Leds.DOWN_RED)
         self.send_command(cmd)
 

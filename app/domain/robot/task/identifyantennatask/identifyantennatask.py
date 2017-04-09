@@ -5,14 +5,16 @@ from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
+from service import pathfinding_application_service
 from mcu.robotcontroller import RobotSpeed
 from service.feedback import Feedback
 from service.feedback import TASK_IDENTEFIE_ANTENNA
 from service.globalinformation import GlobalInformation
 
 LINE_LENGHT = 1
-ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(45)
+ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(0)
 ANTENNA_MARK_LENGTH = 7.5
+
 
 
 class IdentifyAntennaTask(Task):
@@ -22,21 +24,25 @@ class IdentifyAntennaTask(Task):
         feedback: Feedback,
         vision_regulation: VisionRegulation,
         global_information: GlobalInformation,
-        blackboard: Blackboard
+        blackboard: Blackboard,
+        pathfinder_service: pathfinding_application_service
     ):
         self.antenna = antenna
         self.vision_regulation = vision_regulation
         self.global_information = global_information
         self.feedback = feedback
         self.blackboard = blackboard
+        self.pathfinder_service = pathfinder_service
 
     def execute(self):
         self.antenna.robot_controller.set_robot_speed(RobotSpeed.SCAN_SPEED)
         start_position = self.antenna.get_start_antenna_position()
-        self.vision_regulation.go_to_position(start_position)
+        path_to_start_point = self.pathfinder_service.find(self.global_information, start_position)
+        self.vision_regulation.go_to_positions(path_to_start_point)
         self.antenna.start_recording()
         end_position = self.antenna.get_stop_antenna_position()
-        self.vision_regulation.go_to_position(end_position)
+        path = self.pathfinder_service.find(self.global_information, end_position)
+        self.vision_regulation.go_to_positions(path)
         self.antenna.end_recording()
         self.draw_line()
         self.vision_regulation.go_to_position(self.blackboard.antenna_position)
@@ -47,6 +53,9 @@ class IdentifyAntennaTask(Task):
         max_signal_position = self.antenna.get_max_signal_position()
         self.blackboard.antenna_position = max_signal_position
 
+        robot_pos = self.global_information.get_robot_position()
+        self.global_information.send_path([robot_pos, self.blackboard.antenna_position])
+        self.vision_regulation.oriente_robot(max_signal_position.theta)
         self.vision_regulation.go_to_position(max_signal_position)
         mark_move = Position(0, -ANTENNA_MARK_LENGTH)
 

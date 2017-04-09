@@ -16,6 +16,7 @@ class ReceiveInformationsTaskTest(unittest.TestCase):
         self.feedback = Mock()
         self.vision_regulation = Mock()
         self.blackboard = Mock()
+        self.global_information = Mock()
         self.decoder.get_image_number.return_value = VALID_IMAGE_NUMBER
         self.decoder.get_image_orientation.return_value = VALID_IMAGE_ORIENTATION
         self.decoder.get_image_magnification.return_value = VALID_IMAGE_MAGNIFICATION

@@ -7,7 +7,7 @@ from domain.robot.task.gotoimagetask.gotoimagetask import images_position
 VALID_OBSTACLES_LIST = [Mock(pos_x=50, pos_y=50, radius=2, Tag=""), Mock(pos_x=40, pos_y=40, radius=2, Tag="")]
 WIDTH_TABLE = 1120
 LENGTH_TABLE = 2300
-VALID_PATH = [(35, 35), (40, 40), (45, 45)]
+VALID_PATH = [Mock(pos_x=35, pos_y=35, theta=0), Mock(pos_x=40, pos_y=40, theta=0), Mock(pos_x=45, pos_y=45, theta=0)]
 VALID_IMAGE_ID = 2
 
 
@@ -26,17 +26,13 @@ class GoToImageTaskTest(TestCase):
         self.blackboard.get_image_id.return_value = VALID_IMAGE_ID
         self.pathfinding_application_service.find.return_value = VALID_PATH
 
-    def test_get_information_of_the_gameboard_correctly(self):
+    def test_call_pathfinder_correctly(self):
         task = GoToImageTask(
             self.feedback, self.vision_regulation, self.global_information, self.pathfinding_application_service,
             self.blackboard
         )
 
         task.execute()
-
-        expected_calls = [
-            call.get_obstacles(), call.get_robot_position(), call.get_gameboard_width(), call.get_gameboard_length()
-        ]
 
         self.pathfinding_application_service.find.assert_called_once_with(
             self.global_information, images_position[VALID_IMAGE_ID]
