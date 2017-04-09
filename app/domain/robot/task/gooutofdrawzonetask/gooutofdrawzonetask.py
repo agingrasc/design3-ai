@@ -24,5 +24,6 @@ class GoOutOfDrawzoneTask(Task):
 
     def execute(self):
         safe_zone_path = self.safe_zone_finder.find_safe_zone()
+        self.global_information.send_path([self.global_information.get_robot_position()] + safe_zone_path)
         self.vision_regulation.go_to_positions(safe_zone_path)
         self.feedback.send_comment(TASK_GO_OUT_OF_DRAWING_ZONE)
