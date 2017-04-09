@@ -1,9 +1,10 @@
 import sys
 import queue
-from domain.gameboard.position import Position
-from domain.gameboard.gameboard import Tag
 from domain.pathfinding.grid import Grid
 
+
+class NoPathFound(Exception):
+    pass
 
 class PathFinding:
     def __init__(self, game_board, begin_position, end_position):
@@ -67,7 +68,7 @@ def find_real_value_minimum(neighbors, destination):
 
 def find_minimum(neighbors, destination):
     if len(neighbors) <= 0:
-        raise Exception("Cannot find path")
+        raise NoPathFound
     current_neighbor = neighbors[0]
     old_distance = 99999999
     #print("new min")

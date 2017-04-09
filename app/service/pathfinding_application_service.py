@@ -1,6 +1,3 @@
-from domain.gameboard.position import Position
-from domain.pathfinding import dijkstra
-from domain.pathfinding.dijkstra import Dijkstra
 from service.globalinformation import GlobalInformation
 from domain.gameboard.gameboard import GameBoard
 from domain.pathfinding import get_segments

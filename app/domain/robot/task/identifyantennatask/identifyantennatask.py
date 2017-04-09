@@ -50,15 +50,13 @@ class IdentifyAntennaTask(Task):
         self.feedback.send_comment(TASK_IDENTEFIE_ANTENNA)
 
     def draw_line(self):
-        max_signal_position = self.antenna.get_max_signal_position()
-        self.blackboard.antenna_position = max_signal_position
+        self.max_signal_position = self.antenna.get_max_signal_position()
+        self.blackboard.antenna_position = self.max_signal_position
 
-        robot_pos = self.global_information.get_robot_position()
-        self.global_information.send_path([robot_pos, self.blackboard.antenna_position])
-        self.vision_regulation.oriente_robot(max_signal_position.theta)
-        self.vision_regulation.go_to_position(max_signal_position)
+        path_max = self.pathfinder_service.find(self.global_information, self.max_signal_position)
+        self.vision_regulation.go_to_positions(path_max)
+
         mark_move = Position(0, -ANTENNA_MARK_LENGTH)
-
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
         self.antenna.robot_controller.lower_pencil()
         self.antenna.robot_controller.precise_move(mark_move)
