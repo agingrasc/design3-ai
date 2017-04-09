@@ -35,14 +35,17 @@ class IdentifyAntennaTask(Task):
         self.pathfinder_service = pathfinder_service
 
     def execute(self):
+        robot_position = self.global_information.get_robot_position()
         self.antenna.robot_controller.set_robot_speed(RobotSpeed.SCAN_SPEED)
         start_position = self.antenna.get_start_antenna_position()
         path_to_start_point = self.pathfinder_service.find(self.global_information, start_position)
+        self.global_information.send_path([robot_position] + path_to_start_point)
         self.vision_regulation.go_to_positions(path_to_start_point)
         self.antenna.start_recording()
         end_position = self.antenna.get_stop_antenna_position()
-        path = self.pathfinder_service.find(self.global_information, end_position)
-        self.vision_regulation.go_to_positions(path)
+        path_end_position = self.pathfinder_service.find(self.global_information, end_position)
+        self.global_information.send_path([robot_position] + path_end_position)
+        self.vision_regulation.go_to_positions(path_end_position)
         self.antenna.end_recording()
         self.draw_line()
         self.vision_regulation.go_to_position(self.blackboard.antenna_position)
@@ -50,10 +53,12 @@ class IdentifyAntennaTask(Task):
         self.feedback.send_comment(TASK_IDENTEFIE_ANTENNA)
 
     def draw_line(self):
+        robot_position = self.global_information.get_robot_position()
         self.max_signal_position = self.antenna.get_max_signal_position()
         self.blackboard.antenna_position = self.max_signal_position
 
         path_max = self.pathfinder_service.find(self.global_information, self.max_signal_position)
+        self.global_information.send_path([robot_position] + path_max)
         self.vision_regulation.go_to_positions(path_max)
 
         mark_move = Position(0, -ANTENNA_MARK_LENGTH)
