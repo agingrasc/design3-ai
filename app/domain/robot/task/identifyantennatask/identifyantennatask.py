@@ -44,6 +44,7 @@ class IdentifyAntennaTask(Task):
         self.antenna.start_recording()
         end_position = self.antenna.get_stop_antenna_position()
         path_end_position = self.pathfinder_service.find(self.global_information, end_position)
+        robot_position = self.global_information.get_robot_position()
         self.global_information.send_path([robot_position] + path_end_position)
         self.vision_regulation.go_to_positions(path_end_position)
         self.antenna.end_recording()
