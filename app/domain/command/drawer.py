@@ -26,19 +26,19 @@ class Drawer:
     def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
         self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
 
-        segments.append(segments.pop(0))
+        # segments.append(segments.pop(0))
         self.robot_controller.lower_pencil()
         robot_position = self.global_information.get_robot_position()
         last_point = robot_position
         for point in segments:
-            self.vision_regulation.go_to_position(last_point)
-            # angle = self.compute_draw_angle(point)
-            # self.vision_regulation.oriente_robot(angle)
-            # point.theta = angle
-            # self.vision_regulation.go_to_position(point)
+            # self.vision_regulation.go_to_position(last_point)
             robot_position = self.global_information.get_robot_position()
-            self.vision_regulation.robot_controller.stupid_move(point, 80, robot_position)
-            last_point = point
+            angle = self.compute_draw_angle(point)
+            self.vision_regulation.oriente_robot(angle)
+            point.theta = angle
+            self.vision_regulation.go_to_position(point)
+            # self.vision_regulation.robot_controller.stupid_move(point, 80, robot_position)
+            # last_point = point
 
         self.stop()
 
