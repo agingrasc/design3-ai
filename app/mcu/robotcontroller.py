@@ -31,10 +31,25 @@ class RobotSpeed(enum.Enum):
     DRAW_SPEED = (120, 1)
 
 
-constants = [(0.027069, 0.040708, 0, 20),  # REAR X
-             (0.0095292, 0.029466, 0, 20),  # FRONT Y
-             (0.015431, 0.042286, 0, 20),  # FRONT X
-             (0.030357, 0.02766, 0, 20)]  # REAR Y
+# Old constants of single PID
+#constants = [(0.027069, 0.040708, 0, 20),  # REAR X
+#             (0.0095292, 0.029466, 0, 20),  # FRONT Y
+#             (0.015431, 0.042286, 0, 20),  # FRONT X
+#             (0.030357, 0.02766, 0, 20)]  # REAR Y
+
+
+# Clockwise PID constants
+constants_cw = [(0.027069, 0.040708, 0, 20),  # REAR X
+             (0.026588, 0.01469, 0, 20),  # FRONT Y (0.0095292, 0.029466)
+             (0.019431, 0.030086, 0, 20),  # FRONT X (0.015431, 0.042286)
+             (0.025657, 0.02366, 0, 20)] # REAR Y
+
+
+# Counterclocwise PID constants
+constants_ccw = [(0.027069, 0.040708, 0, 20),  # REAR X
+                (0.0215, 0.0191075, 0, 20),  # FRONT Y 0.010536 0.0091075
+                (0.015431, 0.042286, 0, 20),  # FRONT X
+                (0.0209032, 0.019589, 0, 20)] # REAR Y
 
 
 class SerialMock:
@@ -262,8 +277,12 @@ class RobotController(object):
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:
-            kp, ki, kd, dz = constants[motor.value]
-            cmd = protocol.generate_set_pid_constant(motor, kp, ki, kd, dz)
+            kp_cw, ki_cw, kd_cw, dz_cw = constants_cw[motor.value]
+            cmd = protocol.generate_set_pid_constant_forward(motor, kp_cw, ki_cw, kd_cw, dz_cw)
+            self.ser_mcu.write(cmd)
+
+            kp_ccw, ki_ccw, kd_ccw, dz_ccw = constants_ccw[motor.value]
+            cmd = protocol.generate_set_pid_constant_backward(motor, kp_ccw, ki_ccw, kd_ccw, dz_ccw)
             self.ser_mcu.write(cmd)
 
     def _startup_test(self):
