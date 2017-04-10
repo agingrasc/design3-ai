@@ -21,3 +21,6 @@ class Blackboard:
             return True
         else:
             return False
+
+    def get_antenna_position(self):
+        return self.antenna_position
