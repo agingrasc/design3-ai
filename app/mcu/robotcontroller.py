@@ -40,7 +40,7 @@ class RobotSpeed(enum.Enum):
 
 
 constants_cw = [(0.0016763, 0.0019101, 0, 20),  # REAR X (SEMI-OK)
-             (0.0020301, 0, 20),  # FRONT Y (SEMI-OK)
+             (0.0020301, 0.0021392, 0, 20),  # FRONT Y (SEMI-OK)
              (0.0056477, 0.0021392, 0.0021575, 0, 20),  # FRONT X (OK)
              (0.0067589, 0.0023699, 0, 20)] # REAR Y 0.025657 0.02366
 
