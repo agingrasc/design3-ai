@@ -17,6 +17,7 @@ from domain.robot.task.shutdownredledtask.shutdownredledtask import ShutDownRedL
 from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 from service import pathfinding_application_service
 from service.feedback import Feedback
+from service.safezonefinder import SafeZoneFinder
 from util.singleton import Singleton
 
 
@@ -31,6 +32,7 @@ class TaskFactory(metaclass=Singleton):
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
         self.lighter = Lighter(self.robot_controller)
+        self.safe_zone_finder = SafeZoneFinder(pathfinding_application_service, self.global_information)
 
     def create_initial_orientation_task(self):
         print(self.global_information)
@@ -65,7 +67,7 @@ class TaskFactory(metaclass=Singleton):
 
     def create_go_out_of_drawzone_task(self):
         return GoOutOfDrawzoneTask(
-            self.feedback, self.vision_regulation, self.global_information, pathfinding_application_service
+            self.feedback, self.vision_regulation, self.global_information, self.safe_zone_finder
         )
 
     def create_light_red_led_task(self):
@@ -75,7 +77,8 @@ class TaskFactory(metaclass=Singleton):
         return ShutDownRedLedTask(self.feedback, self.lighter)
 
     def create_proxy_identify_antenna_task(self):
-        return IdentifyAntennaTaskProxy(self.create_indentify_antenna_task(), self.blackboard, self.vision_regulation, self.global_information)
+        return IdentifyAntennaTaskProxy(self.create_indentify_antenna_task(), self.blackboard,
+                                        self.vision_regulation, self.global_information, pathfinding_application_service)
 
     def create_competition_tasks(self):
         return [
