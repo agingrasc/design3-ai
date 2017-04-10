@@ -96,14 +96,14 @@ class RobotController(object):
         """
         self.ser_mcu.write(cmd.pack_command())
 
-    def send_move_command(self, robot_position: Position, delta_t=None):
+    def send_move_command(self, robot_position: Position, delta_t=None, pure_orientation=False):
         now = time.time()
         if delta_t:
             regulator_delta_t = delta_t
         else:
             regulator_delta_t = now - self.last_timestamp
         self.last_timestamp = now
-        cmd = MoveCommand(robot_position, regulator_delta_t)
+        cmd = MoveCommand(robot_position, regulator_delta_t, pure_orientation)
         self.ser_mcu.write(cmd.pack_command())
 
     def send_servo_command(self, cmd):
@@ -186,7 +186,7 @@ class RobotController(object):
         power = int.from_bytes(power_bytes, byteorder='big')
         return power
 
-    def move(self, destination: Position):
+    def move(self, destination: Position, pure_orientation=False):
         """" S'occupe d'amener le robot a la bonne position. BLOQUANT! """
         regulator.setpoint = destination
         retroaction = self.global_information.get_robot_position()
@@ -199,7 +199,7 @@ class RobotController(object):
             delta_t = now - last_time
             if delta_t > REGULATOR_FREQUENCY:
                 last_time = now
-                self.send_move_command(retroaction, delta_t)
+                self.send_move_command(retroaction, delta_t, pure_orientation)
                 if self.record_power:
                     power_level = self.get_manchester_power()
                     print("Power level: {}".format(power_level))

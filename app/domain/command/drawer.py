@@ -4,9 +4,11 @@ import time
 
 from domain.command.visionregulation import VisionRegulation
 from domain.gameboard.position import Position
+from domain.robot.blackboard import Blackboard
 from mcu.regulator import wrap_theta
 from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
+from service.segmentwrapper import SegmentWrapper
 
 DRAW_ANGLE = np.deg2rad(-90)
 WAIT_TIME = 2
@@ -17,11 +19,13 @@ class Drawer:
         self,
         global_information: GlobalInformation,
         robot_controller: RobotController,
-        vision_regulation: VisionRegulation
+        vision_regulation: VisionRegulation,
+        blackboard: Blackboard
     ):
         self.global_information = global_information
         self.robot_controller = robot_controller
         self.vision_regulation = vision_regulation
+        self.blackboard = blackboard
 
     def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
         self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
@@ -30,9 +34,10 @@ class Drawer:
         self.robot_controller.lower_pencil()
         robot_position = self.global_information.get_robot_position()
         last_point = robot_position
+        segments = SegmentWrapper(self.blackboard).wrap_segment()
         for point in segments:
             # self.vision_regulation.go_to_position(last_point)
-            robot_position = self.global_information.get_robot_position()
+            # robot_position = self.global_information.get_robot_position()
             angle = self.compute_draw_angle(point)
             self.vision_regulation.oriente_robot(angle)
             point.theta = angle

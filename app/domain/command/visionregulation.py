@@ -36,11 +36,11 @@ class VisionRegulation:
             self.go_to_position(position)
         print("Path finisehd!")
 
-    def go_to_position(self, position):
-        self.robot_controller.move(position)
+    def go_to_position(self, position, pure_orientation=False):
+        self.robot_controller.move(position, pure_orientation)
         # self.robot_controller.stupid_move(position)
 
     def oriente_robot(self, theta):
         pos = self.global_information.get_robot_position()
         pos.theta = theta
-        self.go_to_position(pos)
+        self.go_to_position(pos, True)
