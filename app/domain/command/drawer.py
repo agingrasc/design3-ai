@@ -39,12 +39,12 @@ class Drawer:
             # self.vision_regulation.go_to_position(last_point)
             # robot_position = self.global_information.get_robot_position()
             angle = abs(self.compute_draw_angle(point))
-            if check_for_bad_angles(angle):
-                self.vision_regulation.oriente_robot(angle + DRAW_ANGLE)
+            if self.check_for_bad_angles(angle):
+                angle = angle - DRAW_ANGLE
             else:
-                self.vision_regulation.oriente_robot(0)
-            # self.vision_regulation.oriente_robot(angle)
-            # point.theta = angle
+                angle = 0
+            self.vision_regulation.oriente_robot(angle)
+            point.theta = angle
             self.vision_regulation.go_to_position(point)
             # self.vision_regulation.robot_controller.stupid_move(point, 80, robot_position)
             # last_point = point
