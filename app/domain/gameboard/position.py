@@ -38,3 +38,6 @@ class Position:
 
     def __repr__(self):
         return "Position({}, {}, {})".format(self.pos_x, self.pos_y, self.theta)
+
+    def __hash__(self):
+        return id(self)
