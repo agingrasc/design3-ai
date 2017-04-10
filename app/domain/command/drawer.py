@@ -10,7 +10,7 @@ from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
 from service.segmentwrapper import SegmentWrapper
 
-DRAW_ANGLE = np.deg2rad(-90)
+DRAW_ANGLE = np.deg2rad(45)
 WAIT_TIME = 2
 
 
@@ -38,9 +38,13 @@ class Drawer:
         for point in segments:
             # self.vision_regulation.go_to_position(last_point)
             # robot_position = self.global_information.get_robot_position()
-            angle = self.compute_draw_angle(point)
-            self.vision_regulation.oriente_robot(angle)
-            point.theta = angle
+            angle = abs(self.compute_draw_angle(point))
+            if check_for_bad_angles(angle):
+                self.vision_regulation.oriente_robot(angle + DRAW_ANGLE)
+            else:
+                self.vision_regulation.oriente_robot(0)
+            # self.vision_regulation.oriente_robot(angle)
+            # point.theta = angle
             self.vision_regulation.go_to_position(point)
             # self.vision_regulation.robot_controller.stupid_move(point, 80, robot_position)
             # last_point = point
@@ -50,9 +54,16 @@ class Drawer:
     def compute_draw_angle(self, destination: Position) -> float:
         robot_position = self.global_information.get_robot_position()
         delta_vec = Position(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y)
-        angle = delta_vec.get_angle() + DRAW_ANGLE
+        # angle = delta_vec.get_angle() + DRAW_ANGLE
+        angle = delta_vec.get_angle()
         return wrap_theta(angle)
 
+    def check_for_bad_angles(self, angle):
+        low_angles = np.deg2rad(15) <= angle <= np.deg2rad(30)
+        high_angles = np.deg2rad(60) <= angle <= np.deg2rad(75)
+        above_90_low_angles = np.deg2rad(105) <= angle <= np.deg2rad(120)
+        above_90_high_angles = np.deg2rad(150) <= angle <= np.deg2rad(165)
+        return low_angles or high_angles or above_90_low_angles or above_90_high_angles
 
     def stop(self):
         self.robot_controller.raise_pencil()
