@@ -257,21 +257,9 @@ class RobotController(object):
         last_cmd_time = time.time()
         while time.time() - start_time < time_to_move:
             if time.time() - last_cmd_time > REGULATOR_FREQUENCY:
-                last_cmd_time = time.time()
-
-                _, distance_y, _, distance_x = self.get_traveled_distance()
-                self.reset_traveled_distance()
-                robot_position += Position(distance_x, distance_y, robot_position.theta)
-                if (destination - robot_position).get_norm() > 10:
-                    print("Robot position: {}".format(robot_position))
-                    move_vec = destination - robot_position
-                    speed_vec = move_vec.renormalize(speed)
-                    time_to_move = self.compute_time_move(move_vec, speed, speed_vec)
-                    start_time = time.time()
                 speed_x, speed_y = correct_for_referential_frame(speed_vec.pos_x, speed_vec.pos_y, robot_position.theta)
                 self.ser_mcu.write(protocol.generate_move_command(speed_x, speed_y, 0))
 
-        time.sleep(0.5)
         print("Erreur: {} -- {} -- ({})".format(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y, (robot_position - destination).get_norm()))
         self.ser_mcu.write(protocol.generate_move_command(0, 0, 0))
         return robot_position
