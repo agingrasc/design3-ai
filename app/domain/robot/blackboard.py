@@ -24,3 +24,6 @@ class Blackboard:
 
     def get_antenna_position(self):
         return self.antenna_position
+
+    def get_segment_image_list(self):
+        return self.segments_image
