@@ -23,13 +23,13 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
-REGULATOR_FREQUENCY = 0.10 # secondes
+REGULATOR_FREQUENCY = 0.030 # secondes
 
 
 class RobotSpeed(enum.Enum):
     NORMAL_SPEED = (150, 4)
     SCAN_SPEED = (70, 5)
-    DRAW_SPEED = (120, 1)
+    DRAW_SPEED = (60, 1)
 
 
 # Old constants of single PID
@@ -193,7 +193,7 @@ class RobotController(object):
         now = time.time()
         last_time = now
 
-        while not regulator.is_arrived(retroaction):
+        while not regulator.is_arrived(retroaction, regulator.constants.position_deadzone):
             retroaction = self.global_information.get_robot_position()
             now = time.time()
             delta_t = now - last_time
@@ -245,35 +245,48 @@ class RobotController(object):
         cmd = protocol.generate_move_command(0, 0, 0)
         self.ser_mcu.write(cmd)
 
-    def stupid_move(self, destination: Position, speed=120, draw_mode = False):
-        robot_position = self.global_information.get_robot_position()
+    def stupid_move(self, destination: Position, speed=80, robot_position=None):
+        self.reset_traveled_distance()
         move_vec = destination - robot_position
         speed_vec = move_vec.renormalize(speed)
 
-        time_to_move = (move_vec.get_norm() / speed_vec.get_norm()) * 1.3
-        print("Time to move: {}".format(time_to_move))
+        time_to_move = self.compute_time_move(move_vec, speed, speed_vec)
+        print("Time to move: {} -- Speed vector: {}".format(time_to_move, speed_vec))
         start_time = time.time()
 
         last_cmd_time = time.time()
-        step_down = False
         while time.time() - start_time < time_to_move:
             if time.time() - last_cmd_time > REGULATOR_FREQUENCY:
                 last_cmd_time = time.time()
-                robot_position = self.global_information.get_robot_position()
-                move_vec = destination - robot_position
-                if move_vec.get_norm() < 40 and not step_down:
-                    step_down = True
-                    speed_vec = move_vec.renormalize(20)
+
+                _, distance_y, _, distance_x = self.get_traveled_distance()
+                self.reset_traveled_distance()
+                robot_position += Position(distance_x, distance_y, robot_position.theta)
+                if (destination - robot_position).get_norm() > 10:
+                    print("Robot position: {}".format(robot_position))
+                    move_vec = destination - robot_position
+                    speed_vec = move_vec.renormalize(speed)
+                    time_to_move = self.compute_time_move(move_vec, speed, speed_vec)
                     start_time = time.time()
-                    time_to_move = move_vec.get_norm() / speed_vec.get_norm()
-                    print("Step down")
                 speed_x, speed_y = correct_for_referential_frame(speed_vec.pos_x, speed_vec.pos_y, robot_position.theta)
                 self.ser_mcu.write(protocol.generate_move_command(speed_x, speed_y, 0))
 
-        robot_position = self.global_information.get_robot_position()
-        print("Erreur: {}".format((robot_position - destination).get_norm()))
+        time.sleep(0.5)
+        print("Erreur: {} -- {} -- ({})".format(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y, (robot_position - destination).get_norm()))
         self.ser_mcu.write(protocol.generate_move_command(0, 0, 0))
+        return robot_position
 
+    def compute_time_move(self, move_vec, speed, speed_vec):
+        ACCEL_X = 135  # mm/s^2 (128)
+        ACCEL_Y = 220 # 160
+        acceleration_time_x = speed / ACCEL_X
+        acceleration_time_y = speed / ACCEL_Y
+        speed_during_acceleration = speed_vec.multiply(0.50)
+        move_during_acceleration = Position(speed_during_acceleration.pos_x * acceleration_time_x,
+                                            speed_during_acceleration.pos_y * acceleration_time_y)
+        move_vec -= move_during_acceleration
+        time_to_move = (move_vec.get_norm() / speed_vec.get_norm()) + speed / Position(ACCEL_X, ACCEL_Y).get_norm()
+        return time_to_move
 
     def get_remaining_distances(self, target_distance_x, target_distance_y):
         distances = self.get_traveled_distance()

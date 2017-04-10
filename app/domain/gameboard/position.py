@@ -34,7 +34,7 @@ class Position:
         return self.pos_x == other.pos_x and self.pos_y == other.pos_y and self.theta == other.theta
 
     def __str__(self):
-        return "Position: ({}, {}, {})".format(self.pos_x, self.pos_y, self.theta)
+        return "({}, {}, {})".format(self.pos_x, self.pos_y, self.theta)
 
     def __repr__(self):
         return "Position({}, {}, {})".format(self.pos_x, self.pos_y, self.theta)

@@ -28,11 +28,12 @@ class Drawer:
 
         segments.append(segments.pop(0))
         self.robot_controller.lower_pencil()
+        robot_position = self.global_information.get_robot_position()
         for point in segments:
-            # angle = self.compute_draw_angle(point)
-            # self.vision_regulation.oriente_robot(angle)
-            # point.theta = angle
-            self.robot_controller.stupid_move(point, 40, True)
+            angle = self.compute_draw_angle(point)
+            self.vision_regulation.oriente_robot(angle)
+            point.theta = angle
+            self.vision_regulation.go_to_position(point)
 
         self.stop()
 
