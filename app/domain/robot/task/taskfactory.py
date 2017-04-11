@@ -9,6 +9,7 @@ from domain.robot.task.gooutofdrawzonetask.gooutofdrawzonetask import GoOutOfDra
 from domain.robot.task.gotodrawzonetask.gotodrawzonetask import GoToDrawzoneTask
 from domain.robot.task.gotoimagetask.gotoimagetask import GoToImageTask
 from domain.robot.task.identifyantennatask.identifyantennatask import IdentifyAntennaTask
+from domain.robot.task.imagesroutinetask.imagesroutinetask import ImagesRoutineTask
 from domain.robot.task.identifyantennataskproxy.identifyantennataskproxy import IdentifyAntennaTaskProxy
 from domain.robot.task.initialorientationtask.initialorientationtask import InitialOrientationTask
 from domain.robot.task.lightredledtask.lightredledtask import LightRedLedTask
@@ -73,6 +74,11 @@ class TaskFactory(metaclass=Singleton):
     def create_light_red_led_task(self):
         return LightRedLedTask(self.feedback, self.lighter)
 
+    def create_image_routine_task(self):
+        return ImagesRoutineTask(self.global_information, self.blackboard, self.vision_regulation,
+                                 self.create_draw_task(), self.create_go_to_drawzone_task()
+                                 , self.create_go_out_of_drawzone_task())
+    
     def create_shut_down_red_led_task(self):
         return ShutDownRedLedTask(self.feedback, self.lighter)
 
