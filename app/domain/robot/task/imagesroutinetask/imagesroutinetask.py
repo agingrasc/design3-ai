@@ -19,10 +19,9 @@ class ImagesRoutineTask(Task):
         self.go_to_drawzone_task = go_to_drawzone_task
         self.go_out_of_drawzone_task = go_out_of_drawzone_task
 
-
     def execute(self):
         for position in self.blackboard.images_position.values():
             self.vision_regulation.go_to_position(position)
             self.global_information.send_take_picture_request(0.5, "SOUTH")
-            self.go_to_drawzone_task.execute()
-            self.draw_task.execute()
+            # self.go_to_drawzone_task.execute()
+            # self.draw_task.execute()
