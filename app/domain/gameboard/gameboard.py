@@ -2,6 +2,7 @@ import sys
 import collections
 from enum import Enum
 from . import position
+from domain.gameboard.bad_position_exception import BadPositionException
 
 ObstacleValueObject = collections.namedtuple('ObstacleValueObject', 'pos_x pos_y radius tag')
 
@@ -78,7 +79,11 @@ class GameBoard:
             self.game_board[self.width - 1 - obstacle.pos_x][obstacle.pos_y] = obstacle
 
     def get_coordinate(self, x, y):
-        return self.game_board[self.width - 1 - x][y]
+        x_coord = self.width - 1 - x
+        y_coord = y
+        if x_coord < 0 or x_coord >= self.width or y_coord < 0 or y_coord >= self.length:
+            raise BadPositionException(x, y)
+        return self.game_board[x_coord][y_coord]
 
     def get_real_coordinate(self, x, y):
         return self.game_board[x][y]
