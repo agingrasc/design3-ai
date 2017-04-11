@@ -245,13 +245,11 @@ class RobotController(object):
         cmd = protocol.generate_move_command(0, 0, 0)
         self.ser_mcu.write(cmd)
 
-    def stupid_move(self, destination: Position, speed=80, robot_position=None):
-        self.reset_traveled_distance()
+    def timed_move(self, destination: Position, speed=80, robot_position=None):
         move_vec = destination - robot_position
         speed_vec = move_vec.renormalize(speed)
 
         time_to_move = self.compute_time_move(move_vec, speed, speed_vec)
-        print("Time to move: {} -- Speed vector: {}".format(time_to_move, speed_vec))
         start_time = time.time()
 
         last_cmd_time = time.time()
@@ -260,7 +258,6 @@ class RobotController(object):
                 speed_x, speed_y = correct_for_referential_frame(speed_vec.pos_x, speed_vec.pos_y, robot_position.theta)
                 self.ser_mcu.write(protocol.generate_move_command(speed_x, speed_y, 0))
 
-        print("Erreur: {} -- {} -- ({})".format(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y, (robot_position - destination).get_norm()))
         self.ser_mcu.write(protocol.generate_move_command(0, 0, 0))
         return robot_position
 
