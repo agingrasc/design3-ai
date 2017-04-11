@@ -205,46 +205,6 @@ class RobotController(object):
                     print("Power level: {}".format(power_level))
                     self.powers[retroaction] = power_level
 
-    def precise_move(self, vec: Position, speed: Position=Position(20, 20)):
-        self.reset_traveled_distance()
-
-        retroaction = self.global_information.get_robot_position()
-        angle = retroaction.theta
-
-        distance_to_move_x, distance_to_move_y = correct_for_referential_frame(vec.pos_x, vec.pos_y, angle)
-        # FIXME: dynamic speed computing
-        target_speed_x, target_speed_y = speed.pos_x, speed.pos_y
-        if distance_to_move_x < 0:
-            target_speed_x = -speed.pos_x
-        if distance_to_move_y < 0:
-            target_speed_y = -speed.pos_y
-
-        last_timestamp = time.time()
-
-        remaining_x, remaining_y = self.get_remaining_distances(distance_to_move_x, distance_to_move_y)
-        while remaining_x > 0 or remaining_y > 0:
-            delta_t = time.time() - last_timestamp
-            if delta_t > REGULATOR_FREQUENCY:
-                last_timestamp = time.time()
-                if remaining_x > 0:
-                    speed_x = target_speed_x
-                else:
-                    speed_x = 0
-
-                if remaining_y > 0:
-                    speed_y = target_speed_y
-                else:
-                    speed_y = 0
-
-                cmd = protocol.generate_move_command(speed_x, speed_y, 0)
-                self.ser_mcu.write(cmd)
-                self.ser_mcu.read(self.ser_mcu.inWaiting())
-
-                remaining_x, remaining_y = self.get_remaining_distances(distance_to_move_x, distance_to_move_y)
-
-        cmd = protocol.generate_move_command(0, 0, 0)
-        self.ser_mcu.write(cmd)
-
     def timed_move(self, destination: Position, speed=80, robot_position=None):
         move_vec = destination - robot_position
         speed_vec = move_vec.renormalize(speed)
