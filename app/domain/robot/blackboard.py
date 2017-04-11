@@ -37,6 +37,9 @@ class Blackboard:
         else:
             return False
 
+    def set_image_segments(self, image_segments):
+        self.segments_image = image_segments
+
     def get_antenna_position(self):
         return self.antenna_position
 
