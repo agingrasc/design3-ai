@@ -75,7 +75,7 @@ class PIPositionRegulator(object):
                                       theta_max,
                                       theta_min)
 
-    def next_speed_command(self, actual_position: Position, delta_t: float = DEFAULT_DELTA_T) -> List[int]:
+    def next_speed_command(self, actual_position: Position, delta_t: float = DEFAULT_DELTA_T, pure_orientation = False) -> List[int]:
         """"
         Calcul une iteration du PID.
         Args:
@@ -166,6 +166,9 @@ class PIPositionRegulator(object):
         for cmd in saturated_cmd:
             command.append(int(cmd))
         command.append(saturated_theta)
+        if pure_orientation:
+            command[0] = 0
+            command[1] = 0
         print("Commandes: {} -- {} -- {}".format(*command))
         return command
 

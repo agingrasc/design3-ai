@@ -17,7 +17,7 @@ class ICommand(metaclass=ABCMeta):
 
 
 class MoveCommand(ICommand):
-    def __init__(self, robot_position, delta_t=DEFAULT_DELTA_T):
+    def __init__(self, robot_position, delta_t=DEFAULT_DELTA_T, pure_orientation=False):
         """"
         Args:
             :x: Position x sur le plan monde
@@ -27,6 +27,7 @@ class MoveCommand(ICommand):
         super().__init__()
         self.robot_position = robot_position
         self.delta_t = delta_t
+        self.pure_orientation = pure_orientation
 
     def pack_command(self) -> bytes:
         regulated_command = regulator.next_speed_command(self.robot_position)
