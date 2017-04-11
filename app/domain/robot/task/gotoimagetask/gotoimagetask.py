@@ -9,8 +9,6 @@ from service.feedback import TASK_GO_TO_IMAGE
 from service.globalinformation import GlobalInformation
 
 
-
-
 class GoToImageTask(Task):
     def __init__(
         self,

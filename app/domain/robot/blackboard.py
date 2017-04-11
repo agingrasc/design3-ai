@@ -11,14 +11,14 @@ class Blackboard:
         self.orientation = None
         self.segments_image = None
         self.images_position: Dict[int, Position] = {
-            0: Position(1959, 366, 1.57),
-            1: Position(2024, 305, 1.22),
-            2: Position(1933, 267, 0.35),
-            3: Position(1890, 360, 0.00),
-            4: Position(1929, 615, 0),
-            5: Position(1940, 750, -0.20),
-            6: Position(2096, 551, -1.37),
-            7: Position(2005, 580, -1.75)
+            0: Position(1895, 330, 1.52),
+            1: Position(1910, 290, 1.00),
+            2: Position(1910, 250, 0.37),
+            3: Position(1895, 330, 0.00),
+            4: Position(1900, 560, 0.00),
+            5: Position(1910, 635, -0.50),
+            6: Position(1910, 630, -1.05),
+            7: Position(1910, 605, -1.54)
         }
 
     def get_image_segments(self):
