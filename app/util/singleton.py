@@ -8,9 +8,6 @@ class Singleton(type):
 
 
 class MockForSingleton(metaclass=Singleton):
-
     def __init__(self):
         self.first_value = 0
         self.second_value = 0
-
-

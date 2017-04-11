@@ -7,6 +7,7 @@ from domain.gameboard.gameboard import GameBoard
 from . import pathfinding
 from .grid import Grid
 from domain.pathfinding import get_segments
+from domain.pathfinding.pathfinding import DestinationInvalidException
 
 
 class PathFindingITest(TestCase):
@@ -54,7 +55,7 @@ class PathFindingITest(TestCase):
         game_board = GameBoard(55, 30, [obstacle], 3)
 
         end_position = game_board.get_coordinate(50, 8)
-        begin_position = game_board.get_coordinate(2, 2)
+        begin_position = game_board.get_coordinate(3, 3)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
@@ -65,7 +66,7 @@ class PathFindingITest(TestCase):
         game_board = GameBoard(55, 30, [obstacle1, obstacle2], 3)
 
         end_position = game_board.get_coordinate(50, 8)
-        begin_position = game_board.get_coordinate(2, 2)
+        begin_position = game_board.get_coordinate(3, 3)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
@@ -127,6 +128,17 @@ class PathFindingITest(TestCase):
         path = pathfinder.find_path()
         game_board.print_game_board()
         self.validate_path(path)
+
+    def test_bad_begin_position(self):
+        obstacle1 = ObstacleValueObject(pos_x=149, pos_y=70, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        obstacle2 = ObstacleValueObject(pos_x=149, pos_y=11, radius=3, tag=Tag.CANT_PASS_LEFT)
+        game_board = GameBoard(230, 110, [obstacle1, obstacle2])
+
+        end_position = game_board.get_coordinate(148, 70)
+        begin_position = game_board.get_coordinate(0, 0)
+
+        pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
+        self.assertRaises(DestinationInvalidException, pathfinder.find_path)
 
     def validate_path(self, path):
         new_path = get_segments.get_filter_path(path, 10)
