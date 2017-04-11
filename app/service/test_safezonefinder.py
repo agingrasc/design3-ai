@@ -11,6 +11,9 @@ NOT_VALID_PATH_1 = [Mock(), Mock()]
 VALID_PATH_2 = [Mock(), Mock(), STOP_POSITION_LIST[1]]
 NOT_VALID_PATH_2 = [Mock(), Mock(), Mock()]
 
+NOT_FLOOR_POSITION = [Position(1255, 588)]
+FLOOR_POSITION = [Position(1250, 580)]
+
 
 class SafeZoneFinderTest(TestCase):
     def setUp(self):
@@ -32,3 +35,17 @@ class SafeZoneFinderTest(TestCase):
         self.pathfinding_application_service.find.side_effect = [NOT_VALID_PATH_1, VALID_PATH_2]
         path = self.safe_zone_finder_test.find_safe_zone(STOP_POSITION_LIST)
         self.assertEqual(VALID_PATH_2, path)
+
+    def test_find_not_floor_position(self):
+        self.pathfinding_application_service.find.side_effect = [FLOOR_POSITION]
+        path = self.safe_zone_finder_test.find_safe_zone(NOT_FLOOR_POSITION)
+        self.assertEqual(FLOOR_POSITION, path)
+
+    def test_find_two_times(self):
+        self.pathfinding_application_service.find.side_effect = [FLOOR_POSITION, NOT_VALID_PATH_1, VALID_PATH_2]
+
+        path_1 = self.safe_zone_finder_test.find_safe_zone(NOT_FLOOR_POSITION)
+        path_2 = self.safe_zone_finder_test.find_safe_zone(STOP_POSITION_LIST)
+
+        self.assertEqual(FLOOR_POSITION, path_1)
+        self.assertEqual(VALID_PATH_2, path_2)
