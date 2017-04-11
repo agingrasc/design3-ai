@@ -19,6 +19,6 @@ class DrawTask(Task):
 
     def execute(self):
         draw_path = self.segment_wrapper.wrap_segment()
-        self.global_information.send_path(draw_path )
+        self.global_information.send_path(draw_path)
         self.drawer.draw(draw_path)
         self.feedback.send_comment(TASK_DRAW_IMAGE)
