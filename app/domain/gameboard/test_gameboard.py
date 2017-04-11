@@ -1,5 +1,6 @@
 import unittest
 from domain.gameboard import gameboard
+from domain.gameboard.bad_position_exception import BadPositionException
 
 VALID_ROBOT_X_POSITION = 22
 VALID_ROBOT_Y_POSITION = 11
@@ -139,3 +140,39 @@ class GameBoardTest(unittest.TestCase):
         self.assertEqual(gameboard.Tag.CAN_PASS, coord_min_y.get_tag())
         self.assertEqual(gameboard.Tag.OBSTACLE, coord_max_y.get_tag())
         self.assertEqual(gameboard.Tag.CAN_PASS, coord_lim_y.get_tag())
+
+    def test_bad_position_on_coordinate_x_max(self):
+        board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [], 2)
+        exception_raised = False
+        try:
+            board.get_coordinate(VALID_MAX_X, 0)
+        except BadPositionException:
+            exception_raised = True
+        self.assertTrue(exception_raised)
+
+    def test_bad_position_on_coordinate_y_max(self):
+        board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [], 2)
+        exception_raised = False
+        try:
+            board.get_coordinate(0, VALID_MAX_Y)
+        except BadPositionException:
+            exception_raised = True
+        self.assertTrue(exception_raised)
+
+    def test_bad_position_on_coordinate_x_min(self):
+        board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [], 2)
+        exception_raised = False
+        try:
+            board.get_coordinate(-1, 0)
+        except BadPositionException:
+            exception_raised = True
+        self.assertTrue(exception_raised)
+
+    def test_bad_position_on_coordinate_y_min(self):
+        board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [], 2)
+        exception_raised = False
+        try:
+            board.get_coordinate(0, -1)
+        except BadPositionException:
+            exception_raised = True
+        self.assertTrue(exception_raised)
