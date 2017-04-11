@@ -3,7 +3,7 @@ import math
 from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
 
-MIN_DISTANCE_PRECISION = 100
+MIN_DISTANCE_PRECISION = 250
 
 
 class SegmentWrapper:
@@ -14,9 +14,9 @@ class SegmentWrapper:
     def wrap_segment(self):
         segment_list = self.blackboard.get_segment_image_list()
         actual_position = segment_list[0]
-        last_position = segment_list[len(segment_list)-2]
+        last_position = segment_list[0]
         i = 1
-        while actual_position != last_position:
+        while actual_position is not last_position:
             if self._calculate_distance(actual_position, segment_list[i]) > MIN_DISTANCE_PRECISION:
                 self.divide_segment(actual_position, i, segment_list)
                 actual_position = segment_list[i+1]

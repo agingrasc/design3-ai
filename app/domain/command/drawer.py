@@ -10,7 +10,7 @@ from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
 
 DRAW_ANGLE = np.deg2rad(45)
-WAIT_TIME = 2
+WAIT_TIME = 3
 
 
 class Drawer:
@@ -30,13 +30,10 @@ class Drawer:
         self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
 
         self.vision_regulation.go_to_position(segments[0])
+        time.sleep(WAIT_TIME)
         self.robot_controller.lower_pencil()
         for destination in segments[1:]:
-            angle = abs(self.compute_draw_angle(destination))
-            if self.check_for_bad_angles(angle):
-                angle = angle - draw_angle
-            else:
-                angle = 0
+            angle = self.compute_draw_angle(destination) - draw_angle
             self.vision_regulation.oriente_robot(angle)
             destination.theta = angle
             self.vision_regulation.go_to_position(destination)
@@ -48,13 +45,6 @@ class Drawer:
         direction_vector = destination - robot_position
         angle = direction_vector.get_angle()
         return wrap_theta(angle)
-
-    def check_for_bad_angles(self, angle):
-        first_quarter_low_angles = np.deg2rad(15) <= angle <= np.deg2rad(30)
-        first_quarter_high_angles = np.deg2rad(60) <= angle <= np.deg2rad(75)
-        second_quarter_low_angles = np.deg2rad(105) <= angle <= np.deg2rad(120)
-        second_quarter_high_angles = np.deg2rad(150) <= angle <= np.deg2rad(165)
-        return first_quarter_low_angles or first_quarter_high_angles or second_quarter_low_angles or second_quarter_high_angles
 
     def stop(self):
         self.robot_controller.raise_pencil()
