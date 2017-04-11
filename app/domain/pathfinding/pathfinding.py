@@ -6,6 +6,13 @@ from domain.pathfinding.grid import Grid
 class NoPathFound(Exception):
     pass
 
+
+class RobotPositionInvalid(Exception):
+    def __init__(self, position):
+        message = "Robot position is invalid : " + str(position)
+        Exception.__init__(self, message)
+
+
 class PathFinding:
     def __init__(self, game_board, begin_position, end_position):
         self.grid = Grid(game_board)
@@ -16,6 +23,9 @@ class PathFinding:
     def find_path(self):
         if self.end_position.weight == sys.maxsize:
             self.end_position = find_closes_destination(self.grid, self.end_position)
+
+        if self.begin_position.weight == sys.maxsize:
+            raise RobotPositionInvalid(self.begin_position)
 
         initialise_weight(self.grid, self.end_position)
 
