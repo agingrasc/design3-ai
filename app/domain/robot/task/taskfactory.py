@@ -19,6 +19,7 @@ from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 from service import pathfinding_application_service
 from service.feedback import Feedback
 from service.safezonefinder import SafeZoneFinder
+from service.segmentwrapper import SegmentWrapper
 from util.singleton import Singleton
 
 
@@ -29,11 +30,12 @@ class TaskFactory(metaclass=Singleton):
         self.blackboard: Blackboard = Blackboard()
         self.feedback = Feedback(self.global_information)
         self.vision_regulation = VisionRegulation(self.robot_controller, self.global_information)
-        self.drawer = Drawer(self.global_information, self.robot_controller, self.vision_regulation)
+        self.drawer = Drawer(self.global_information, self.robot_controller, self.vision_regulation, self.blackboard)
         self.antenna = Antenna(self.global_information, self.robot_controller)
         self.decoder = Decoder(self.robot_controller)
         self.lighter = Lighter(self.robot_controller)
         self.safe_zone_finder = SafeZoneFinder(pathfinding_application_service, self.global_information)
+        self.segment_wrapper = SegmentWrapper(self.blackboard)
 
     def create_initial_orientation_task(self):
         print(self.global_information)
@@ -63,7 +65,7 @@ class TaskFactory(metaclass=Singleton):
         )
 
     def create_draw_task(self):
-        return DrawTask(self.feedback, self.drawer, self.blackboard, self.global_information)
+        return DrawTask(self.feedback, self.drawer, self.global_information, self.segment_wrapper)
 
 
     def create_go_out_of_drawzone_task(self):

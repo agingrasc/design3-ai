@@ -16,8 +16,6 @@ def set_image_segments_():
         return make_response(jsonify(), 400)
 
     if 'error' in req_info:
-        print(req_info)
-
         return make_response(jsonify({"message": "trying again"}), 400)
     else:
         segments = req_info['segments']

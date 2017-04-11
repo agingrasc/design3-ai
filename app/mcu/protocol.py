@@ -38,7 +38,8 @@ class CommandType(Enum):
     CAMERA = 0x01
     PENCIL = 0x02
     LED = 0x03
-    SET_PID_CONSTANTS = 0x04
+    SET_PID_CONSTANTS_FORWARD = 0x04
+    SET_PID_CONSTANTS_BACKWARD = 0x06
     RESET_STATE = 0x05
     MANUAL_SPEED = 0xa0
     READ_ENCODER = 0xa1
@@ -244,15 +245,34 @@ def generate_set_pid_mode(mode: PIDStatus):
     return header + payload
 
 
-def generate_set_pid_constant(motor: Motors, ki: float, kp: float, kd: float, dz: int):
+def generate_set_pid_constant_forward(motor: Motors, ki: float, kp: float, kd: float, dz: int):
     """"
     Args:
+        :motor: motor identifier
+        :direction: direction identifier
         :ki: gain integral
         :kp: gain proportionnel
         :kd: gain differentiel
         :dz: deadzone
     """
-    header = _generate_header(CommandType.SET_PID_CONSTANTS, PayloadLength.SET_PID_CONSTANTS)
+
+    header = _generate_header(CommandType.SET_PID_CONSTANTS_FORWARD, PayloadLength.SET_PID_CONSTANTS)
+    payload = _generate_payload([motor.value] + [int(ki*PID_SCALING), int(kp*PID_SCALING), int(kd*PID_SCALING)] + [dz])
+    return header + payload
+
+
+def generate_set_pid_constant_backward(motor: Motors, ki: float, kp: float, kd: float, dz: int):
+    """"
+    Args:
+        :motor: motor identifier
+        :direction: direction identifier
+        :ki: gain integral
+        :kp: gain proportionnel
+        :kd: gain differentiel
+        :dz: deadzone
+    """
+
+    header = _generate_header(CommandType.SET_PID_CONSTANTS_BACKWARD, PayloadLength.SET_PID_CONSTANTS)
     payload = _generate_payload([motor.value] + [int(ki*PID_SCALING), int(kp*PID_SCALING), int(kd*PID_SCALING)] + [dz])
     return header + payload
 

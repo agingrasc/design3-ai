@@ -44,3 +44,21 @@ class PositionTest(unittest.TestCase):
         distance = math.sqrt(float(self.a_valid_x**2) + float(self.a_valid_x**2))
         self.assertEqual(distance, pos.get_norm())
         self.assertEqual(angle, pos.get_angle())
+
+    def test_renormalize_smaller(self):
+        pos = position.Position(100, 100)
+        result = pos.renormalize(10)
+        expected = position.Position(7, 7)
+        self.assertEqual(expected, result)
+
+    def test_renormalize_larger(self):
+        pos = position.Position(100, 100)
+        result = pos.renormalize(200)
+        expected = position.Position(141, 141)
+        self.assertEqual(expected, result)
+
+    def test_multiply(self):
+        pos = position.Position(100, 100)
+        result = pos.multiply(1.5)
+        expected = position.Position(150, 150)
+        self.assertEqual(expected, result)

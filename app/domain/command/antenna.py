@@ -3,6 +3,7 @@ from mcu.robotcontroller import RobotController
 from service.globalinformation import GlobalInformation
 
 
+
 START_POSITION = Position(260, 897, 0) # 310, 865
 STOP_POSITION = Position(1250, 897, 0) # 1280, 865
 MAX_Y = 900
@@ -18,9 +19,6 @@ class Antenna:
 
     def end_recording(self):
         self.robot_controller.stop_power_recording()
-
-    def move_to_end_position(self):
-        self.robot_controller.precise_move(STOP_POSITION, Position(20, 0))
 
     def get_max_signal_position(self) -> Position:
         try:
