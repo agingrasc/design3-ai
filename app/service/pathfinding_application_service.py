@@ -32,9 +32,9 @@ def find(global_information: GlobalInformation, destination):
     game_board = GameBoard(x_dimension, y_dimension, obstacles, robot_radius, CAMERA_LENGTH)
 
     robot_position_scale = __robot_position(game_board, global_information)
-    destination = __destination_position(game_board, destination)
+    destination_final = __destination_position(game_board, destination)
 
-    pathfinder = PathFinding(game_board, robot_position_scale, destination)
+    pathfinder = PathFinding(game_board, robot_position_scale, destination_final)
 
     try:
         path = pathfinder.find_path()
