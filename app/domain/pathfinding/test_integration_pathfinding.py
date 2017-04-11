@@ -7,7 +7,7 @@ from domain.gameboard.gameboard import GameBoard
 from . import pathfinding
 from .grid import Grid
 from domain.pathfinding import get_segments
-from domain.pathfinding.pathfinding import DestinationInvalidException
+from domain.pathfinding.pathfinding import RobotPositionInvalid
 
 
 class PathFindingITest(TestCase):
@@ -138,7 +138,7 @@ class PathFindingITest(TestCase):
         begin_position = game_board.get_coordinate(0, 0)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
-        self.assertRaises(DestinationInvalidException, pathfinder.find_path)
+        self.assertRaises(RobotPositionInvalid, pathfinder.find_path)
 
     def validate_path(self, path):
         new_path = get_segments.get_filter_path(path, 10)

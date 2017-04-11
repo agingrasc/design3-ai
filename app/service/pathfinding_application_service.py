@@ -7,7 +7,7 @@ from api.gotoposition.dimensionassembler import DimensionAssembler
 from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
 from domain.gameboard.bad_position_exception import BadPositionException
-from domain.pathfinding.pathfinding import DestinationInvalidException
+from domain.pathfinding.pathfinding import RobotPositionInvalid
 
 DEFAULT_CELL_SCALE = 10
 CAMERA_LENGTH = 5
@@ -38,7 +38,7 @@ def find(global_information: GlobalInformation, destination):
 
     try:
         path = pathfinder.find_path()
-    except DestinationInvalidException:
+    except RobotPositionInvalid:
         return find(global_information, destination)
 
     path = get_segments.get_filter_path(path, DEFAULT_CELL_SCALE)

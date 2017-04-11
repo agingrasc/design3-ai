@@ -7,7 +7,7 @@ class NoPathFound(Exception):
     pass
 
 
-class DestinationInvalidException(Exception):
+class RobotPositionInvalid(Exception):
     def __init__(self, position):
         message = "Robot position is invalid : " + str(position)
         Exception.__init__(self, message)
@@ -25,7 +25,7 @@ class PathFinding:
             self.end_position = find_closes_destination(self.grid, self.end_position)
 
         if self.begin_position.weight == sys.maxsize:
-            raise DestinationInvalidException(self.begin_position)
+            raise RobotPositionInvalid(self.begin_position)
 
         initialise_weight(self.grid, self.end_position)
 
