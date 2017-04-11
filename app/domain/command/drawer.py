@@ -29,39 +29,32 @@ class Drawer:
     def draw(self, segments: List[Position], draw_angle=DRAW_ANGLE):
         self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
 
-        # segments.append(segments.pop(0))
+        self.vision_regulation.go_to_position(segments[0])
         self.robot_controller.lower_pencil()
-        robot_position = self.global_information.get_robot_position()
-        last_point = robot_position
-        for point in segments:
-            # self.vision_regulation.go_to_position(last_point)
-            # robot_position = self.global_information.get_robot_position()
-            angle = abs(self.compute_draw_angle(point))
+        for destination in segments[1:]:
+            angle = abs(self.compute_draw_angle(destination))
             if self.check_for_bad_angles(angle):
-                angle = angle - DRAW_ANGLE
+                angle = angle - draw_angle
             else:
                 angle = 0
             self.vision_regulation.oriente_robot(angle)
-            point.theta = angle
-            self.vision_regulation.go_to_position(point)
-            # self.vision_regulation.robot_controller.stupid_move(point, 80, robot_position)
-            # last_point = point
+            destination.theta = angle
+            self.vision_regulation.go_to_position(destination)
 
         self.stop()
 
     def compute_draw_angle(self, destination: Position) -> float:
         robot_position = self.global_information.get_robot_position()
-        delta_vec = Position(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y)
-        # angle = delta_vec.get_angle() + DRAW_ANGLE
-        angle = delta_vec.get_angle()
+        direction_vector = destination - robot_position
+        angle = direction_vector.get_angle()
         return wrap_theta(angle)
 
     def check_for_bad_angles(self, angle):
-        low_angles = np.deg2rad(15) <= angle <= np.deg2rad(30)
-        high_angles = np.deg2rad(60) <= angle <= np.deg2rad(75)
-        above_90_low_angles = np.deg2rad(105) <= angle <= np.deg2rad(120)
-        above_90_high_angles = np.deg2rad(150) <= angle <= np.deg2rad(165)
-        return low_angles or high_angles or above_90_low_angles or above_90_high_angles
+        first_quarter_low_angles = np.deg2rad(15) <= angle <= np.deg2rad(30)
+        first_quarter_high_angles = np.deg2rad(60) <= angle <= np.deg2rad(75)
+        second_quarter_low_angles = np.deg2rad(105) <= angle <= np.deg2rad(120)
+        second_quarter_high_angles = np.deg2rad(150) <= angle <= np.deg2rad(165)
+        return first_quarter_low_angles or first_quarter_high_angles or second_quarter_low_angles or second_quarter_high_angles
 
     def stop(self):
         self.robot_controller.raise_pencil()

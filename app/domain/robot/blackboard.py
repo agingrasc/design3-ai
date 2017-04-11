@@ -24,24 +24,27 @@ class Blackboard:
                                                      7: POSITIONS[7]
                                                      }
 
-        def get_image_segments(self):
-            self.segments_image += [self.segments_image[0]]
-            return self.segments_image
+    def get_image_segments(self):
+        self.segments_image += [self.segments_image[0]]
+        return self.segments_image
 
-        def get_image_id(self):
-            return self.id_image
+    def get_image_id(self):
+        return self.id_image
 
-        def get_image_position(self, image_id):
-            return self.images_position[image_id]
+    def get_image_position(self, image_id):
+        return self.images_position[image_id]
+      
+    def has_antenna_position(self):
+        if self.antenna_position:
+            return True
+        else:
+            return False
 
-        def has_antenna_position(self):
-            if self.antenna_position:
-                return True
-            else:
-                return False
+    def set_image_segments(self, image_segments):
+        self.segments_image = image_segments
 
-        def get_antenna_position(self):
-            return self.antenna_position
+    def get_antenna_position(self):
+        return self.antenna_position
 
-        def get_segment_image_list(self):
-            return self.segments_image
+    def get_segment_image_list(self):
+        return self.segments_image

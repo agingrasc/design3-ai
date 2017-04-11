@@ -20,9 +20,6 @@ class Antenna:
     def end_recording(self):
         self.robot_controller.stop_power_recording()
 
-    def move_to_end_position(self):
-        self.robot_controller.precise_move(STOP_POSITION, Position(20, 0))
-
     def get_max_signal_position(self) -> Position:
         try:
             pos = self.robot_controller.get_max_power_position()

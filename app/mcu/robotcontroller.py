@@ -40,14 +40,14 @@ class RobotSpeed(enum.Enum):
 
 
 constants_cw = [(0.0016763, 0.0019101, 0, 20),  # REAR X (SEMI-OK)
-             (0.0020301, 0.0021392, 0, 20),  # FRONT Y (SEMI-OK)
+             (0.0023951, 0.0022002, 0, 20),  # FRONT Y (SEMI-OK)
              (0.0056477, 0.0021575, 0, 20),  # FRONT X (OK)
-             (0.0067589, 0.0023699, 0, 20)] # REAR Y 0.025657 0.02366
+             (0.0067589, 0.0023039, 0, 20)] # REAR Y 0.025657 0.02366
 
-constants_ccw = [(0.00609, 0.0021158, 0, 20),  # REAR X 0.027069 0.040708 (OK)
-                (0.0013096, 0.0022907, 0, 20),  # FRONT Y
-                (0.0095079, 0.0029324, 0, 20),  # FRONTX (SEMI-OK)
-                (0.0054301, 0.0025819, 0, 20)] # REAR Y (SEMI-OK)
+constants_ccw = [(0.0059, 0.0020158, 0, 20),  # REAR X 0.027069 0.040708 (OK)
+                (0.0013096, 0.0022507, 0, 20),  # FRONT Y
+                (0.0083117, 0.0025862, 0, 20),  # FRONTX (SEMI-OK)
+                (0.00018672, 0.0023825, 0, 20)] # REAR Y (SEMI-OK)
 
 
 class SerialMock:
@@ -205,53 +205,11 @@ class RobotController(object):
                     print("Power level: {}".format(power_level))
                     self.powers[retroaction] = power_level
 
-    def precise_move(self, vec: Position, speed: Position=Position(20, 20)):
-        self.reset_traveled_distance()
-
-        retroaction = self.global_information.get_robot_position()
-        angle = retroaction.theta
-
-        distance_to_move_x, distance_to_move_y = correct_for_referential_frame(vec.pos_x, vec.pos_y, angle)
-        # FIXME: dynamic speed computing
-        target_speed_x, target_speed_y = speed.pos_x, speed.pos_y
-        if distance_to_move_x < 0:
-            target_speed_x = -speed.pos_x
-        if distance_to_move_y < 0:
-            target_speed_y = -speed.pos_y
-
-        last_timestamp = time.time()
-
-        remaining_x, remaining_y = self.get_remaining_distances(distance_to_move_x, distance_to_move_y)
-        while remaining_x > 0 or remaining_y > 0:
-            delta_t = time.time() - last_timestamp
-            if delta_t > REGULATOR_FREQUENCY:
-                last_timestamp = time.time()
-                if remaining_x > 0:
-                    speed_x = target_speed_x
-                else:
-                    speed_x = 0
-
-                if remaining_y > 0:
-                    speed_y = target_speed_y
-                else:
-                    speed_y = 0
-
-                cmd = protocol.generate_move_command(speed_x, speed_y, 0)
-                self.ser_mcu.write(cmd)
-                self.ser_mcu.read(self.ser_mcu.inWaiting())
-
-                remaining_x, remaining_y = self.get_remaining_distances(distance_to_move_x, distance_to_move_y)
-
-        cmd = protocol.generate_move_command(0, 0, 0)
-        self.ser_mcu.write(cmd)
-
-    def stupid_move(self, destination: Position, speed=80, robot_position=None):
-        self.reset_traveled_distance()
+    def timed_move(self, destination: Position, speed=80, robot_position=None):
         move_vec = destination - robot_position
         speed_vec = move_vec.renormalize(speed)
 
         time_to_move = self.compute_time_move(move_vec, speed, speed_vec)
-        print("Time to move: {} -- Speed vector: {}".format(time_to_move, speed_vec))
         start_time = time.time()
 
         last_cmd_time = time.time()
@@ -260,7 +218,6 @@ class RobotController(object):
                 speed_x, speed_y = correct_for_referential_frame(speed_vec.pos_x, speed_vec.pos_y, robot_position.theta)
                 self.ser_mcu.write(protocol.generate_move_command(speed_x, speed_y, 0))
 
-        print("Erreur: {} -- {} -- ({})".format(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y, (robot_position - destination).get_norm()))
         self.ser_mcu.write(protocol.generate_move_command(0, 0, 0))
         return robot_position
 
