@@ -6,6 +6,7 @@ from domain.pathfinding.pathfinding import PathFinding
 from api.gotoposition.dimensionassembler import DimensionAssembler
 from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
+from domain.gameboard.bad_position_exception import BadPositionException
 
 DEFAULT_CELL_SCALE = 10
 CAMERA_LENGTH = 5
@@ -16,7 +17,6 @@ obstacle_assembler = ObstacleAssembler(position_assembler, dimension_assembler)
 
 
 def find(global_information: GlobalInformation, destination):
-    robot_position = global_information.get_robot_position()
     x_dimension, y_dimension = global_information.get_board_dimensions()
     robot_radius = global_information.get_robot_radius()
     obstacles = global_information.get_obstacles_json()
@@ -29,15 +29,33 @@ def find(global_information: GlobalInformation, destination):
         print(obstacle)
 
     game_board = GameBoard(x_dimension, y_dimension, obstacles, robot_radius, CAMERA_LENGTH)
-    robot_position_scale = game_board.get_coordinate(
-        int(robot_position.pos_x / DEFAULT_CELL_SCALE), int(robot_position.pos_y / DEFAULT_CELL_SCALE)
-    )
-    destination = game_board.get_coordinate(
-        int(destination.pos_x / DEFAULT_CELL_SCALE), int(destination.pos_y / DEFAULT_CELL_SCALE)
-    )
+
+    robot_position_scale = __robot_position(game_board, global_information)
+    destination = __destination_position(game_board, destination)
 
     pathfinder = PathFinding(game_board, robot_position_scale, destination)
     path = get_segments.get_filter_path(pathfinder.find_path(), DEFAULT_CELL_SCALE)
     for pos in path:
         print(pos)
     return path
+
+
+def __robot_position(game_board, global_information):
+    try:
+        robot_position = global_information.get_robot_position()
+        robot_position_scale = game_board.get_coordinate(
+            int(robot_position.pos_x / DEFAULT_CELL_SCALE), int(robot_position.pos_y / DEFAULT_CELL_SCALE)
+        )
+        return robot_position_scale
+    except BadPositionException:
+        return __robot_position(game_board, global_information)
+
+
+def __destination_position(game_board, destination):
+    try:
+        destination = game_board.get_coordinate(
+            int(destination.pos_x / DEFAULT_CELL_SCALE), int(destination.pos_y / DEFAULT_CELL_SCALE)
+        )
+        return destination
+    except BadPositionException:
+        return __destination_position(game_board, destination)
