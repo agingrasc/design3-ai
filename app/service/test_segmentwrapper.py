@@ -19,7 +19,7 @@ class SegmentWrapperTest(TestCase):
 
        self.assertEquals(len(list_segment), 4)
        self.assertTrue(list_segment[0] == Position(pos_x=0, pos_y=0))
-       self.assertTrue(list_segment[0] == ADDED_POSITION)
-       self.assertTrue(list_segment[0] == Position(pos_x=200, pos_y=200))
-       self.assertTrue(list_segment[0] == Position(pos_x=210, pos_y=210))
+       self.assertTrue(list_segment[1] == ADDED_POSITION)
+       self.assertTrue(list_segment[2] == Position(pos_x=200, pos_y=200))
+       self.assertTrue(list_segment[3] == Position(pos_x=210, pos_y=210))
 

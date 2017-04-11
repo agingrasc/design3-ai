@@ -8,7 +8,6 @@ from domain.robot.blackboard import Blackboard
 from mcu.regulator import wrap_theta
 from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
-from service.segmentwrapper import SegmentWrapper
 
 DRAW_ANGLE = np.deg2rad(45)
 WAIT_TIME = 2
@@ -34,7 +33,6 @@ class Drawer:
         self.robot_controller.lower_pencil()
         robot_position = self.global_information.get_robot_position()
         last_point = robot_position
-        segments = SegmentWrapper(self.blackboard).wrap_segment()
         for point in segments:
             # self.vision_regulation.go_to_position(last_point)
             # robot_position = self.global_information.get_robot_position()

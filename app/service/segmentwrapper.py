@@ -15,9 +15,8 @@ class SegmentWrapper:
         segment_list = self.blackboard.get_segment_image_list()
         actual_position = segment_list[0]
         last_position = segment_list[len(segment_list)-1]
-
+        i = 1
         while actual_position != last_position:
-            i = 1
             if self._calculate_distance(actual_position, segment_list[i]) > MIN_DISTANCE_PRECISION:
                 vector = segment_list[i] - actual_position
                 half_vector = vector.multiply(0.5)
