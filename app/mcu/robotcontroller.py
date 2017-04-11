@@ -122,6 +122,8 @@ class RobotController(object):
         self.send_command(cmd)
 
     def shutdown_red_led(self):
+        self.reset_state()
+
         cmd = LedCommand(Leds.DOWN_RED)
         self.send_command(cmd)
 

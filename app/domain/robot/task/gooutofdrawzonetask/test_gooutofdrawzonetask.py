@@ -17,12 +17,12 @@ class GoOutOfDrawzoneTaskTest(TestCase):
         self.vision_regulation = Mock()
         self.global_information = Mock()
         self.destination_calculator = Mock()
-        self.pathfinding_application_service = Mock()
+        self.safe_zone_finder = Mock()
+        self.safe_zone_finder.find_safe_zone.return_value = VALID_DESTINATIONS_PATH
 
     def test_call_go_to_position_correctly(self):
-        self.pathfinding_application_service.find.return_value = VALID_DESTINATIONS_PATH
         task = GoOutOfDrawzoneTask(
-            self.feedback, self.vision_regulation, self.global_information, self.pathfinding_application_service
+            self.feedback, self.vision_regulation, self.global_information, self.safe_zone_finder
         )
 
         task.execute()
@@ -31,10 +31,10 @@ class GoOutOfDrawzoneTaskTest(TestCase):
 
     def test_call_all_submodules_once(self):
         task = GoOutOfDrawzoneTask(
-            self.feedback, self.vision_regulation, self.global_information, self.pathfinding_application_service
+            self.feedback, self.vision_regulation, self.global_information, self.safe_zone_finder
         )
 
         task.execute()
 
+        self.safe_zone_finder.find_safe_zone.assert_called_once()
         self.feedback.send_comment.assert_called_once()
-        self.pathfinding_application_service.find.assert_called_once()

@@ -30,3 +30,12 @@ class Blackboard:
 
     def get_image_position(self, image_id):
         return self.images_position[image_id]
+      
+    def has_antenna_position(self):
+        if self.antenna_position:
+            return True
+        else:
+            return False
+
+    def get_antenna_position(self):
+        return self.antenna_position

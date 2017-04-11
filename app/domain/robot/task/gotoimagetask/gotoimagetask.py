@@ -29,7 +29,9 @@ class GoToImageTask(Task):
 
     def execute(self):
         image_position = self.blackboard.get_image_position(self.blackboard.get_image_id())
+        robot_position = self.global_information.get_robot_position()
         path = self.pathfinding_application_service.find(self.global_information, image_position)
+        self.global_information.send_path([robot_position] + path)
         for destination in path:
             self.vision_regulation.oriente_robot(destination.theta)
             self.vision_regulation.go_to_position(destination)

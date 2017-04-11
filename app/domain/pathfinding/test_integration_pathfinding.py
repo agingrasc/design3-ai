@@ -102,7 +102,8 @@ class PathFindingITest(TestCase):
         begin_position = game_board.get_coordinate(217, 27)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
-        self.validate_path(pathfinder.find_path())
+        path = pathfinder.find_path()
+        self.validate_path(path)
 
     def test_no_obstacle_verticable(self):
         obstacle1 = ObstacleValueObject(pos_x=5, pos_y=5, radius=1, tag=Tag.CANT_PASS_RIGHT)
@@ -114,10 +115,21 @@ class PathFindingITest(TestCase):
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
 
+    def test_end_position_on_obstacle(self):
+        obstacle1 = ObstacleValueObject(pos_x=149, pos_y=70, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        obstacle2 = ObstacleValueObject(pos_x=149, pos_y=11, radius=3, tag=Tag.CANT_PASS_LEFT)
+        game_board = GameBoard(230, 110, [obstacle1, obstacle2])
+
+        end_position = game_board.get_coordinate(148, 70)
+        begin_position = game_board.get_coordinate(30, 30)
+
+        pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
+        path = pathfinder.find_path()
+        game_board.print_game_board()
+        self.validate_path(path)
+
     def validate_path(self, path):
         new_path = get_segments.get_filter_path(path, 10)
-        for pp in new_path:
-            print(pp)
         previous_weight = sys.maxsize
         for position in path:
             self.assertTrue(previous_weight > position.weight)

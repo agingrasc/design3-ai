@@ -26,9 +26,11 @@ class GoToDrawzoneTask(Task):
         self.blackboard = blackboard
 
     def execute(self):
+        robot_position = self.global_information.get_robot_position()
         segments = self.blackboard.get_image_segments()
         first_point = segments[0]
         path = self.pathfinding_application_service.find(self.global_information, first_point)
+        self.global_information.send_path([robot_position] + path)
         for destination in path:
             self.vision_regulation.oriente_robot(destination.theta)
             self.vision_regulation.go_to_position(destination)

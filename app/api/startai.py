@@ -1,7 +1,6 @@
 from flask import Blueprint, request, make_response, jsonify
 from threading import Thread
 
-
 def create_start_ai_blueprint(task_factory, robot_ai):
     start_ai_blueprint = Blueprint('start-ai', __name__)
 
@@ -37,7 +36,8 @@ def create_start_ai_blueprint(task_factory, robot_ai):
             7: task_factory.create_draw_task,
             8: task_factory.create_go_out_of_drawzone_task,
             9: task_factory.create_light_red_led_task,
-            12: task_factory.create_image_routine_task
+            12: task_factory.create_image_routine_task,
+            10: task_factory.create_shut_down_red_led_task
         }
 
         if task_id == 0:

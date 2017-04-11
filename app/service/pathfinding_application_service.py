@@ -1,6 +1,3 @@
-from domain.gameboard.position import Position
-from domain.pathfinding import dijkstra
-from domain.pathfinding.dijkstra import Dijkstra
 from service.globalinformation import GlobalInformation
 from domain.gameboard.gameboard import GameBoard
 from domain.pathfinding import get_segments
@@ -11,7 +8,7 @@ from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
 
 DEFAULT_CELL_SCALE = 10
-CAMERA_LENGTH = 6
+CAMERA_LENGTH = 5
 
 dimension_assembler = DimensionAssembler(DEFAULT_CELL_SCALE)
 position_assembler = PositionAssembler(DEFAULT_CELL_SCALE)
@@ -43,5 +40,4 @@ def find(global_information: GlobalInformation, destination):
     path = get_segments.get_filter_path(pathfinder.find_path(), DEFAULT_CELL_SCALE)
     for pos in path:
         print(pos)
-    global_information.send_path([robot_position] + path)
     return path
