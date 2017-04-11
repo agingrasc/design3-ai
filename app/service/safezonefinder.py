@@ -7,7 +7,7 @@ STOP_POSITION_LIST = [Position(1250, 580, 0), Position(1250, 880, 0), Position(1
                                                                                                        0)]  # 1280, 865
 
 
-class SafeZoneFinder():
+class SafeZoneFinder:
     def __init__(self, pathfinding_application_service, global_information: GlobalInformation):
         self.pathfinder_service = pathfinding_application_service
         self.global_information = global_information

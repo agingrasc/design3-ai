@@ -1,5 +1,6 @@
 """" Interface entre le système de prise de décision et le MCU. Se charge d'envoyer les commandes. """
 import enum
+from typing import List
 
 import serial
 import time
@@ -22,19 +23,31 @@ else:
 
 SERIAL_MCU_DEV_NAME = "ttySTM32"
 SERIAL_POLULU_DEV_NAME = "ttyPololu"
-REGULATOR_FREQUENCY = 0.10 # secondes
+REGULATOR_FREQUENCY = 0.030 # secondes
 
 
 class RobotSpeed(enum.Enum):
     NORMAL_SPEED = (150, 4)
-    SCAN_SPEED = (50, 5)
-    DRAW_SPEED = (120, 1)
+    SCAN_SPEED = (70, 5)
+    DRAW_SPEED = (60, 2)
 
 
-constants = [(0.027069, 0.040708, 0, 20),  # REAR X
-             (0.0095292, 0.029466, 0, 20),  # FRONT Y
-             (0.015431, 0.042286, 0, 20),  # FRONT X
-             (0.030357, 0.02766, 0, 20)]  # REAR Y
+# Old constants of single PID
+#constants = [(0.027069, 0.040708, 0, 20),  # REAR X
+#             (0.0095292, 0.029466, 0, 20),  # FRONT Y
+#             (0.015431, 0.042286, 0, 20),  # FRONT X
+#             (0.030357, 0.02766, 0, 20)]  # REAR Y
+
+
+constants_cw = [(0.0016763, 0.0019101, 0, 20),  # REAR X (SEMI-OK)
+             (0.0020301, 0.0021392, 0, 20),  # FRONT Y (SEMI-OK)
+             (0.0056477, 0.0021575, 0, 20),  # FRONT X (OK)
+             (0.0067589, 0.0023699, 0, 20)] # REAR Y 0.025657 0.02366
+
+constants_ccw = [(0.00609, 0.0021158, 0, 20),  # REAR X 0.027069 0.040708 (OK)
+                (0.0013096, 0.0022907, 0, 20),  # FRONT Y
+                (0.0095079, 0.0029324, 0, 20),  # FRONTX (SEMI-OK)
+                (0.0054301, 0.0025819, 0, 20)] # REAR Y (SEMI-OK)
 
 
 class SerialMock:
@@ -83,14 +96,14 @@ class RobotController(object):
         """
         self.ser_mcu.write(cmd.pack_command())
 
-    def send_move_command(self, robot_position: Position, delta_t=None):
+    def send_move_command(self, robot_position: Position, delta_t=None, pure_orientation=False):
         now = time.time()
         if delta_t:
             regulator_delta_t = delta_t
         else:
             regulator_delta_t = now - self.last_timestamp
         self.last_timestamp = now
-        cmd = MoveCommand(robot_position, regulator_delta_t)
+        cmd = MoveCommand(robot_position, regulator_delta_t, pure_orientation)
         self.ser_mcu.write(cmd.pack_command())
 
     def send_servo_command(self, cmd):
@@ -173,20 +186,20 @@ class RobotController(object):
         power = int.from_bytes(power_bytes, byteorder='big')
         return power
 
-    def move(self, destination: Position):
+    def move(self, destination: Position, pure_orientation=False):
         """" S'occupe d'amener le robot a la bonne position. BLOQUANT! """
         regulator.setpoint = destination
         retroaction = self.global_information.get_robot_position()
         now = time.time()
         last_time = now
 
-        while not regulator.is_arrived(retroaction):
+        while not regulator.is_arrived(retroaction, regulator.constants.position_deadzone):
             retroaction = self.global_information.get_robot_position()
             now = time.time()
             delta_t = now - last_time
             if delta_t > REGULATOR_FREQUENCY:
                 last_time = now
-                self.send_move_command(retroaction, delta_t)
+                self.send_move_command(retroaction, delta_t, pure_orientation)
                 if self.record_power:
                     power_level = self.get_manchester_power()
                     print("Power level: {}".format(power_level))
@@ -232,6 +245,37 @@ class RobotController(object):
         cmd = protocol.generate_move_command(0, 0, 0)
         self.ser_mcu.write(cmd)
 
+    def stupid_move(self, destination: Position, speed=80, robot_position=None):
+        self.reset_traveled_distance()
+        move_vec = destination - robot_position
+        speed_vec = move_vec.renormalize(speed)
+
+        time_to_move = self.compute_time_move(move_vec, speed, speed_vec)
+        print("Time to move: {} -- Speed vector: {}".format(time_to_move, speed_vec))
+        start_time = time.time()
+
+        last_cmd_time = time.time()
+        while time.time() - start_time < time_to_move:
+            if time.time() - last_cmd_time > REGULATOR_FREQUENCY:
+                speed_x, speed_y = correct_for_referential_frame(speed_vec.pos_x, speed_vec.pos_y, robot_position.theta)
+                self.ser_mcu.write(protocol.generate_move_command(speed_x, speed_y, 0))
+
+        print("Erreur: {} -- {} -- ({})".format(destination.pos_x - robot_position.pos_x, destination.pos_y - robot_position.pos_y, (robot_position - destination).get_norm()))
+        self.ser_mcu.write(protocol.generate_move_command(0, 0, 0))
+        return robot_position
+
+    def compute_time_move(self, move_vec, speed, speed_vec):
+        ACCEL_X = 135  # mm/s^2 (128)
+        ACCEL_Y = 220 # 160
+        acceleration_time_x = speed / ACCEL_X
+        acceleration_time_y = speed / ACCEL_Y
+        speed_during_acceleration = speed_vec.multiply(0.50)
+        move_during_acceleration = Position(speed_during_acceleration.pos_x * acceleration_time_x,
+                                            speed_during_acceleration.pos_y * acceleration_time_y)
+        move_vec -= move_during_acceleration
+        time_to_move = (move_vec.get_norm() / speed_vec.get_norm()) + speed / Position(ACCEL_X, ACCEL_Y).get_norm()
+        return time_to_move
+
     def get_remaining_distances(self, target_distance_x, target_distance_y):
         distances = self.get_traveled_distance()
         distance_x = distances[3]
@@ -262,8 +306,12 @@ class RobotController(object):
 
     def _init_mcu_pid(self):
         for motor in protocol.Motors:
-            kp, ki, kd, dz = constants[motor.value]
-            cmd = protocol.generate_set_pid_constant(motor, kp, ki, kd, dz)
+            kp_cw, ki_cw, kd_cw, dz_cw = constants_cw[motor.value]
+            cmd = protocol.generate_set_pid_constant_forward(motor, kp_cw, ki_cw, kd_cw, dz_cw)
+            self.ser_mcu.write(cmd)
+
+            kp_ccw, ki_ccw, kd_ccw, dz_ccw = constants_ccw[motor.value]
+            cmd = protocol.generate_set_pid_constant_backward(motor, kp_ccw, ki_ccw, kd_ccw, dz_ccw)
             self.ser_mcu.write(cmd)
 
     def _startup_test(self):
