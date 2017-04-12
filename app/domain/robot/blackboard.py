@@ -5,7 +5,7 @@ from domain.gameboard.position import Position
 POSITIONS = [Position(1895, 330, 1.52), Position(1910, 290, 1.00), Position(1910, 250, 0.37), Position(1895, 330, 0.00),
              Position(1900, 560, 0.00), Position(1910, 635, -0.50), Position(1910, 630, -1.05),
              Position(1910, 605, -1.54)]
-
+ANTENNA_MARK_LENGTH = 8
 
 class Blackboard:
     def __init__(self):
@@ -48,3 +48,6 @@ class Blackboard:
 
     def get_segment_image_list(self):
         return self.segments_image
+
+    def get_mark_move(self, robot_position):
+        return (robot_position + Position(0, -ANTENNA_MARK_LENGTH))

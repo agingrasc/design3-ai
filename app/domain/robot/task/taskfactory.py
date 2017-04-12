@@ -19,7 +19,6 @@ from domain.robot.task.takepicturetask.takepicturetask import TakePictureTask
 from service import pathfinding_application_service
 from service.feedback import Feedback
 from service.safezonefinder import SafeZoneFinder
-from service.segmentwrapper import SegmentWrapper
 from util.singleton import Singleton
 
 
