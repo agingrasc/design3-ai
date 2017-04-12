@@ -27,9 +27,9 @@ class GameBoardTest(unittest.TestCase):
         )
         board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [obstacle], 0)
 
-        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS - 1
+        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
         min_y = VALID_OBSTACLE_Y_POSITION - VALID_RADIUS - 1
-        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
+        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS + 1
 
         coord_max_y = board.game_board[VALID_OBSTACLE_X_POSITION][max_y]
         coord_min_y = board.game_board[VALID_OBSTACLE_X_POSITION][min_y]
@@ -48,9 +48,9 @@ class GameBoardTest(unittest.TestCase):
         )
         board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [obstacle], 0)
 
-        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS - 1
+        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
         min_y = VALID_OBSTACLE_Y_POSITION - VALID_RADIUS - 1
-        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
+        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS + 1
 
         coord_max_y = board.game_board[VALID_OBSTACLE_X_POSITION][max_y]
         coord_min_y = board.game_board[VALID_OBSTACLE_X_POSITION][min_y]
@@ -69,9 +69,9 @@ class GameBoardTest(unittest.TestCase):
         )
         board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [obstacle], 0)
 
-        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS - 1
+        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
         min_y = VALID_OBSTACLE_Y_POSITION - VALID_RADIUS - 1
-        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
+        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS + 1
 
         coord_max_y = board.game_board[VALID_OBSTACLE_X_POSITION][max_y]
         coord_min_y = board.game_board[VALID_OBSTACLE_X_POSITION][min_y]
@@ -90,9 +90,9 @@ class GameBoardTest(unittest.TestCase):
         )
         board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [obstacle], 1)
 
-        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS - 1
+        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
         min_y = VALID_OBSTACLE_Y_POSITION - VALID_RADIUS - 1
-        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
+        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS + 1
 
         coord_max_y = board.game_board[VALID_OBSTACLE_X_POSITION][max_y]
         coord_min_y = board.game_board[VALID_OBSTACLE_X_POSITION][min_y]
@@ -111,9 +111,9 @@ class GameBoardTest(unittest.TestCase):
         )
         board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [obstacle], 1)
 
-        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS - 1
+        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
         min_y = VALID_OBSTACLE_Y_POSITION - VALID_RADIUS - 1
-        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
+        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS + 1
 
         coord_max_y = board.game_board[VALID_OBSTACLE_X_POSITION][max_y]
         coord_min_y = board.game_board[VALID_OBSTACLE_X_POSITION][min_y]
@@ -129,9 +129,9 @@ class GameBoardTest(unittest.TestCase):
         )
         board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [obstacle], 2)
 
-        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS - 1
+        max_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
         min_y = VALID_OBSTACLE_Y_POSITION - VALID_RADIUS - 1
-        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS
+        lim_y = VALID_OBSTACLE_Y_POSITION + VALID_RADIUS + 1
 
         coord_max_y = board.game_board[VALID_OBSTACLE_X_POSITION][max_y]
         coord_min_y = board.game_board[VALID_OBSTACLE_X_POSITION][min_y]
@@ -176,3 +176,15 @@ class GameBoardTest(unittest.TestCase):
         except BadPositionException:
             exception_raised = True
         self.assertTrue(exception_raised)
+
+    def test_set_right_obstacle_with_robot_radius_hard_mode(self):
+        obstacle = gameboard.ObstacleValueObject(
+            pos_x=VALID_OBSTACLE_X_POSITION,
+            pos_y=VALID_OBSTACLE_Y_POSITION,
+            radius=VALID_RADIUS - 1,
+            tag=gameboard.Tag.CANT_PASS_RIGHT
+        )
+        print("Try hard")
+        board = gameboard.GameBoard(VALID_MAX_X, VALID_MAX_Y, [obstacle], 1, hard_mode=True)
+
+        board.print_game_board()

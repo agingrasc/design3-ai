@@ -63,18 +63,20 @@ class PathFindingITest(TestCase):
     def test_find_extrem_left_right_obstacles(self):
         obstacle1 = ObstacleValueObject(pos_x=19, pos_y=20, radius=3, tag=Tag.CANT_PASS_LEFT)
         obstacle2 = ObstacleValueObject(pos_x=39, pos_y=10, radius=3, tag=Tag.CANT_PASS_RIGHT)
-        game_board = GameBoard(55, 30, [obstacle1, obstacle2], 3)
+        game_board = GameBoard(55, 31, [obstacle1, obstacle2], 3)
 
         end_position = game_board.get_coordinate(50, 8)
         begin_position = game_board.get_coordinate(3, 3)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
-        self.validate_path(pathfinder.find_path())
+        path = pathfinder.find_path()
+        self.validate_path(path)
+        game_board.print_game_board()
 
     def test_find_left_rightx2_obstacles(self):
         obstacle1 = ObstacleValueObject(pos_x=8, pos_y=20, radius=3, tag=Tag.CANT_PASS_LEFT)
         obstacle2 = ObstacleValueObject(pos_x=39, pos_y=10, radius=3, tag=Tag.CANT_PASS_RIGHT)
-        obstacle3 = ObstacleValueObject(pos_x=19, pos_y=10, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        obstacle3 = ObstacleValueObject(pos_x=20, pos_y=10, radius=3, tag=Tag.CANT_PASS_RIGHT)
         game_board = GameBoard(55, 30, [obstacle1, obstacle2, obstacle3], 2)
 
         end_position = game_board.get_coordinate(50, 8)
@@ -82,6 +84,7 @@ class PathFindingITest(TestCase):
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
 
     def test_real_value_two_obstacles(self):
         obstacle1 = ObstacleValueObject(pos_x=148, pos_y=23, radius=3, tag=Tag.CANT_PASS_LEFT)
@@ -93,6 +96,7 @@ class PathFindingITest(TestCase):
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
 
     def test_real_value_obstacles(self):
         obstacle1 = ObstacleValueObject(pos_x=149, pos_y=70, radius=3, tag=Tag.CANT_PASS_RIGHT)
@@ -105,16 +109,18 @@ class PathFindingITest(TestCase):
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         path = pathfinder.find_path()
         self.validate_path(path)
+        game_board.print_game_board()
 
     def test_no_obstacle_verticable(self):
         obstacle1 = ObstacleValueObject(pos_x=5, pos_y=5, radius=1, tag=Tag.CANT_PASS_RIGHT)
         game_board = GameBoard(23, 11, [obstacle1])
 
         end_position = game_board.get_coordinate(14, 4)
-        begin_position = game_board.get_coordinate(7, 5)
+        begin_position = game_board.get_coordinate(2, 2)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
 
     def test_end_position_on_obstacle(self):
         obstacle1 = ObstacleValueObject(pos_x=149, pos_y=70, radius=3, tag=Tag.CANT_PASS_RIGHT)
@@ -126,8 +132,8 @@ class PathFindingITest(TestCase):
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         path = pathfinder.find_path()
-        game_board.print_game_board()
         self.validate_path(path)
+        game_board.print_game_board()
 
     def test_bad_begin_position(self):
         obstacle1 = ObstacleValueObject(pos_x=149, pos_y=70, radius=3, tag=Tag.CANT_PASS_RIGHT)
@@ -139,6 +145,7 @@ class PathFindingITest(TestCase):
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.assertRaises(RobotPositionInvalid, pathfinder.find_path)
+        game_board.print_game_board()
 
     def validate_path(self, path):
         new_path = get_segments.get_filter_path(path, 10)
@@ -146,3 +153,15 @@ class PathFindingITest(TestCase):
         for position in path:
             self.assertTrue(previous_weight > position.weight)
         self.assertTrue(path[len(path) - 1].weight == 0)
+
+    def test_real_value_two_obstacles_hard_mode(self):
+        obstacle1 = ObstacleValueObject(pos_x=148, pos_y=23, radius=3, tag=Tag.CANT_PASS_LEFT)
+        obstacle2 = ObstacleValueObject(pos_x=149, pos_y=80, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        game_board = GameBoard(230, 111, [obstacle1, obstacle2], 5, 2, True)
+
+        end_position = game_board.get_coordinate(211, 104)
+        begin_position = game_board.get_coordinate(56, 63)
+
+        pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
+        self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
