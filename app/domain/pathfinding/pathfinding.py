@@ -22,7 +22,7 @@ class PathFinding:
         self.end_position = end_position
         self.end_position.set_weight(0)
 
-    def find_path(self, obstacles_prevision=True):
+    def find_path(self, obstacles_precision=True):
         if self.end_position.weight == sys.maxsize:
             self.end_position = find_closes_destination(self.grid, self.end_position)
 
@@ -33,19 +33,19 @@ class PathFinding:
 
         path = find(
             self.grid, self.begin_position, self.end_position, self.obstacles_position, self.grid.width,
-            self.grid.length, obstacles_prevision
+            self.grid.length, obstacles_precision
         )
         return path
 
 
-def find(grid, begin_position, end_position, obstacles_position, width, length, obstacles_prevision):
+def find(grid, begin_position, end_position, obstacles_position, width, length, obstacles_precision):
     path = []
     current_neighbor = begin_position
     while current_neighbor.weight > 0:
         neighbors = grid.neighbors(current_neighbor)
         new_neighbors = removed_already_visited_neighbors(neighbors, path)
         current_neighbor = find_minimum(
-            new_neighbors, end_position, obstacles_position, width, length, obstacles_prevision
+            new_neighbors, end_position, obstacles_position, width, length, obstacles_precision
         )
         current_neighbor.set_path()
         path.append(current_neighbor)
@@ -102,7 +102,7 @@ def find_distance_from_closest_obstacle(neighbor, obstacles_position, width, len
     return old_distance
 
 
-def find_minimum(neighbors, destination, obstacles_position, width, length, obstacles_prevision):
+def find_minimum(neighbors, destination, obstacles_position, width, length, obstacles_precision):
     if len(neighbors) <= 0:
         raise NoPathFound
     current_neighbor = neighbors[0]
@@ -120,7 +120,7 @@ def find_minimum(neighbors, destination, obstacles_position, width, length, obst
         new_distance = math.sqrt((neighbor.pos_x - destination.pos_x)**2 + (neighbor.pos_y - destination.pos_y)**2)
         new_distance_from_obstace = find_distance_from_closest_obstacle(neighbor, obstacles_position, width, length)
         new_distance_from_walls = distance_from_walls(neighbor, width, length)
-        if obstacles_prevision:
+        if obstacles_precision:
             new_distance -= new_distance_from_walls
         if new_distance <= old_distance:
             old_distance = new_distance

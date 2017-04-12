@@ -2,7 +2,6 @@ import numpy as np
 
 from domain.command.antenna import Antenna
 from domain.command.visionregulation import VisionRegulation
-from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service import pathfinding_application_service
