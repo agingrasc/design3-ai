@@ -24,7 +24,7 @@ class PathFinding:
 
     def find_path(self, obstacles_precision=True):
         if self.end_position.weight == sys.maxsize:
-            self.end_position = find_closes_destination(self.grid, self.end_position)
+            self.end_position = find_closes_destination(self.grid, self.end_position, obstacles_precision)
 
         if self.begin_position.weight == sys.maxsize:
             raise RobotPositionInvalid(self.begin_position)
@@ -52,11 +52,15 @@ def find(grid, begin_position, end_position, obstacles_position, width, length, 
     return path
 
 
-def find_closes_destination(grid, end_position):
+def find_closes_destination(grid, end_position, obstacles_precision):
     neighbors = queue.Queue()
     neighbors.put(end_position)
     current_neighbor = end_position
     visited_neighbors = []
+    if not obstacles_precision:
+        while current_neighbor.weight == sys.maxsize:
+            current_neighbor = grid.game_board.get_coordinate(current_neighbor.pos_x - 1, current_neighbor.pos_y)
+        return current_neighbor
     while current_neighbor.weight == sys.maxsize:
         current_neighbor = neighbors.get()
         new_neighbors = grid.neighbors(current_neighbor)
