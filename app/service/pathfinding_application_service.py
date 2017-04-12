@@ -8,6 +8,7 @@ from api.gotoposition.positionassembler import PositionAssembler
 from api.gotoposition.obstaclesassembler import ObstacleAssembler
 from domain.gameboard.bad_position_exception import BadPositionException
 from domain.pathfinding.pathfinding import RobotPositionInvalid
+from domain.pathfinding.pathfinding import NoPathFound
 
 DEFAULT_CELL_SCALE = 10
 CAMERA_LENGTH = 5
@@ -17,7 +18,7 @@ position_assembler = PositionAssembler(DEFAULT_CELL_SCALE)
 obstacle_assembler = ObstacleAssembler(position_assembler, dimension_assembler)
 
 
-def find(global_information: GlobalInformation, destination, obstacles_prevision=True):
+def find(global_information: GlobalInformation, destination, obstacles_prevision=True, hard_mode=False):
     x_dimension, y_dimension = global_information.get_board_dimensions()
     robot_radius = global_information.get_robot_radius()
     obstacles = global_information.get_obstacles_json()
@@ -29,7 +30,7 @@ def find(global_information: GlobalInformation, destination, obstacles_prevision
     for obstacle in obstacles:
         print(obstacle)
 
-    game_board = GameBoard(x_dimension, y_dimension, obstacles, robot_radius, CAMERA_LENGTH)
+    game_board = GameBoard(x_dimension, y_dimension, obstacles, robot_radius, CAMERA_LENGTH, hard_mode)
 
     robot_position_scale = __robot_position(game_board, global_information)
     destination_final = __destination_position(game_board, destination)
@@ -40,6 +41,10 @@ def find(global_information: GlobalInformation, destination, obstacles_prevision
         path = pathfinder.find_path(obstacles_prevision)
     except RobotPositionInvalid:
         return find(global_information, destination)
+    except NoPathFound:
+        return find(global_information, destination, obstacles_prevision, True)
+    if len(path) == 0:
+        return find(global_information, destination, obstacles_prevision, True)
 
     path = get_segments.get_filter_path(path, DEFAULT_CELL_SCALE)
     return path
