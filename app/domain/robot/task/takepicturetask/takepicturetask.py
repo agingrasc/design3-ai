@@ -23,10 +23,13 @@ class TakePictureTask(Task):
         scale_factor = self.blackboard.magnification
         orientation = self.blackboard.orientation
 
-        response_data = self.global_information.send_take_picture_request(scale_factor, orientation)
+        response_data = {'error': 'error'}
 
         while 'error' in response_data:
-            response_data = self.global_information.send_take_picture_request(scale_factor, orientation)
+            try:
+                response_data = self.global_information.send_take_picture_request(scale_factor, orientation)
+            except:
+                return self.execute()
 
         segments = response_data['segments']
 

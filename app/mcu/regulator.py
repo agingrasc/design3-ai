@@ -159,8 +159,8 @@ class PIPositionRegulator(object):
         if abs(err_theta) < THETA_DEADZONE:
             saturated_theta = 0
 
-        print("Acc: {} -- {} -- {}".format(self.accumulator[0], self.accumulator[1], self.accumulator[2]))
-        print("Distance ({}): {} -- {}".format(math.sqrt(err_x ** 2 + err_y ** 2), err_x, err_y))
+        # print("Acc: {} -- {} -- {}".format(self.accumulator[0], self.accumulator[1], self.accumulator[2]))
+        # print("Distance ({}): {} -- {}".format(math.sqrt(err_x ** 2 + err_y ** 2), err_x, err_y))
 
         command = []
         for cmd in saturated_cmd:
@@ -169,7 +169,7 @@ class PIPositionRegulator(object):
         if pure_orientation:
             command[0] = 0
             command[1] = 0
-        print("Commandes: {} -- {} -- {}".format(*command))
+        # print("Commandes: {} -- {} -- {}".format(*command))
         return command
 
     def _relinearize(self, cmd):
