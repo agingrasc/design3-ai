@@ -45,7 +45,7 @@ class Drawer:
         robot_angle = robot_position.theta
         direction_vector = destination - robot_position
         angle = direction_vector.get_angle() - draw_angle
-        nearest_angle = self._get_nearest_angle(angle, robot_angle)
+        nearest_angle = _get_nearest_angle(angle, robot_angle)
         return wrap_theta(nearest_angle)
 
     def stop(self):
