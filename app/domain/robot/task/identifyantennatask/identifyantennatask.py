@@ -11,9 +11,7 @@ from service.feedback import Feedback
 from service.feedback import TASK_IDENTEFIE_ANTENNA
 from service.globalinformation import GlobalInformation
 
-LINE_LENGHT = 1
 ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(0)
-ANTENNA_MARK_LENGTH = 8
 OBSTACLE_PRECISION = False
 
 
@@ -62,8 +60,8 @@ class IdentifyAntennaTask(Task):
         self.global_information.send_path([robot_position] + path_max)
         self.vision_regulation.go_to_positions(path_max)
 
-        mark_move = Position(0, -ANTENNA_MARK_LENGTH)
+        self.mark_move = self.blackboard.get_mark_move(robot_position)
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
         self.antenna.robot_controller.lower_pencil()
-        self.antenna.robot_controller.timed_move((robot_position + mark_move), 20, robot_position)
+        self.antenna.robot_controller.timed_move(self.mark_move, 20, robot_position)
         self.antenna.robot_controller.raise_pencil()

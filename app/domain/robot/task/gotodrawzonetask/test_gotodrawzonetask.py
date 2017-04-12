@@ -4,6 +4,7 @@ from unittest.mock import Mock, call
 from mcu.robotcontroller import RobotController
 from domain.robot.task.gotodrawzonetask.gotodrawzonetask import GoToDrawzoneTask
 
+VALID_PATH = [Mock(pos_x=10, pos_y=10, theta=0), Mock(pos_x=15, pos_y=15, theta=0)]
 
 class GoToDrawzoneTaskTest(TestCase):
     def setUp(self):
@@ -33,7 +34,7 @@ class GoToDrawzoneTaskTest(TestCase):
 
     def test_send_comment(self):
         self.blackboard.get_image_segments.return_value = [Mock()]
-        self.pathfinder_service.find.return_value = []
+        self.pathfinder_service.find.return_value = VALID_PATH
 
         self.go_to_draw_zone_task.execute()
 

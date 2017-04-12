@@ -26,6 +26,8 @@ class IdentifyAntennaTaskTest(unittest.TestCase):
         self.global_information.get_robot_width.return_value = VALID_WIDTH
         self.blackboard = Mock()
         self.pathfinding_application_service.find.side_effect = [VALID_PATH_START, VALID_PATH_END, VALID_PATH_MAX]
+        self.global_information.get_robot_position = Mock(pos_x=10, pos_y=10)
+        self.blackboard.get_mark_move.return_value = Mock(pos_x=10, pos_y=10)
 
     def test_call_go_to_multiple_positions_correctly(self):
         task = IdentifyAntennaTask(
@@ -63,9 +65,9 @@ class IdentifyAntennaTaskTest(unittest.TestCase):
         task.execute()
 
         expected_calls = [
-            call(self.global_information,
-                 self.start_antenna_position), call(self.global_information, self.end_antenna_position),
-            call(self.global_information, self.max_signal_position)
+            call(self.global_information, self.start_antenna_position,
+                 False), call(self.global_information, self.end_antenna_position, False),
+            call(self.global_information, self.max_signal_position, False)
         ]
 
         self.pathfinding_application_service.find.assert_has_calls(expected_calls)

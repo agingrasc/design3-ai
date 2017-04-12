@@ -29,7 +29,7 @@ REGULATOR_FREQUENCY = 0.030 # secondes
 class RobotSpeed(enum.Enum):
     NORMAL_SPEED = (150, 4)
     SCAN_SPEED = (70, 5)
-    DRAW_SPEED = (60, 2)
+    DRAW_SPEED = (120, 2)
 
 
 # Old constants of single PID
