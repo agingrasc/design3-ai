@@ -1,5 +1,6 @@
 import sys
 import queue
+import math
 from domain.pathfinding.grid import Grid
 
 
@@ -16,40 +17,50 @@ class RobotPositionInvalid(Exception):
 class PathFinding:
     def __init__(self, game_board, begin_position, end_position):
         self.grid = Grid(game_board)
+        self.obstacles_position = game_board.obstacles_position
         self.begin_position = begin_position
         self.end_position = end_position
         self.end_position.set_weight(0)
 
-    def find_path(self):
+    def find_path(self, obstacles_precision=True):
         if self.end_position.weight == sys.maxsize:
-            self.end_position = find_closes_destination(self.grid, self.end_position)
+            self.end_position = find_closes_destination(self.grid, self.end_position, obstacles_precision)
 
         if self.begin_position.weight == sys.maxsize:
             raise RobotPositionInvalid(self.begin_position)
 
         initialise_weight(self.grid, self.end_position)
 
-        path = find(self.grid, self.begin_position, self.end_position)
+        path = find(
+            self.grid, self.begin_position, self.end_position, self.obstacles_position, self.grid.width,
+            self.grid.length, obstacles_precision
+        )
         return path
 
 
-def find(grid, begin_position, end_position):
+def find(grid, begin_position, end_position, obstacles_position, width, length, obstacles_precision):
     path = []
     current_neighbor = begin_position
     while current_neighbor.weight > 0:
         neighbors = grid.neighbors(current_neighbor)
         new_neighbors = removed_already_visited_neighbors(neighbors, path)
-        current_neighbor = find_minimum(new_neighbors, end_position)
+        current_neighbor = find_minimum(
+            new_neighbors, end_position, obstacles_position, width, length, obstacles_precision
+        )
         current_neighbor.set_path()
         path.append(current_neighbor)
     return path
 
 
-def find_closes_destination(grid, end_position):
+def find_closes_destination(grid, end_position, obstacles_precision):
     neighbors = queue.Queue()
     neighbors.put(end_position)
     current_neighbor = end_position
     visited_neighbors = []
+    if not obstacles_precision:
+        while current_neighbor.weight == sys.maxsize:
+            current_neighbor = grid.game_board.get_coordinate(current_neighbor.pos_x - 1, current_neighbor.pos_y)
+        return current_neighbor
     while current_neighbor.weight == sys.maxsize:
         current_neighbor = neighbors.get()
         new_neighbors = grid.neighbors(current_neighbor)
@@ -66,6 +77,8 @@ def find_closes_destination(grid, end_position):
 
 
 def find_real_value_minimum(neighbors, destination):
+    if len(neighbors) <= 0:
+        raise NoPathFound
     old_distance = sys.maxsize
     current_neighbor = neighbors[0]
     for neighbor in neighbors:
@@ -76,12 +89,27 @@ def find_real_value_minimum(neighbors, destination):
     return current_neighbor
 
 
-def find_minimum(neighbors, destination):
+def distance_from_walls(neighbor, width, length):
+    distance_from_y = min([neighbor.pos_y, length - neighbor.pos_y])
+    return distance_from_y
+
+
+def find_distance_from_closest_obstacle(neighbor, obstacles_position, width, length):
+    old_distance = sys.maxsize
+    for obstacle_position in obstacles_position:
+        new_distance = math.sqrt(
+            (neighbor.pos_x - obstacle_position.pos_x)**2 + (neighbor.pos_y - obstacle_position.pos_y)**2
+        )
+        if new_distance <= old_distance:
+            old_distance = new_distance
+
+    return old_distance
+
+
+def find_minimum(neighbors, destination, obstacles_position, width, length, obstacles_precision):
     if len(neighbors) <= 0:
         raise NoPathFound
     current_neighbor = neighbors[0]
-    old_distance = 99999999
-    #print("new min")
     new_min = []
     for neighbor in neighbors:
         if neighbor.weight < current_neighbor.weight:
@@ -91,8 +119,13 @@ def find_minimum(neighbors, destination):
         if neighbor.weight <= current_neighbor.weight:
             new_min.append(neighbor)
 
+    old_distance = sys.maxsize
     for neighbor in new_min:
-        new_distance = (neighbor.pos_x - destination.pos_x)**2 + (neighbor.pos_y - destination.pos_y)**2
+        new_distance = math.sqrt((neighbor.pos_x - destination.pos_x)**2 + (neighbor.pos_y - destination.pos_y)**2)
+        new_distance_from_obstace = find_distance_from_closest_obstacle(neighbor, obstacles_position, width, length)
+        new_distance_from_walls = distance_from_walls(neighbor, width, length)
+        if obstacles_precision:
+            new_distance -= new_distance_from_walls
         if new_distance <= old_distance:
             old_distance = new_distance
             current_neighbor = neighbor

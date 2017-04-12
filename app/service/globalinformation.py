@@ -56,7 +56,6 @@ class GlobalInformation:
         return obstacles
 
     def get_obstacles(self) -> List[Tuple[Position, int, ObstacleType]]:
-        # pos, radius, tag
         data_json = requests.get(BASE_URL_PATTERN.format(self.base_station_url, "obstacles")).json()
         obstacles = data_json['data']['obstacles']
 
@@ -96,8 +95,9 @@ class GlobalInformation:
 
     def send_take_picture_request(self, scale_factor, orientation):
         payload = {'data': {'scaling': scale_factor, 'orientation': orientation}}
-        base_station_response = requests.post(BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT),
-                                              json=payload).json()
+        base_station_response = requests.post(
+            BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT), json=payload
+        ).json()
         return base_station_response
 
     def reset_obstacles_detection(self):
