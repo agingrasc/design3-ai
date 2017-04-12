@@ -4,7 +4,6 @@ from domain.command.drawer import Drawer
 from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
 from service.feedback import TASK_DRAW_IMAGE
-from service.segmentwrapper import SegmentWrapper
 
 MESSAGE = "End of drawing task!"
 
