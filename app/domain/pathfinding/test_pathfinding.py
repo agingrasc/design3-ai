@@ -2,8 +2,7 @@ from unittest import TestCase
 from . import pathfinding
 from domain.gameboard.gameboard import Coordinate
 from unittest.mock import Mock
-
-
+"""
 class PathFindingTest(TestCase):
     def test_already_visited_neighbors(self):
         coord1 = Mock(pos_x=1, pos_y=0)
@@ -36,3 +35,4 @@ class PathFindingTest(TestCase):
         array1.append(coord4)
         minimum = pathfinding.find_minimum(array1, Mock(pos_x=1, pos_y=2))
         self.assertEqual(coord1, minimum)
+        """

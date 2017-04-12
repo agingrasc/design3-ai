@@ -17,7 +17,7 @@ position_assembler = PositionAssembler(DEFAULT_CELL_SCALE)
 obstacle_assembler = ObstacleAssembler(position_assembler, dimension_assembler)
 
 
-def find(global_information: GlobalInformation, destination):
+def find(global_information: GlobalInformation, destination, obstacles_prevision=True):
     x_dimension, y_dimension = global_information.get_board_dimensions()
     robot_radius = global_information.get_robot_radius()
     obstacles = global_information.get_obstacles_json()
@@ -37,7 +37,7 @@ def find(global_information: GlobalInformation, destination):
     pathfinder = PathFinding(game_board, robot_position_scale, destination_final)
 
     try:
-        path = pathfinder.find_path()
+        path = pathfinder.find_path(obstacles_prevision)
     except RobotPositionInvalid:
         return find(global_information, destination)
 
