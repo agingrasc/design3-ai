@@ -180,3 +180,14 @@ class PathFindingITest(TestCase):
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
         game_board.print_game_board()
+
+    def test_real_value_one_obstacles_hard_mode(self):
+        obstacle1 = ObstacleValueObject(pos_x=149, pos_y=40, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        game_board = GameBoard(230, 111, [obstacle1], 5, 2, True)
+
+        end_position = game_board.get_coordinate(211, 104)
+        begin_position = game_board.get_coordinate(56, 63)
+
+        pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
+        self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
