@@ -148,7 +148,6 @@ def find_minimum(neighbors, destination, obstacles_position, width, length, info
                 old_distance = new_distance
                 current_neighbor = neighbor
     else:
-        print("Easy")
         old_distance = sys.maxsize
         for neighbor in new_min:
             new_distance = math.sqrt((neighbor.pos_x - destination.pos_x)**2 + (neighbor.pos_y - destination.pos_y)**2)

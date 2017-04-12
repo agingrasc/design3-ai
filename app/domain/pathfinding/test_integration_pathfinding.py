@@ -38,6 +38,7 @@ class PathFindingITest(TestCase):
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
 
     def test_find_obstacle(self):
         obstacle = ObstacleValueObject(pos_x=19, pos_y=5, radius=3, tag='')
@@ -49,6 +50,7 @@ class PathFindingITest(TestCase):
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         pathfinder.find_path()
         self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
 
     def test_find_left_obstacle(self):
         obstacle = ObstacleValueObject(pos_x=19, pos_y=14, radius=3, tag=Tag.CANT_PASS_LEFT)
@@ -59,6 +61,7 @@ class PathFindingITest(TestCase):
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.validate_path(pathfinder.find_path())
+        game_board.print_game_board()
 
     def test_find_extrem_left_right_obstacles(self):
         obstacle1 = ObstacleValueObject(pos_x=19, pos_y=20, radius=3, tag=Tag.CANT_PASS_LEFT)
@@ -127,7 +130,20 @@ class PathFindingITest(TestCase):
         obstacle2 = ObstacleValueObject(pos_x=149, pos_y=11, radius=3, tag=Tag.CANT_PASS_LEFT)
         game_board = GameBoard(230, 110, [obstacle1, obstacle2])
 
-        end_position = game_board.get_coordinate(148, 70)
+        end_position = game_board.get_coordinate(149, 70)
+        begin_position = game_board.get_coordinate(30, 30)
+
+        pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
+        path = pathfinder.find_path()
+        self.validate_path(path)
+        game_board.print_game_board()
+
+    def test_end_position_on_obstacle_close(self):
+        obstacle1 = ObstacleValueObject(pos_x=149, pos_y=70, radius=3, tag=Tag.CANT_PASS_RIGHT)
+        obstacle2 = ObstacleValueObject(pos_x=149, pos_y=11, radius=3, tag=Tag.CANT_PASS_LEFT)
+        game_board = GameBoard(230, 110, [obstacle1, obstacle2])
+
+        end_position = game_board.get_coordinate(152, 80)
         begin_position = game_board.get_coordinate(30, 30)
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
@@ -145,7 +161,6 @@ class PathFindingITest(TestCase):
 
         pathfinder = pathfinding.PathFinding(game_board, begin_position, end_position)
         self.assertRaises(RobotPositionInvalid, pathfinder.find_path)
-        game_board.print_game_board()
 
     def validate_path(self, path):
         new_path = get_segments.get_filter_path(path, 10)

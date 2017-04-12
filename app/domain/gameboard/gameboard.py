@@ -80,12 +80,25 @@ class GameBoard:
         )
         for obstacle in obstacles:
             self.game_board[self.width - 1 - obstacle.pos_x][obstacle.pos_y] = obstacle
+        if obstacle_value_object.tag == Tag.CANT_PASS_LEFT:
+            for i in range(1, obstacle_value_object.pos_y + 1):
+                new_obstacle_coord = Coordinate(obstacle_value_object.pos_x, obstacle_value_object.pos_y)
+                new_obstacle_coord.set_tag(Tag.ROBOT)
+                #self.game_board[self.width - 1 - obstacle_value_object.pos_x][i] = new_obstacle_coord
+                #self.obstacles_position.append(self.game_board[self.width - 1 - obstacle_value_object.pos_x][i])
+        if obstacle_value_object.tag == Tag.CANT_PASS_RIGHT:
+            for j in range(obstacle_value_object.pos_y, self.length - 1):
+                new_obstacle_coord = Coordinate(obstacle_value_object.pos_x, obstacle_value_object.pos_y)
+                new_obstacle_coord.set_tag(Tag.ROBOT)
+                #self.game_board[self.width - 1 - obstacle_value_object.pos_x][j] = new_obstacle_coord
+                #self.obstacles_position.append(self.game_board[self.width - 1 - obstacle_value_object.pos_x][j])
         self.obstacles_position.append(
             self.game_board[self.width - 1 - obstacle_value_object.pos_x][obstacle_value_object.pos_y]
         )
-        new_obstacle_coord = Coordinate(obstacle.pos_x, obstacle.pos_y)
-        new_obstacle_coord.set_tag(Tag.ROBOT)
-        self.game_board[self.width - 1 - obstacle_value_object.pos_x][obstacle_value_object.pos_y] = new_obstacle_coord
+
+        #        new_obstacle_coord = Coordinate(obstacle_value_object.pos_x, obstacle_value_object.pos_y)
+        #        new_obstacle_coord.set_tag(Tag.ROBOT)
+        #        self.game_board[self.width - 1 - obstacle_value_object.pos_x][obstacle_value_object.pos_y] = new_obstacle_coord
 
     def get_coordinate(self, x, y):
         x_coord = self.width - 1 - x
@@ -120,19 +133,22 @@ def build_obstacle(obstacle, width, length, robot_radius, camera_length, try_har
 
         for i in range(startx_pos_round, endx_pos_round):
             for j in range(starty_pos_round, endy_pos_round):
-                distance = (math.sqrt((i - obstacle.pos_x)**2 + (j - obstacle.pos_y)**2))
-                if distance <= obstacle.radius + robot_radius + camera_length:
-                    #                print("obstacle.radius :" + str(obstacle.radius))
-                    #                print("distance : " + str(distance))
-                    #                print("robot_radius : " + str(robot_radius))
-                    new_obstacle_coord = Coordinate(i, j)
-                    new_obstacle_coord.set_tag(Tag.OBSTACLE)
-                    new_obstacle_coord.set_weight(sys.maxsize)
-                    obstacle_coord.append(new_obstacle_coord)
-                else:
-                    new_obstacle_coord = Coordinate(i, j)
-                    #new_obstacle_coord.set_tag(Tag.PATH)
-                    obstacle_coord.append(new_obstacle_coord)
+                if (obstacle.tag == Tag.CANT_PASS_LEFT and
+                    j > obstacle.pos_y) or (obstacle.tag == Tag.CANT_PASS_RIGHT and j < obstacle.pos_y):
+                    pass
+                    distance = (math.sqrt((i - obstacle.pos_x)**2 + (j - obstacle.pos_y)**2))
+                    if distance <= obstacle.radius + robot_radius + camera_length:
+                        #                print("obstacle.radius :" + str(obstacle.radius))
+                        #                print("distance : " + str(distance))
+                        #                print("robot_radius : " + str(robot_radius))
+                        new_obstacle_coord = Coordinate(i, j)
+                        new_obstacle_coord.set_tag(Tag.OBSTACLE)
+                        new_obstacle_coord.set_weight(sys.maxsize)
+                        obstacle_coord.append(new_obstacle_coord)
+                    else:
+                        new_obstacle_coord = Coordinate(i, j)
+                        #new_obstacle_coord.set_tag(Tag.PATH)
+                        obstacle_coord.append(new_obstacle_coord)
 
     #new_obstacle_coord = Coordinate(obstacle.pos_x, obstacle.pos_y)
     #new_obstacle_coord.set_tag(Tag.ROBOT)
