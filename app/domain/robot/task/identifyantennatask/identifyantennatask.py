@@ -33,18 +33,10 @@ class IdentifyAntennaTask(Task):
         self.pathfinder_service = pathfinder_service
 
     def execute(self):
-        robot_position = self.global_information.get_robot_position()
         self.antenna.robot_controller.set_robot_speed(RobotSpeed.SCAN_SPEED)
-        start_position = self.antenna.get_start_antenna_position()
-        path_to_start_point = self.pathfinder_service.find(self.global_information, start_position)
-        self.global_information.send_path([robot_position] + path_to_start_point)
-        self.vision_regulation.go_to_positions(path_to_start_point)
+        self._go_to_start_point()
         self.antenna.start_recording()
-        end_position = self.antenna.get_stop_antenna_position()
-        path_end_position = self.pathfinder_service.find(self.global_information, end_position)
-        robot_position = self.global_information.get_robot_position()
-        self.global_information.send_path([robot_position] + path_end_position)
-        self.vision_regulation.go_to_positions(path_end_position)
+        self._go_to_end_position()
         self.antenna.end_recording()
         self.draw_line()
         self.vision_regulation.go_to_position(self.blackboard.antenna_position)
@@ -55,13 +47,26 @@ class IdentifyAntennaTask(Task):
         robot_position = self.global_information.get_robot_position()
         self.max_signal_position = self.antenna.get_max_signal_position()
         self.blackboard.antenna_position = self.max_signal_position
-
         path_max = self.pathfinder_service.find(self.global_information, self.max_signal_position)
         self.global_information.send_path([robot_position] + path_max)
         self.vision_regulation.go_to_positions(path_max)
-
         self.mark_move = self.blackboard.get_mark_move(robot_position)
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
         self.antenna.robot_controller.lower_pencil()
         self.antenna.robot_controller.timed_move(self.mark_move, 20, robot_position)
         self.antenna.robot_controller.raise_pencil()
+
+    def _go_to_start_point(self):
+        robot_position = self.global_information.get_robot_position()
+
+        start_position = self.antenna.get_start_antenna_position()
+        path_to_start_point = self.pathfinder_service.find(self.global_information, start_position)
+        self.global_information.send_path([robot_position] + path_to_start_point)
+        self.vision_regulation.go_to_positions(path_to_start_point)
+
+    def _go_to_end_position(self):
+        end_position = self.antenna.get_stop_antenna_position()
+        path_end_position = self.pathfinder_service.find(self.global_information, end_position)
+        robot_position = self.global_information.get_robot_position()
+        self.global_information.send_path([robot_position] + path_end_position)
+        self.vision_regulation.go_to_positions(path_end_position)

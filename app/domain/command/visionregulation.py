@@ -1,7 +1,7 @@
 import json
 from websocket import create_connection
 
-from mcu.robotcontroller import RobotController
+from mcu.robotcontroller import RobotController, RobotSpeed
 from service.globalinformation import GlobalInformation
 
 DELTA_T = 0.1
@@ -44,3 +44,8 @@ class VisionRegulation:
         pos = self.global_information.get_robot_position()
         pos.theta = theta
         self.go_to_position(pos, True)
+
+    def go_to_last_draw_position(self, position):
+        self.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
+        self.go_to_position(position)
+        self.robot_controller.set_robot_speed(RobotSpeed.NORMAL_SPEED)

@@ -3,8 +3,11 @@ from domain.pathfinding.pathfinding import NoPathFound
 from service.globalinformation import GlobalInformation
 from domain.robot.blackboard import POSITIONS
 
-STOP_POSITION_LIST = [Position(1250, 580, 0), Position(1250, 880, 0), Position(1250, 380, 0), Position(1250, 20,
-                                                                                                       0)]  # 1280, 865
+STOP_POSITION_LIST = [Position(1250, 580, 0),
+                      Position(1250, 880, 0),
+                      Position(1250, 380, 0),
+                      Position(1250, 20, 0)
+                      ]
 
 
 class SafeZoneFinder:

@@ -7,6 +7,5 @@ class RobotAi:
     def execute(self, tasks_list):
         self._global_information.connection.send(json.dumps({"headers":"cycle_started"}))
         for task in tasks_list:
-            print(task)
             task.execute()
         self._global_information.connection.send(json.dumps({"headers":"cycle_ended"}))
