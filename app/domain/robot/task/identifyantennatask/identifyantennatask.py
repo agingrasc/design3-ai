@@ -60,13 +60,13 @@ class IdentifyAntennaTask(Task):
         robot_position = self.global_information.get_robot_position()
 
         start_position = self.antenna.get_start_antenna_position()
-        path_to_start_point = self.pathfinder_service.find(self.global_information, start_position)
+        path_to_start_point = self.pathfinder_service.find(self.global_information, start_position, OBSTACLE_PRECISION)
         self.global_information.send_path([robot_position] + path_to_start_point)
         self.vision_regulation.go_to_positions(path_to_start_point)
 
     def _go_to_end_position(self):
         end_position = self.antenna.get_stop_antenna_position()
-        path_end_position = self.pathfinder_service.find(self.global_information, end_position)
+        path_end_position = self.pathfinder_service.find(self.global_information, end_position, OBSTACLE_PRECISION)
         robot_position = self.global_information.get_robot_position()
         self.global_information.send_path([robot_position] + path_end_position)
         self.vision_regulation.go_to_positions(path_end_position)
