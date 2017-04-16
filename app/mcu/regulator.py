@@ -10,11 +10,11 @@ from domain.gameboard.position import Position
 PIDConstants = namedtuple("PIDConstants",
                           'kp ki kd theta_kp theta_ki position_deadzone max_cmd deadzone_cmd min_cmd theta_max_cmd theta_min_cmd')
 
-DEFAULT_KP = 0.4
+DEFAULT_KP = 0.55
 DEFAULT_KI = 0
 DEFAULT_KD = 0
 
-DEFAULT_THETA_KP = 0.50
+DEFAULT_THETA_KP = 0.55
 DEFAULT_THETA_KI = 0.007
 
 POSITION_ACC_DECAY = 1.00  # 3 iteration pour diminuer de moitie
@@ -22,7 +22,7 @@ THETA_ACC_DECAY = 0.79
 
 POSITION_MAX_CMD = 150
 POSITION_MIN_CMD = 1
-DEFAULT_THETA_MAX_CMD = 0.1
+DEFAULT_THETA_MAX_CMD = 0.3
 DEFAULT_THETA_MIN_CMD = 0.050
 
 DEADZONE = 4  # mm

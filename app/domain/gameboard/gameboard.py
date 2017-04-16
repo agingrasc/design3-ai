@@ -1,4 +1,5 @@
 import sys
+import math
 import collections
 from enum import Enum
 from . import position
@@ -17,13 +18,15 @@ class Tag(Enum):
 
 
 class GameBoard:
-    def __init__(self, width, length, obstacles, robot_radius=1, camera_length=0):
+    def __init__(self, width, length, obstacles, robot_radius=1, camera_length=0, hard_mode=False):
         self.camera_length = camera_length
         self.width = width
+        self.obstacles_position = []
         self.length = length
         self.robot_coordinate = Coordinate(0, 0)
         self.game_board = []
         self.robot_radius = robot_radius
+        self.hard_mode = hard_mode
         self.__build_board()
         for obstacle in obstacles:
             self.__add_obstacle(obstacle)
@@ -73,10 +76,14 @@ class GameBoard:
 
     def __add_obstacle(self, obstacle_value_object):
         obstacles = build_obstacle(
-            obstacle_value_object, self.width, self.length, self.robot_radius, self.camera_length
+            obstacle_value_object, self.width, self.length, self.robot_radius, self.camera_length, self.hard_mode
         )
         for obstacle in obstacles:
             self.game_board[self.width - 1 - obstacle.pos_x][obstacle.pos_y] = obstacle
+
+        self.obstacles_position.append(
+            self.game_board[self.width - 1 - obstacle_value_object.pos_x][obstacle_value_object.pos_y]
+        )
 
     def get_coordinate(self, x, y):
         x_coord = self.width - 1 - x
@@ -89,19 +96,61 @@ class GameBoard:
         return self.game_board[x][y]
 
 
-def build_obstacle(obstacle, width, length, robot_radius, camera_length):
+def build_obstacle(obstacle, width, length, robot_radius, camera_length, try_hard):
     obstacle_coord = []
     startx_pos = __verify_start_x(obstacle, robot_radius, camera_length)
     starty_pos = __verify_start_y(obstacle, robot_radius)
     endx_pos = __verify_end_x(obstacle, robot_radius, width, camera_length)
     endy_pos = __verify_end_y(obstacle, robot_radius, length)
+
     for i in range(startx_pos, endx_pos):
         for j in range(starty_pos, endy_pos):
             new_obstacle_coord = Coordinate(i, j)
             new_obstacle_coord.set_tag(Tag.OBSTACLE)
             new_obstacle_coord.set_weight(sys.maxsize)
             obstacle_coord.append(new_obstacle_coord)
+
+    if try_hard:
+        startx_pos_round = __verify_start_x_round(obstacle, robot_radius, camera_length)
+        starty_pos_round = __verify_start_y_round(obstacle, robot_radius)
+        endx_pos_round = __verify_end_x_round(obstacle, robot_radius, width, camera_length)
+        endy_pos_round = __verify_end_y_round(obstacle, robot_radius, length)
+        for i in range(startx_pos_round, endx_pos_round):
+            for j in range(starty_pos_round, endy_pos_round):
+                if (obstacle.tag == Tag.CANT_PASS_LEFT and
+                    j > obstacle.pos_y) or (obstacle.tag == Tag.CANT_PASS_RIGHT and j < obstacle.pos_y):
+                    pass
+                    distance = (math.sqrt((i - obstacle.pos_x)**2 + (j - obstacle.pos_y)**2))
+                    if distance <= obstacle.radius + robot_radius + camera_length:
+                        new_obstacle_coord = Coordinate(i, j)
+                        new_obstacle_coord.set_tag(Tag.OBSTACLE)
+                        new_obstacle_coord.set_weight(sys.maxsize)
+                        obstacle_coord.append(new_obstacle_coord)
+                    else:
+                        new_obstacle_coord = Coordinate(i, j)
+                        obstacle_coord.append(new_obstacle_coord)
+
     return obstacle_coord
+
+
+def __verify_start_y_round(obstacle, robot_radius):
+    starty_pos = obstacle.pos_y - obstacle.radius - robot_radius
+    return starty_pos
+
+
+def __verify_end_y_round(obstacle, robot_radius, width):
+    endy_pos = obstacle.pos_y + obstacle.radius + robot_radius + 1
+    return endy_pos
+
+
+def __verify_end_x_round(obstacle, robot_radius, length, camera_length):
+    endx_pos = obstacle.pos_x + obstacle.radius + robot_radius + 1
+    return endx_pos + camera_length
+
+
+def __verify_start_x_round(obstacle, robot_radius, camera_length):
+    startx_pos = obstacle.pos_x - obstacle.radius - robot_radius
+    return startx_pos - camera_length
 
 
 def __verify_start_y(obstacle, robot_radius):
@@ -112,14 +161,14 @@ def __verify_start_y(obstacle, robot_radius):
 
 
 def __verify_end_y(obstacle, robot_radius, width):
-    endy_pos = obstacle.pos_y + obstacle.radius + robot_radius
+    endy_pos = obstacle.pos_y + obstacle.radius + robot_radius + 1
     if endy_pos > width - 1 or obstacle.tag == Tag.CANT_PASS_RIGHT:
         endy_pos = width - 1
     return endy_pos
 
 
 def __verify_end_x(obstacle, robot_radius, length, camera_length):
-    endx_pos = obstacle.pos_x + obstacle.radius + robot_radius
+    endx_pos = obstacle.pos_x + obstacle.radius + robot_radius + 1
     if endx_pos > length - 1:
         endx_pos = length - 1
     return endx_pos + camera_length

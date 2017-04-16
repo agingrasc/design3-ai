@@ -19,7 +19,7 @@ class IdentifyAntennaTaskTest(unittest.TestCase):
         self.pathfinding_application_service = Mock()
         self.start_antenna_position = Mock(pos_x=5, pos_y=10)
         self.end_antenna_position = Mock(pos_x=20, pos_y=10)
-        self.max_signal_position= Mock(pos_x=25, pos_y=45)
+        self.max_signal_position = Mock(pos_x=25, pos_y=45)
         self.antenna.get_start_antenna_position.return_value = self.start_antenna_position
         self.antenna.get_stop_antenna_position.return_value = self.end_antenna_position
         self.antenna.get_max_signal_position.return_value = self.max_signal_position
@@ -31,20 +31,20 @@ class IdentifyAntennaTaskTest(unittest.TestCase):
 
     def test_call_go_to_multiple_positions_correctly(self):
         task = IdentifyAntennaTask(
-            self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard, self.pathfinding_application_service
+            self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard,
+            self.pathfinding_application_service
         )
 
         task.execute()
 
-        expected_calls = [
-            call(VALID_PATH_START), call(VALID_PATH_END)
-        ]
+        expected_calls = [call(VALID_PATH_START), call(VALID_PATH_END)]
 
         self.vision_regulation.go_to_positions.assert_has_calls(expected_calls)
 
     def test_call_antenna_correctly(self):
         task = IdentifyAntennaTask(
-            self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard, self.pathfinding_application_service
+            self.antenna, self.feedback, self.vision_regulation, self.global_information, self.blackboard,
+            self.pathfinding_application_service
         )
 
         task.execute()
@@ -65,8 +65,9 @@ class IdentifyAntennaTaskTest(unittest.TestCase):
         task.execute()
 
         expected_calls = [
-            call(self.global_information, self.start_antenna_position),
-            call(self.global_information, self.end_antenna_position), call(self.global_information, self.max_signal_position)
+            call(self.global_information, self.start_antenna_position,
+                 False), call(self.global_information, self.end_antenna_position, False),
+            call(self.global_information, self.max_signal_position, False)
         ]
 
         self.pathfinding_application_service.find.assert_has_calls(expected_calls)

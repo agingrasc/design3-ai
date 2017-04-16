@@ -2,7 +2,6 @@ import numpy as np
 
 from domain.command.antenna import Antenna
 from domain.command.visionregulation import VisionRegulation
-from domain.gameboard.position import Position
 from domain.robot.blackboard import Blackboard
 from domain.robot.task.task import Task
 from service import pathfinding_application_service
@@ -12,7 +11,7 @@ from service.feedback import TASK_IDENTEFIE_ANTENNA
 from service.globalinformation import GlobalInformation
 
 ANTENNA_DRAW_MARK_ANGLE = np.deg2rad(0)
-
+OBSTACLE_PRECISION = False
 
 
 class IdentifyAntennaTask(Task):
@@ -47,9 +46,10 @@ class IdentifyAntennaTask(Task):
         robot_position = self.global_information.get_robot_position()
         self.max_signal_position = self.antenna.get_max_signal_position()
         self.blackboard.antenna_position = self.max_signal_position
-        path_max = self.pathfinder_service.find(self.global_information, self.max_signal_position)
+        path_max = self.pathfinder_service.find(self.global_information, self.max_signal_position, OBSTACLE_PRECISION)
         self.global_information.send_path([robot_position] + path_max)
         self.vision_regulation.go_to_positions(path_max)
+
         self.mark_move = self.blackboard.get_mark_move(robot_position)
         self.vision_regulation.oriente_robot(ANTENNA_DRAW_MARK_ANGLE)
         self.antenna.robot_controller.lower_pencil()
@@ -70,3 +70,4 @@ class IdentifyAntennaTask(Task):
         robot_position = self.global_information.get_robot_position()
         self.global_information.send_path([robot_position] + path_end_position)
         self.vision_regulation.go_to_positions(path_end_position)
+

@@ -95,8 +95,9 @@ class GlobalInformation:
 
     def send_take_picture_request(self, scale_factor, orientation):
         payload = {'data': {'scaling': scale_factor, 'orientation': orientation}}
-        base_station_response = requests.post(BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT),
-                                              json=payload).json()
+        base_station_response = requests.post(
+            BASE_URL_PATTERN.format(self.base_station_url, TAKE_PICTURE_ENDPOINT), json=payload
+        ).json()
         return base_station_response
 
     def reset_obstacles_detection(self):
