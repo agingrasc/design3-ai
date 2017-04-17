@@ -5,8 +5,6 @@ from service.feedback import Feedback
 from service.globalinformation import GlobalInformation
 from service.feedback import TASK_DRAW_IMAGE
 
-MESSAGE = "End of drawing task!"
-
 
 class DrawTask(Task):
     def __init__(self, feedback: Feedback, drawer: Drawer, global_information: GlobalInformation, blackboard: Blackboard):

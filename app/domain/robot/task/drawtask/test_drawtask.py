@@ -3,7 +3,6 @@ from unittest.mock import Mock, MagicMock, patch, call
 
 from domain.robot.task.drawtask import drawtask
 
-VALID_MESSAGE = drawtask.MESSAGE
 
 
 class DrawTaskTest(unittest.TestCase):

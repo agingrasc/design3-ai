@@ -1,6 +1,5 @@
 from unittest import TestCase
 from . import pathfinding
-from domain.gameboard.gameboard import Coordinate
 from unittest.mock import Mock
 """
 class PathFindingTest(TestCase):

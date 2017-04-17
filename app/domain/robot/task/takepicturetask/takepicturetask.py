@@ -24,12 +24,10 @@ class TakePictureTask(Task):
         orientation = self.blackboard.orientation
 
         response_data = self.global_information.send_take_picture_request(scale_factor, orientation)
-
         while 'error' in response_data:
             response_data = self.global_information.send_take_picture_request(scale_factor, orientation)
 
         segments = response_data['segments']
 
         self.blackboard.set_image_segments([Position(point[0], point[1]) for point in segments])
-
         self.feedback.send_comment(TASK_TAKE_PICTURE)

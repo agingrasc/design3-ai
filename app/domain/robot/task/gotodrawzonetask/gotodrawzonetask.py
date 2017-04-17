@@ -35,11 +35,6 @@ class GoToDrawzoneTask(Task):
         path: List = self.pathfinding_application_service.find(self.global_information, first_point)
         self.global_information.send_path([robot_position] + path)
         last_point = path.pop(len(path) - 1)
-        for destination in path:
-            self.vision_regulation.oriente_robot(destination.theta)
-            self.vision_regulation.go_to_position(destination)
-
-        self.vision_regulation.robot_controller.set_robot_speed(RobotSpeed.DRAW_SPEED)
-        self.vision_regulation.go_to_position(last_point)
-        self.vision_regulation.robot_controller.set_robot_speed(RobotSpeed.NORMAL_SPEED)
+        self.vision_regulation.go_to_positions(path)
+        self.vision_regulation.go_to_last_draw_position(last_point)
         self.feedback.send_comment(TASK_GO_TO_DRAWING_ZONE)
